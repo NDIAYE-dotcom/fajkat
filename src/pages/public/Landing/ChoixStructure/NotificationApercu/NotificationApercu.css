@@ -1,23 +1,25 @@
 .notification-apercu {
-  position: absolute;
-  right: var(--esp-3);
-  bottom: var(--esp-3);
-  left: var(--esp-3);
-  z-index: 2;
   display: flex;
   align-items: center;
   gap: var(--esp-3);
   padding: var(--esp-2) var(--esp-3);
-  border: 1px solid var(--doux);
-  border-left: 4px solid var(--succes);
-  border-radius: var(--rayon-champ);
-  background: var(--fond);
+  border: 1px solid color-mix(in srgb, var(--doux) 60%, transparent);
+  border-radius: 10px;
+  background: var(--blanc);
   box-shadow: var(--ombre-flottante);
   opacity: 0;
-  transform: translateY(calc(100% + var(--esp-3)));
+  transform: translateY(1.25rem);
   transition:
-    opacity 200ms var(--courbe),
-    transform 200ms var(--courbe);
+    opacity 280ms var(--courbe),
+    transform 280ms var(--courbe);
+}
+
+.notification-apercu--flottante {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 2;
 }
 
 .notification-apercu[data-visible] {
@@ -29,22 +31,26 @@
   display: grid;
   flex-shrink: 0;
   place-items: center;
-  width: 2rem;
-  height: 2rem;
+  width: 2.5rem;
+  height: 2.5rem;
   border-radius: 50%;
+  /* Résultat validé : couleur de succès, comme sur la maquette */
   background: var(--succes);
-  color: var(--fond);
+  color: var(--blanc);
 }
 
 .notification-apercu__texte {
   display: grid;
+  flex: 1;
   min-width: 0;
-  line-height: 1.3;
+  line-height: 1.35;
 }
 
 .notification-apercu__titre {
-  font-size: var(--texte-s);
+  overflow: hidden;
   font-weight: 700;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .notification-apercu__detail {
@@ -53,4 +59,24 @@
   font-size: var(--texte-xs);
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.notification-apercu__heure {
+  align-self: start;
+  color: var(--encre-douce);
+  font-size: var(--texte-xs);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Petit écran : le texte passe à la ligne plutôt que d'être coupé. */
+@media (max-width: 40rem) {
+  .notification-apercu__titre,
+  .notification-apercu__detail {
+    white-space: normal;
+  }
+
+  /* L'heure laisse sa place au texte : la notification reste basse. */
+  .notification-apercu__heure {
+    display: none;
+  }
 }

@@ -1,86 +1,130 @@
-/* Écran d'accueil miniature. Uniquement des <span> (on est dans un bouton). */
 .apercu-file {
-  --hauteur-ticket: 2rem;
-  position: relative;
+  --hauteur-ticket: 2.375rem;
+  --ecart-ticket: 0.375rem;
   display: flex;
   flex-direction: column;
-  gap: var(--esp-3);
-  height: 100%;
-  padding: var(--esp-3);
-  overflow: hidden;
-  border: var(--trait);
-  border-radius: var(--rayon-panneau);
-  background: var(--fond);
-  font-size: var(--texte-s);
-  text-align: left;
+  gap: var(--esp-2);
 }
 
-.apercu-file__barre {
-  display: flex;
-  justify-content: space-between;
-  padding-bottom: var(--esp-2);
-  border-bottom: var(--trait);
-  color: var(--encre-douce);
-  font-size: var(--texte-xs);
-  font-weight: 700;
-}
-
-.apercu-file__heure {
-  font-family: var(--police-mono);
-  font-variant-numeric: tabular-nums;
-}
-
-/* Le ticket appelé, en grand */
-.apercu-file__appel {
-  display: flex;
+/* Le guichet : grand bloc foncé, le numéro appelé au centre */
+.apercu-file__guichet {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
   align-items: center;
-  justify-content: space-between;
-  gap: var(--esp-3);
+  min-height: 5rem;
   padding: var(--esp-2) var(--esp-3);
-  border-radius: var(--rayon-champ);
-  background: var(--primaire);
-  color: var(--fond);
+  overflow: hidden;
+  border-radius: 10px;
+  background: var(--carte-couleur);
+  color: var(--blanc);
 }
 
-.apercu-file__appel-libelle {
-  font-size: var(--texte-xs);
+/* Deux traits pâles à gauche, comme le texte flou d'un écran d'appel */
+.apercu-file__decor {
+  align-self: start;
+  width: 4.5rem;
+  height: 0.75rem;
+  margin-top: var(--esp-3);
+  border-radius: 2px;
+  background: var(--blanc);
+  box-shadow: 0 1.25rem 0 -0.125rem var(--blanc);
+  opacity: 0.18;
+}
+
+.apercu-file__appel {
+  display: grid;
+  justify-items: center;
+  line-height: 1.15;
+  animation: apercu-file-appel 320ms var(--courbe) both;
+}
+
+.apercu-file__libelle {
+  font-size: 0.6875rem;
   font-weight: 700;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
 }
 
-.apercu-file__appel-ticket {
-  display: grid;
-  justify-items: end;
-  line-height: 1.2;
-  animation: apercu-file-appel 260ms var(--courbe) both;
-}
-
-.apercu-file__appel-numero {
-  font-family: var(--police-mono);
-  font-size: 1.5rem;
-  font-weight: 500;
+.apercu-file__numero-appel {
+  font-size: 1.75rem;
+  font-weight: 700;
   font-variant-numeric: tabular-nums;
 }
 
-.apercu-file__appel-salle {
+.apercu-file__salle {
   font-size: var(--texte-xs);
-  opacity: 0.85;
+  font-weight: 700;
+}
+
+.apercu-file__pictogramme {
+  position: relative;
+  display: grid;
+  justify-self: end;
+  place-items: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--blanc) 16%, transparent);
+}
+
+/* Onde qui part du pictogramme à chaque appel */
+.apercu-file__onde {
+  position: absolute;
+  inset: 0;
+  border: 2px solid var(--blanc);
+  border-radius: 50%;
+  opacity: 0;
+  animation: apercu-file-onde 900ms var(--courbe);
+}
+
+@keyframes apercu-file-onde {
+  from {
+    opacity: 0.6;
+    transform: scale(1);
+  }
+
+  to {
+    opacity: 0;
+    transform: scale(1.7);
+  }
+}
+
+/* Fine barre qui se remplit jusqu'au prochain appel (4 s, même durée que la cadence) */
+.apercu-file__decompte {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 3px;
+  background: var(--blanc);
+  opacity: 0.45;
+  transform-origin: left;
+  animation: apercu-file-decompte 4000ms linear both;
+}
+
+@keyframes apercu-file-decompte {
+  from {
+    transform: scaleX(0);
+  }
+
+  to {
+    transform: scaleX(1);
+  }
 }
 
 @keyframes apercu-file-appel {
   from {
     opacity: 0;
-    transform: translateY(40%);
+    transform: translateY(35%);
   }
 }
 
-/* Les tickets en attente : chacun placé selon sa position, l'avance est une translation. */
+/* La file : chaque ticket est placé selon sa position, l'avance est une translation. */
 .apercu-file__liste {
   position: relative;
   display: block;
-  flex-shrink: 0;
-  height: calc(var(--hauteur-ticket) * 3);
+  height: calc(var(--hauteur-ticket) * 2 + var(--ecart-ticket));
 }
 
 .apercu-file__ticket {
@@ -90,23 +134,29 @@
   left: 0;
   display: flex;
   align-items: center;
-  gap: var(--esp-3);
+  gap: var(--esp-2);
   height: var(--hauteur-ticket);
-  padding-inline: var(--esp-2);
-  border-bottom: 1px dashed var(--doux);
-  transform: translateY(calc(var(--position) * var(--hauteur-ticket)));
+  padding: 0 var(--esp-2) 0 var(--esp-3);
+  border: 1px solid color-mix(in srgb, var(--doux) 60%, transparent);
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--fond) 70%, var(--blanc));
+  transform: translateY(calc(var(--position) * (var(--hauteur-ticket) + var(--ecart-ticket))));
   transition:
-    transform 420ms var(--courbe),
-    opacity 320ms var(--courbe);
+    transform 480ms var(--courbe),
+    opacity 360ms var(--courbe);
 }
 
 .apercu-file__ticket[data-masque] {
   opacity: 0;
 }
 
+.apercu-file__personne {
+  flex-shrink: 0;
+  color: var(--encre-douce);
+}
+
 .apercu-file__numero {
-  font-family: var(--police-mono);
-  font-weight: 500;
+  font-weight: 700;
   font-variant-numeric: tabular-nums;
 }
 
@@ -119,16 +169,30 @@
   white-space: nowrap;
 }
 
-.apercu-file__priorite {
+.apercu-file__badge {
   flex-shrink: 0;
-  padding: 0 var(--esp-1);
-  border: 1.5px solid var(--primaire);
-  border-radius: 3px;
-  color: var(--primaire);
-  font-family: var(--police-mono);
-  font-size: 0.6875rem;
-  font-weight: 500;
-  letter-spacing: 0.06em;
+  padding: 0.125rem 0.375rem;
+  border: 1px solid var(--encre-douce);
+  border-radius: 4px;
+  color: var(--encre-douce);
+  font-size: 0.625rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
   text-transform: uppercase;
-  transform: rotate(-2deg);
+}
+
+.apercu-file__badge[data-prochain] {
+  border-color: var(--tampon);
+  color: var(--tampon);
+}
+
+@media (max-width: 24rem) {
+  .apercu-file__decor,
+  .apercu-file__personne {
+    display: none;
+  }
+
+  .apercu-file__guichet {
+    grid-template-columns: 1fr auto;
+  }
 }

@@ -95,6 +95,10 @@ Les deux offres partagent la même palette ; html[data-offre] ne change pas la c
 - Poste de santé : ambiance claire (sections --fond et --surface, accents --accent).
 - Clinique : davantage de sections sombres (fond --primaire, texte --fond).
 Tout texte respecte le contraste AA (4,5:1, ou 3:1 pour le texte de grande taille).
+Exception — page publique uniquement (l'application connectée reste sobre) :
+- autorisés : dégradés très doux en fond de carte, coins arrondis (20 px pour les cartes, token --rayon-carte), ombres douces (--ombre-carte, --ombre-carte-survol), illustrations 3D de bâtiments fournies par le porteur du projet (public/images/) ;
+- l'offre Clinique y a sa couleur propre, --clinique #1062E2 (texte blanc : 5,4:1) et --clinique-doux #E3EEFD ; l'offre Poste de santé garde la palette sarcelle ;
+- l'écran de choix suit la maquette docs/references/maquette-choix.png, qui prime sur les autres règles de cette section.
 Typographies, auto-hébergées via @fontsource :
 - Titres : Spectral (600), éditoriale et humaine.
 - Texte et interface : Atkinson Hyperlegible, conçue pour une lisibilité maximale.
@@ -151,3 +155,4 @@ INTERDITS ABSOLUS (signes d'un design généré automatiquement) :
 - Étape 2 — 13/10/2026 — Identité visuelle « registre vivant » (tokens, base, polices) et page d’accueil : choix obligatoire Poste de santé / Clinique, deux pages d’offre distinctes, offres et tarifs centralisés dans src/lib/offres.js, modules marqués « Prévu ». Aucune migration.
 - Étape 2b-A — 13/10/2026 — Refonte de la page publique, partie A : écran de choix en scène dessinée au trait (poste / clinique), tracé animé, fiche épinglée, tampon et View Transitions ; SVG remplaçables dans src/assets/illustrations (règle dans docs/illustrations.md). Aucune migration.
 - Étape 2c-A — 13/10/2026 — Refonte de la page publique, partie A : en-tête commun avec menu « Plateforme » (3 familles, tiroir plein écran sur mobile) et bouton de démo WhatsApp ; écran de choix en deux panneaux avec aperçus animés en HTML/CSS (file d'attente, plan des lits), 60 / 40 au survol, tampon puis View Transition ; catalogue des 38 modules de la section 6 dans src/lib/modules.js, phares et contact démo dans src/lib/offres.js. Aucune migration.
+- Étape 2c-B — 13/10/2026 — Écran de choix refait d'après la maquette docs/references/maquette-choix.png : cartes Poste de santé (sarcelle) / Clinique (--clinique #1062E2) sans prix, bouton « Découvrir toutes les fonctionnalités », illustrations WebP (cercle sur grand écran, bandeau avec images dédiées sur mobile), aperçus animés dans un cadre d'application rejoués au défilement ; exception « page publique » ajoutée en section 7. Aucune migration.

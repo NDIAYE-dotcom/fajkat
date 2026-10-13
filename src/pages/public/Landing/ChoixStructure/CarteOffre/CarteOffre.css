@@ -1,0 +1,302 @@
+/* Carte de choix — page publique : dégradé doux, coins de 20 px et ombres douces autorisés
+   (CLAUDE.md, section 7, exception page publique). */
+.carte-offre {
+  position: relative;
+  isolation: isolate;
+  /* La taille du titre suit la largeur de la carte (unités cqi). */
+  container-type: inline-size;
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-4);
+  min-width: 0;
+  padding: var(--esp-5) var(--esp-5) var(--esp-4);
+  border: 1px solid color-mix(in srgb, var(--doux) 55%, transparent);
+  border-radius: var(--rayon-carte);
+  background: var(--fond);
+  box-shadow: var(--ombre-carte);
+  color: var(--encre);
+  text-align: left;
+  cursor: pointer;
+  /* Entrée : la carte monte en fondu ; la seconde part 120 ms après la première.
+     « backwards » : l'animation ne bloque pas le transform du survol une fois terminée. */
+  animation: carte-offre-entree 560ms var(--courbe) calc(var(--rang) * 120ms) backwards;
+  transition:
+    transform 200ms var(--courbe),
+    opacity 200ms var(--courbe);
+}
+
+.carte-offre--poste_sante {
+  --carte-couleur: var(--primaire);
+  --carte-accent: var(--accent);
+  --carte-doux: var(--surface);
+}
+
+.carte-offre--clinique {
+  --carte-couleur: var(--clinique);
+  --carte-accent: var(--clinique);
+  --carte-doux: var(--clinique-doux);
+}
+
+@keyframes carte-offre-entree {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+}
+
+/* Ombre accentuée du survol : calque dont seule l'opacité change. */
+.carte-offre::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  box-shadow: var(--ombre-carte-survol);
+  opacity: 0;
+  transition: opacity 200ms var(--courbe);
+  pointer-events: none;
+}
+
+.carte-offre--repos:hover,
+.carte-offre--repos:focus-visible {
+  transform: translateY(-4px);
+}
+
+.carte-offre--repos:hover::after,
+.carte-offre--repos:focus-visible::after {
+  opacity: 1;
+}
+
+.carte-offre:focus-visible {
+  outline-color: var(--carte-couleur);
+  outline-offset: 4px;
+  border-radius: var(--rayon-carte);
+}
+
+.carte-offre[aria-disabled] {
+  cursor: default;
+}
+
+.carte-offre--estompe {
+  opacity: 0.4;
+}
+
+/* Fond : dégradé très doux depuis le coin haut droit, et grand cercle clair de l'illustration */
+.carte-offre__feuille {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  border-radius: inherit;
+  background:
+    radial-gradient(
+      120% 70% at 100% 0%,
+      color-mix(in srgb, var(--carte-doux) 70%, transparent),
+      transparent 70%
+    ),
+    var(--fond);
+}
+
+.carte-offre__cercle {
+  position: absolute;
+  top: -3rem;
+  right: -4.5rem;
+  width: min(60%, 30rem);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--carte-doux) 80%, var(--blanc));
+}
+
+/* La photo se fond dans le cercle : bord adouci par un masque radial. */
+.carte-offre__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 55% 60%;
+  border-radius: 50%;
+  -webkit-mask-image: radial-gradient(closest-side, #000 72%, transparent 100%);
+  mask-image: radial-gradient(closest-side, #000 72%, transparent 100%);
+  animation: carte-offre-flotte 6s ease-in-out infinite alternate;
+}
+
+/* Hors de l'écran, l'illustration cesse de flotter. */
+.carte-offre:not([data-visible]) .carte-offre__image {
+  animation-play-state: paused;
+}
+
+@keyframes carte-offre-flotte {
+  to {
+    transform: translateY(-6px);
+  }
+}
+
+.carte-offre__tete {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+/* Surtitre en petites capitales espacées, petit trait de couleur dessous */
+.carte-offre__surtitre {
+  position: relative;
+  max-width: 58%;
+  padding-bottom: var(--esp-3);
+  font-size: var(--texte-xs);
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+
+.carte-offre__surtitre::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 2.5rem;
+  height: 3px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, var(--carte-couleur), var(--carte-accent));
+}
+
+.carte-offre__reperage {
+  color: var(--carte-couleur);
+}
+
+/* « Déjà consultée » sur sa propre ligne, pour ne jamais se couper au milieu */
+.carte-offre__rappel {
+  display: block;
+  margin-top: 0.125rem;
+  color: var(--encre-douce);
+}
+
+.carte-offre__nom {
+  position: relative;
+  max-width: 58%;
+  margin-top: var(--esp-3);
+  padding-bottom: var(--esp-4);
+  font-family: var(--police-titre);
+  font-size: clamp(2.25rem, 9.25cqi, 4rem);
+  font-weight: 600;
+  line-height: 1.02;
+  letter-spacing: -0.015em;
+}
+
+/* Trait de couleur dégradé sous le titre */
+.carte-offre__nom::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 9rem;
+  height: 4px;
+  border-radius: 2px;
+  background: linear-gradient(
+    90deg,
+    var(--carte-couleur) 0 55%,
+    var(--carte-doux) 80%,
+    transparent
+  );
+}
+
+.carte-offre__apercu {
+  position: relative;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+}
+
+/* Bouton pleine largeur, dans la couleur de l'offre (texte blanc : AA vérifié) */
+.carte-offre__bouton {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--esp-3);
+  min-height: 3.125rem;
+  padding: var(--esp-2) var(--esp-4);
+  border-radius: 12px;
+  background: var(--carte-couleur);
+  box-shadow: var(--ombre-flottante);
+  color: var(--blanc);
+  font-size: var(--texte-l);
+  font-weight: 700;
+  line-height: 1.2;
+  text-align: center;
+}
+
+.carte-offre__bouton svg {
+  flex-shrink: 0;
+  transition: transform var(--duree) var(--courbe);
+}
+
+.carte-offre--repos:hover .carte-offre__bouton svg {
+  transform: translateX(4px);
+}
+
+.carte-offre__tampon {
+  top: 42%;
+}
+
+/* Écran moyen : le texte prend plus de place, le cercle rétrécit. */
+@media (max-width: 64rem) {
+  .carte-offre__cercle {
+    width: 54%;
+  }
+}
+
+/* Téléphone : l'image mobile (scène complète) s'affiche en entier, en bandeau sur toute
+   la largeur du haut de la carte, sans cercle ni masque ; le texte vient dessous.
+   Hauteur du bandeau : 2/3 de la largeur de la carte (format 3:2 de l'image, unités cqi). */
+@media (max-width: 40rem) {
+  .carte-offre {
+    --hauteur-bandeau: 66.67cqi;
+    gap: var(--esp-3);
+    padding: var(--esp-4);
+  }
+
+  .carte-offre__cercle {
+    top: 0;
+    right: 0;
+    left: 0;
+    width: auto;
+    height: var(--hauteur-bandeau);
+    aspect-ratio: auto;
+    border-radius: 0;
+    background: none;
+  }
+
+  .carte-offre__image {
+    object-position: center;
+    border-radius: 0;
+    -webkit-mask-image: none;
+    mask-image: none;
+    /* Le bandeau touche les bords : il ne flotte pas, pour ne pas laisser de jour. */
+    animation: none;
+  }
+
+  .carte-offre__tete {
+    padding-top: var(--hauteur-bandeau);
+  }
+
+  .carte-offre__surtitre,
+  .carte-offre__nom {
+    max-width: none;
+  }
+
+  .carte-offre__apercu {
+    flex: none;
+  }
+
+  .carte-offre__bouton {
+    font-size: var(--texte-m);
+  }
+
+  .carte-offre__nom {
+    margin-top: var(--esp-3);
+  }
+
+  .carte-offre__surtitre {
+    letter-spacing: 0.16em;
+  }
+}

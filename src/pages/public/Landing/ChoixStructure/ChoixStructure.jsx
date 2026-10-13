@@ -1,17 +1,27 @@
 import { useEffect, useRef, useState } from 'react'
-import soulignement from '../../../../assets/illustrations/annotation-soulignement.svg?raw'
 import { useOffre } from '../../../../hooks/useOffre.js'
 import { mouvementReduit } from '../../../../lib/mouvement.js'
 import { OFFRES } from '../../../../lib/offres.js'
-import Illustration from '../Illustration/Illustration.jsx'
 import ApercuFile from './ApercuFile/ApercuFile.jsx'
 import ApercuLits from './ApercuLits/ApercuLits.jsx'
-import PanneauOffre from './PanneauOffre/PanneauOffre.jsx'
+import CarteOffre from './CarteOffre/CarteOffre.jsx'
 import './ChoixStructure.css'
 
-const PANNEAUX = [
-  { type: 'poste_sante', apercu: ApercuFile },
-  { type: 'clinique', apercu: ApercuLits },
+// Illustrations fournies (public/images/), converties en WebP : 720 px de large pour
+// les grands écrans, 480 px pour les téléphones (versions mobiles dédiées, plus légères).
+const CARTES = [
+  {
+    type: 'poste_sante',
+    apercu: ApercuFile,
+    image: '/images/poste-sante.webp',
+    imageMobile: '/images/poste-sante-mobile.webp',
+  },
+  {
+    type: 'clinique',
+    apercu: ApercuLits,
+    image: '/images/clinique.webp',
+    imageMobile: '/images/clinique-mobile.webp',
+  },
 ]
 
 // Temps laissé au tampon (180 ms de frappe) pour être vu avant de passer à la page de l'offre.
@@ -45,36 +55,24 @@ export default function ChoixStructure() {
       <div className="choix__intro">
         <p className="choix__surtitre">Gestion des structures de santé · Sénégal et UEMOA</p>
         <h1 id="titre-page" className="choix__titre" tabIndex={-1}>
-          Quelle{' '}
-          <span className="choix__mot">
-            structure
-            <Illustration
-              source={soulignement}
-              prefixe="choix-soulignement"
-              className="choix__soulignement"
-              delai={600}
-              duree={900}
-            />
-          </span>{' '}
-          gérez-vous&nbsp;?
+          Quelle <span className="choix__mot">structure</span> gérez-vous&nbsp;?
         </h1>
-        <p className="choix__texte">
-          Chaque structure a son offre. Choisissez la vôtre&nbsp;: la suite de la page lui est
-          consacrée.
-        </p>
       </div>
 
       <div
-        className="choix__panneaux"
+        className="choix__cartes"
         role="group"
         aria-labelledby="titre-page"
         data-frappe={frappe ?? undefined}
       >
-        {PANNEAUX.map(({ type, apercu }) => (
-          <PanneauOffre
+        {CARTES.map(({ type, apercu, image, imageMobile }, rang) => (
+          <CarteOffre
             key={type}
             offre={OFFRES[type]}
             apercu={apercu}
+            image={image}
+            imageMobile={imageMobile}
+            rang={rang}
             rappel={derniereOffre === type}
             etat={etatDe(type)}
             onChoisir={choisir}

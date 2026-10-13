@@ -1,31 +1,8 @@
-/* Plan des lits miniature. Uniquement des <span> (on est dans un bouton). */
 .apercu-lits {
   position: relative;
   display: flex;
   flex-direction: column;
   gap: var(--esp-3);
-  height: 100%;
-  padding: var(--esp-3);
-  overflow: hidden;
-  border: var(--trait);
-  border-radius: var(--rayon-panneau);
-  background: var(--fond);
-  font-size: var(--texte-s);
-  text-align: left;
-}
-
-.apercu-lits__barre {
-  display: flex;
-  justify-content: space-between;
-  padding-bottom: var(--esp-2);
-  border-bottom: var(--trait);
-  color: var(--encre-douce);
-  font-size: var(--texte-xs);
-  font-weight: 700;
-}
-
-.apercu-lits__service {
-  color: var(--primaire);
 }
 
 .apercu-lits__plan {
@@ -34,119 +11,184 @@
   gap: var(--esp-2);
 }
 
-.apercu-lits__lit {
+.apercu-lits__chambre {
   position: relative;
   display: block;
-  height: 3.5rem;
-  overflow: hidden;
-  border: 1px solid var(--doux);
-  border-radius: var(--rayon-champ);
-  background: var(--fond);
+  height: 4.875rem;
+  border: 1px solid color-mix(in srgb, var(--doux) 60%, transparent);
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--carte-doux) 45%, var(--blanc));
 }
 
-.apercu-lits__nom {
+.apercu-lits__numero {
   position: absolute;
-  top: var(--esp-1);
+  top: var(--esp-2);
   left: var(--esp-2);
-  z-index: 1;
-  color: var(--encre-douce);
-  font-family: var(--police-mono);
-  font-size: 0.625rem;
-  font-weight: 500;
+  font-size: var(--texte-xs);
+  font-weight: 700;
   white-space: nowrap;
 }
 
 .apercu-lits__couche {
   position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: flex-end;
-  padding: var(--esp-1) var(--esp-2);
-  font-size: var(--texte-xs);
-  font-weight: 700;
-  line-height: 1.2;
+  right: var(--esp-1);
+  bottom: var(--esp-2);
+  left: var(--esp-2);
+  display: grid;
+  gap: var(--esp-1);
   opacity: 0;
-  transition: opacity 260ms var(--courbe);
+  transition: opacity 320ms var(--courbe);
 }
 
-.apercu-lits__couche--libre {
-  border: 1.5px dashed var(--succes);
-  border-radius: inherit;
-  color: var(--succes);
-}
-
-.apercu-lits__couche--occupe {
-  background: var(--surface);
-  color: var(--primaire);
-  font-family: var(--police-mono);
-  font-weight: 500;
-}
-
-/* Hachures : le lit attend l'équipe de nettoyage */
-.apercu-lits__couche--nettoyage {
-  background: repeating-linear-gradient(-45deg, var(--surface) 0 6px, var(--fond) 6px 12px);
-  color: var(--encre);
-}
-
-.apercu-lits__lit[data-etat='libre'] .apercu-lits__couche--libre,
-.apercu-lits__lit[data-etat='occupe'] .apercu-lits__couche--occupe,
-.apercu-lits__lit[data-etat='nettoyage'] .apercu-lits__couche--nettoyage {
+.apercu-lits__chambre[data-etat='occupe'] .apercu-lits__couche--occupe,
+.apercu-lits__chambre[data-etat='libre'] .apercu-lits__couche--libre {
   opacity: 1;
 }
 
-/* Cerne bref autour du lit qui vient de changer */
-.apercu-lits__repere {
+.apercu-lits__initiales {
+  font-weight: 700;
+  white-space: pre;
+}
+
+.apercu-lits__statut {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.1875rem;
+  color: var(--encre-douce);
+  font-size: 0.75rem;
+  white-space: nowrap;
+}
+
+.apercu-lits__point {
+  position: relative;
+  flex-shrink: 0;
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  background: var(--tampon);
+}
+
+.apercu-lits__couche--libre .apercu-lits__statut {
+  color: var(--primaire);
+  font-weight: 700;
+}
+
+.apercu-lits__couche--libre .apercu-lits__point {
+  background: var(--accent);
+}
+
+/* Cadre vert autour de la chambre qui vient de changer (fondu d'opacité). */
+.apercu-lits__cadre {
   position: absolute;
-  inset: 0;
-  z-index: 2;
+  inset: -1px;
   border: 2px solid var(--accent);
   border-radius: inherit;
   opacity: 0;
-  animation: apercu-lits-repere 900ms var(--courbe);
+  transition: opacity 320ms var(--courbe);
 }
 
-@keyframes apercu-lits-repere {
-  20% {
-    opacity: 1;
+.apercu-lits__chambre[data-repere][data-etat='libre'] .apercu-lits__cadre {
+  opacity: 1;
+}
+
+/* Le point de la chambre qui vient de changer palpite une fois. */
+.apercu-lits__pulsation {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: inherit;
+  animation: apercu-lits-pulsation 1100ms var(--courbe);
+}
+
+@keyframes apercu-lits-pulsation {
+  from {
+    opacity: 0.7;
+    transform: scale(1);
+  }
+
+  to {
+    opacity: 0;
+    transform: scale(3.2);
   }
 }
 
-.apercu-lits__legende {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--esp-1) var(--esp-4);
+/* Entrée en cascade des chambres quand la carte arrive à l'écran */
+.cadre-apercu[data-anime] .apercu-lits__chambre {
+  animation: apercu-lits-entree 420ms var(--courbe) calc(var(--i) * 80ms + 380ms) backwards;
+}
+
+@keyframes apercu-lits-entree {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.96);
+  }
+}
+
+/* Jauge d'occupation dans l'en-tête de l'aperçu */
+.apercu-lits__occupation {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--esp-2);
   color: var(--encre-douce);
   font-size: var(--texte-xs);
 }
 
-.apercu-lits__compte {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--esp-1);
+.apercu-lits__jauge {
+  display: block;
+  width: 3.5rem;
+  height: 6px;
+  overflow: hidden;
+  border-radius: 3px;
+  background: var(--carte-doux);
 }
 
-.apercu-lits__puce {
-  display: inline-block;
-  width: 0.625rem;
-  height: 0.625rem;
-  border-radius: 2px;
+.apercu-lits__remplissage {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--carte-couleur);
+  transform: scaleX(var(--taux));
+  transform-origin: left;
+  transition: transform 600ms var(--courbe);
 }
 
-.apercu-lits__compte--libre .apercu-lits__puce {
-  border: 1.5px dashed var(--succes);
-}
-
-.apercu-lits__compte--occupe .apercu-lits__puce {
-  background: var(--primaire);
-}
-
-.apercu-lits__compte--nettoyage .apercu-lits__puce {
-  background: var(--accent);
-}
-
-.apercu-lits__nombre {
+.apercu-lits__taux {
+  min-width: 2.5rem;
   color: var(--encre);
-  font-family: var(--police-mono);
-  font-weight: 500;
+  font-weight: 700;
   font-variant-numeric: tabular-nums;
+  animation: apercu-lits-taux 320ms var(--courbe);
+}
+
+@keyframes apercu-lits-taux {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+}
+
+@media (max-width: 24rem) {
+  .apercu-lits__plan {
+    gap: var(--esp-1);
+  }
+
+  .apercu-lits__numero,
+  .apercu-lits__couche {
+    left: var(--esp-2);
+  }
+
+  .apercu-lits__numero {
+    font-size: 0.6875rem;
+  }
+}
+
+/* Téléphone : la notification passe par-dessus le bas du plan, sans réserver de place vide. */
+@media (max-width: 40rem) {
+  .apercu-lits .notification-apercu {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 2;
+  }
 }

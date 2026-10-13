@@ -20,6 +20,12 @@
   --attention: #b7791f; /* avertissements : jamais en texte sur fond clair */
   --succes: var(--primaire);
 
+  /* Page publique uniquement : couleur de l'offre Clinique (mesurée sur la maquette),
+     blanc des cadres d'aperçu. Texte --blanc sur --clinique : 5,4:1. */
+  --clinique: #1062e2;
+  --clinique-doux: #e3eefd;
+  --blanc: #ffffff;
+
   /* Ambiance des sections alternées : claire par défaut (Poste de santé),
      sombre pour la Clinique (voir [data-offre] en bas de fichier). */
   --section-fond: var(--surface);
@@ -61,9 +67,13 @@
   /* Formes */
   --rayon-champ: 6px;
   --rayon-panneau: 10px;
+  --rayon-carte: 20px; /* page publique uniquement */
   --trait: 1px solid var(--doux);
   --ombre-modale: 0 12px 32px rgb(23 48 44 / 18%);
   --ombre-flottante: 0 6px 16px rgb(23 48 44 / 12%);
+  /* Page publique uniquement : ombres douces des cartes */
+  --ombre-carte: 0 1px 2px rgb(23 48 44 / 6%), 0 12px 32px rgb(23 48 44 / 8%);
+  --ombre-carte-survol: 0 2px 4px rgb(23 48 44 / 8%), 0 22px 48px rgb(23 48 44 / 16%);
 
   /* Mouvement */
   --duree: 180ms;

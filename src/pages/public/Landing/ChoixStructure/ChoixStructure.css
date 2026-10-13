@@ -1,4 +1,4 @@
-/* Écran de choix : deux grands panneaux, chacun avec un aperçu animé du produit. */
+/* Écran de choix : deux cartes d'offre, chacune avec un aperçu animé du produit. */
 .choix {
   display: flex;
   flex-direction: column;
@@ -28,61 +28,17 @@
   outline: none;
 }
 
-/* Le mot souligné au stylo */
+/* Le mot clé de la question, en vert et plus grand */
 .choix__mot {
-  position: relative;
-  display: inline-block;
+  color: var(--primaire);
+  font-size: 1.2em;
 }
 
-.choix__soulignement {
-  position: absolute;
-  left: -3%;
-  bottom: -0.22em;
-  width: 106%;
-  --illustration-couleur: var(--accent);
-  pointer-events: none;
-}
-
-.choix__texte {
-  max-width: var(--largeur-texte);
-  margin-top: var(--esp-3);
-  color: var(--encre-douce);
-  font-size: var(--texte-l);
-  line-height: 1.45;
-}
-
-.choix__panneaux {
-  display: flex;
-  flex: 1;
-  gap: var(--esp-4);
-}
-
-/* Survol (souris uniquement) : le panneau visé passe à 60 %, l'autre s'estompe.
-   flex-basis 0 + flex-grow 1,5 contre 1 = 60 / 40. */
-@media (hover: hover) and (min-width: 48.01rem) {
-  .choix__panneaux:not([data-frappe]) .panneau-offre:is(:hover, :focus-visible) {
-    flex-grow: 1.5;
-  }
-
-  .choix__panneaux:not([data-frappe])
-    .panneau-offre:is(:hover, :focus-visible)
-    .panneau-offre__ecran {
-    transform: scale(1.04);
-  }
-
-  .choix__panneaux:not([data-frappe]):has(.panneau-offre:is(:hover, :focus-visible))
-    .panneau-offre:not(:hover, :focus-visible) {
-    opacity: 0.55;
-  }
-}
-
-/* Après le clic : le panneau tamponné garde la place, l'autre s'efface. */
-.panneau-offre--frappe {
-  flex-grow: 1.5;
-}
-
-.panneau-offre--estompe {
-  opacity: 0.35;
+.choix__cartes {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: stretch;
+  gap: var(--esp-5);
 }
 
 .choix__pied {
@@ -92,7 +48,7 @@
   font-size: var(--texte-s);
 }
 
-/* Écran peu haut (portable 1366 × 768) : on resserre pour garder les deux panneaux entiers. */
+/* Écran peu haut (portable 1366 × 768) : on resserre l'introduction au-dessus des cartes. */
 @media (min-width: 48.01rem) and (max-height: 52rem) {
   .choix__surtitre {
     display: none;
@@ -101,32 +57,19 @@
   .choix__titre {
     font-size: clamp(2rem, 1.4rem + 2vw, 2.75rem);
   }
+}
 
-  .choix__texte {
-    margin-top: var(--esp-2);
-    font-size: var(--texte-m);
+/* Tablette et téléphone : les cartes s'empilent, un toucher choisit directement. */
+@media (max-width: 60rem) {
+  .choix__cartes {
+    grid-template-columns: minmax(0, 1fr);
   }
 }
 
-/* Tablette et téléphone : les panneaux s'empilent, un toucher choisit directement. */
 @media (max-width: 48rem) {
   .choix {
     gap: var(--esp-4);
     padding-top: var(--esp-4);
-  }
-
-  .choix {
-    min-height: 0;
-  }
-
-  /* Empilés, les panneaux gardent leur hauteur naturelle : la page défile. */
-  .choix__panneaux {
-    flex: none;
-    flex-direction: column;
-  }
-
-  .choix__panneaux .panneau-offre {
-    flex: none;
   }
 }
 
@@ -137,11 +80,6 @@
 
   .choix__titre {
     font-size: 1.75rem;
-  }
-
-  .choix__texte {
-    margin-top: var(--esp-2);
-    font-size: var(--texte-s);
   }
 
   .choix__pied {

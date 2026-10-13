@@ -1,83 +1,119 @@
-import { FlaskConical } from 'lucide-react'
+import { BedDouble, ChartNoAxesColumn, FlaskConical, Pill, Stethoscope, User } from 'lucide-react'
 import { useCadence } from '../../../../../hooks/useCadence.js'
+import CadreApercu from '../CadreApercu/CadreApercu.jsx'
 import NotificationApercu from '../NotificationApercu/NotificationApercu.jsx'
 import './ApercuLits.css'
 
-// Aperçu animé de la clinique : le plan des lits change au fil des admissions et des sorties,
-// puis un résultat de laboratoire est validé. Données fictives, construites en HTML/CSS.
+// Aperçu animé de la clinique : les chambres changent d'état au fil des admissions et des sorties,
+// puis la notification du laboratoire glisse depuis le bas. Données fictives, en HTML/CSS.
 
-const INTERVALLE = 1600
-const CYCLE = 8
-const NOTIFICATION = [4, 5, 6]
+const INTERVALLE = 2000
 
-// Un lit passe toujours de « libre » à « occupé », puis « à nettoyer », puis de nouveau « libre ».
-const ETATS = ['libre', 'occupe', 'nettoyage']
-const LIBELLES = { libre: 'Libre', occupe: 'Occupé', nettoyage: 'À nettoyer' }
-
-const LITS = [
-  { nom: 'Ch1·L1', initiales: 'F.S.', initial: 'occupe' },
-  { nom: 'Ch1·L2', initiales: 'A.B.', initial: 'occupe' },
-  { nom: 'Ch1·L3', initiales: 'K.D.', initial: 'libre' },
-  { nom: 'Ch2·L1', initiales: 'M.N.', initial: 'nettoyage' },
-  { nom: 'Ch2·L2', initiales: 'M.D.', initial: 'occupe' },
-  { nom: 'Ch2·L3', initiales: 'O.F.', initial: 'libre' },
-  { nom: 'Ch3·L1', initiales: 'R.S.', initial: 'occupe' },
-  { nom: 'Ch3·L2', initiales: 'B.T.', initial: 'occupe' },
+const NAVIGATION = [
+  { icone: BedDouble, libelle: 'Hospitalisation', actif: true },
+  { icone: User, libelle: 'Patients' },
+  { icone: Stethoscope, libelle: 'Consultations' },
+  { icone: FlaskConical, libelle: 'Laboratoire' },
+  { icone: Pill, libelle: 'Pharmacie' },
+  { icone: ChartNoAxesColumn, libelle: 'Rapports' },
 ]
 
-// Lits qui changent d'état, un par pas, à tour de rôle. En 12 pas, tout revient au départ.
-const ROTATION = [3, 2, 6, 5]
+const CHAMBRES = ['101', '102', '103', '104']
 
-function etatDuLit(index, pas) {
-  const lit = LITS[index]
-  const rang = ROTATION.indexOf(index)
-  if (rang === -1 || pas <= rang) return lit.initial
-  const changements = Math.floor((pas - rang - 1) / ROTATION.length) + 1
-  return ETATS[(ETATS.indexOf(lit.initial) + changements) % ETATS.length]
-}
+// Une étape par pas : occupant de chaque chambre (null = libre), chambre qui vient de changer,
+// notification affichée. L'étape 0 est l'état de la maquette (affiché figé si animations réduites).
+const ETAPES = [
+  { occupants: ['F.S.', 'A.B.', null, null], repere: 2, notification: true },
+  { occupants: ['F.S.', 'A.B.', null, null], repere: 2, notification: true },
+  { occupants: ['F.S.', 'A.B.', 'K.D.', null], repere: 2, notification: false },
+  { occupants: ['F.S.', null, 'K.D.', null], repere: 1, notification: false },
+  { occupants: ['F.S.', 'O.F.', 'K.D.', null], repere: 1, notification: false },
+  { occupants: ['F.S.', 'A.B.', null, null], repere: 2, notification: false },
+]
+
+// L'animation démarre à l'étape 2 : la notification arrive après les mouvements de lits.
+const DEPART = 2
 
 export default function ApercuLits({ actif, statique }) {
-  const pas = useCadence(INTERVALLE, actif && !statique)
-  const etats = LITS.map((_, index) => etatDuLit(index, pas))
-  const litChange = pas > 0 ? ROTATION[(pas - 1) % ROTATION.length] : -1
-  const notification = statique || NOTIFICATION.includes(pas % CYCLE)
-  const compte = (etat) => etats.filter((e) => e === etat).length
+  const anime = actif && !statique
+  const pas = useCadence(INTERVALLE, anime)
+  const etape = ETAPES[statique ? 0 : (pas + DEPART) % ETAPES.length]
+  const occupees = etape.occupants.filter(Boolean).length
+  const taux = Math.round((occupees / CHAMBRES.length) * 100)
 
   return (
-    <span className="apercu-lits" aria-hidden="true">
-      <span className="apercu-lits__barre">
-        <span>Hospitalisation · plan des lits</span>
-        <span className="apercu-lits__service">Médecine</span>
-      </span>
-
-      <span className="apercu-lits__plan">
-        {LITS.map((lit, index) => (
-          <span key={lit.nom} className="apercu-lits__lit" data-etat={etats[index]}>
-            <span className="apercu-lits__nom">{lit.nom}</span>
-            {/* Trois calques superposés : changer d'état revient à un fondu, sans recalcul de mise en page. */}
-            <span className="apercu-lits__couche apercu-lits__couche--libre">Libre</span>
-            <span className="apercu-lits__couche apercu-lits__couche--occupe">{lit.initiales}</span>
-            <span className="apercu-lits__couche apercu-lits__couche--nettoyage">À nettoyer</span>
-            {index === litChange && <span key={pas} className="apercu-lits__repere" />}
+    <CadreApercu
+      logo="H"
+      nom="Clinique"
+      navigation={NAVIGATION}
+      titre="Hospitalisation"
+      sousTitre="Plan des lits"
+      anime={anime}
+      indicateur={
+        <span className="apercu-lits__occupation">
+          Occupation
+          {/* Jauge : seule l'échelle horizontale change (transform). */}
+          <span className="apercu-lits__jauge">
+            <span
+              className="apercu-lits__remplissage"
+              style={{ '--taux': occupees / CHAMBRES.length }}
+            />
           </span>
-        ))}
-      </span>
-
-      <span className="apercu-lits__legende">
-        {ETATS.map((etat) => (
-          <span key={etat} className={`apercu-lits__compte apercu-lits__compte--${etat}`}>
-            <span className="apercu-lits__puce" />
-            {LIBELLES[etat]} <span className="apercu-lits__nombre">{compte(etat)}</span>
+          <span key={taux} className="apercu-lits__taux">
+            {taux} %
           </span>
-        ))}
-      </span>
+        </span>
+      }
+    >
+      <span className="apercu-lits">
+        <span className="apercu-lits__plan">
+          {CHAMBRES.map((chambre, index) => {
+            const occupant = etape.occupants[index]
+            return (
+              <span
+                key={chambre}
+                className="apercu-lits__chambre"
+                data-etat={occupant ? 'occupe' : 'libre'}
+                data-repere={etape.repere === index || undefined}
+                style={{ '--i': index }}
+              >
+                <span className="apercu-lits__numero">Ch. {chambre}</span>
+                {/* Deux calques superposés : changer d'état est un fondu, sans recalcul de mise en page. */}
+                <span className="apercu-lits__couche apercu-lits__couche--occupe">
+                  <span className="apercu-lits__initiales">{occupant ?? ' '}</span>
+                  <span className="apercu-lits__statut">
+                    <span className="apercu-lits__point">
+                      {anime && etape.repere === index && (
+                        <span key={pas} className="apercu-lits__pulsation" />
+                      )}
+                    </span>
+                    Occupé
+                  </span>
+                </span>
+                <span className="apercu-lits__couche apercu-lits__couche--libre">
+                  <span className="apercu-lits__statut">
+                    <span className="apercu-lits__point">
+                      {anime && etape.repere === index && (
+                        <span key={pas} className="apercu-lits__pulsation" />
+                      )}
+                    </span>
+                    Libre
+                  </span>
+                </span>
+                <span className="apercu-lits__cadre" />
+              </span>
+            )
+          })}
+        </span>
 
-      <NotificationApercu
-        visible={notification}
-        icone={FlaskConical}
-        titre="Résultat de labo validé"
-        detail="NFS · M. Diop, chambre 2 · transmis au médecin"
-      />
-    </span>
+        <NotificationApercu
+          visible={etape.notification}
+          icone={FlaskConical}
+          titre="Résultat de labo validé"
+          detail="NFS · M. Diop, chambre 2"
+          heure="10:24"
+        />
+      </span>
+    </CadreApercu>
   )
 }
