@@ -138,5 +138,8 @@ INTERDITS ABSOLUS (signes d'un design généré automatiquement) :
 - RÈGLE DE FIN D'ÉTAPE : quand tu as fini, (1) liste les fichiers créés ou modifiés, (2) donne les commandes à lancer (npm, supabase), (3) donne une liste de tests manuels, (4) propose un message de commit, (5) ajoute une ligne au Journal ci-dessous. Puis ARRÊTE-TOI et attends ma validation.
 
 ## 11. Journal des étapes
+
 (Ajoute une ligne par étape validée : numéro, date, résumé en une phrase, migrations ajoutées.)
+
 - Étape 0 — CLAUDE.md créé.
+- Étape 1 — 13/10/2026 — Projet Vite + React JS initialisé : dépendances, arborescence, client Supabase, utilitaires de formatage, routeur, pages provisoires, ESLint et Prettier. Lint, format et build validés ; aucune migration métier créée.

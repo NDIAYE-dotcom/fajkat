@@ -1,0 +1,1 @@
+-- Données de démonstration locales (supabase db reset). Rempli aux étapes suivantes.
