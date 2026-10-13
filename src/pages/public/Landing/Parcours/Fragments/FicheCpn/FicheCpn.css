@@ -1,0 +1,61 @@
+.fiche-cpn__patiente {
+  padding-bottom: var(--esp-3);
+  border-bottom: 1px dashed var(--doux);
+  color: var(--encre-douce);
+}
+
+.fiche-cpn__patiente strong {
+  color: var(--encre);
+}
+
+.fiche-cpn__mesures {
+  display: grid;
+  margin-top: var(--esp-2);
+}
+
+.fiche-cpn__ligne {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--esp-3);
+  padding-block: var(--esp-2);
+  border-bottom: 1px solid color-mix(in srgb, var(--doux) 60%, transparent);
+  color: var(--encre-douce);
+}
+
+/* Chaque valeur s'écrit après la précédente */
+.fiche-cpn__valeur {
+  color: var(--encre);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  opacity: 0;
+}
+
+.carte-fragment[data-actif] .fiche-cpn__valeur {
+  animation: fiche-cpn-ecrit 360ms var(--courbe) calc(250ms + var(--i) * 320ms) both;
+}
+
+@keyframes fiche-cpn-ecrit {
+  from {
+    opacity: 0;
+    transform: translateX(8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.fiche-cpn__enregistre {
+  display: flex;
+  align-items: center;
+  gap: var(--esp-2);
+  margin-top: var(--esp-3);
+  color: var(--primaire);
+  font-weight: 700;
+  opacity: 0;
+}
+
+.carte-fragment[data-actif] .fiche-cpn__enregistre {
+  animation: fiche-cpn-ecrit 360ms var(--courbe) 2000ms both;
+}

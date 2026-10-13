@@ -1,0 +1,83 @@
+.agenda {
+  display: grid;
+  grid-template-columns: 3rem repeat(3, minmax(0, 1fr));
+  gap: var(--esp-2);
+  font-size: var(--texte-xs);
+}
+
+.agenda__rangee {
+  display: contents;
+}
+
+.agenda__praticien {
+  display: grid;
+  line-height: 1.25;
+}
+
+.agenda__nom {
+  font-weight: 700;
+}
+
+.agenda__specialite {
+  overflow: hidden;
+  color: var(--encre-douce);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.agenda__heure {
+  align-self: center;
+  color: var(--encre-douce);
+  font-variant-numeric: tabular-nums;
+}
+
+.agenda__creneau {
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-height: 2.75rem;
+  padding: 0 var(--esp-2);
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--fond) 60%, var(--blanc));
+  color: var(--encre-douce);
+}
+
+.agenda__creneau[data-etat='pris'] {
+  background: color-mix(in srgb, var(--doux) 35%, var(--blanc));
+  color: var(--encre);
+}
+
+.agenda__creneau[data-etat='libre'] {
+  border: 1px dashed var(--doux);
+}
+
+/* Le nouveau rendez-vous se pose dans le créneau libre */
+.agenda__rdv {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  padding: 0 var(--esp-2);
+  border-radius: inherit;
+  background: var(--primaire);
+  color: var(--blanc);
+  font-weight: 700;
+  opacity: 0;
+  transform: scale(0.8);
+}
+
+.carte-fragment[data-actif] .agenda__rdv {
+  animation: agenda-pose 420ms var(--courbe) 700ms both;
+}
+
+@keyframes agenda-pose {
+  60% {
+    opacity: 1;
+    transform: scale(1.06);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}

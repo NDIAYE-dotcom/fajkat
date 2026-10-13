@@ -1,0 +1,193 @@
+/* Héros de la page d'offre (page publique : dégradé doux et ombres douces autorisés). */
+.heros-offre {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+  gap: var(--esp-7);
+  align-items: center;
+  max-width: var(--largeur-max);
+  margin-inline: auto;
+  padding: var(--esp-7) var(--gouttiere) var(--esp-8);
+}
+
+.heros-offre__surtitre {
+  position: relative;
+  padding-bottom: var(--esp-3);
+  color: var(--primaire);
+  font-size: var(--texte-xs);
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+
+.heros-offre__surtitre::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 2.5rem;
+  height: 3px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, var(--primaire), var(--accent));
+}
+
+.heros-offre__titre {
+  margin-top: var(--esp-4);
+  font-size: var(--titre-1);
+}
+
+.heros-offre__titre:focus {
+  outline: none;
+}
+
+.heros-offre__chapeau {
+  max-width: var(--largeur-texte);
+  margin-top: var(--esp-5);
+  color: var(--encre-douce);
+  font-size: var(--texte-l);
+  line-height: 1.5;
+}
+
+.heros-offre__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--esp-3);
+  margin-top: var(--esp-6);
+}
+
+/* Visuel : grand cercle clair et photo du bâtiment, vignettes posées autour */
+.heros-offre__visuel {
+  position: relative;
+  display: block;
+  aspect-ratio: 1 / 0.9;
+}
+
+.heros-offre__cercle {
+  position: absolute;
+  inset: 0 0 0 8%;
+  display: block;
+  overflow: hidden;
+  border-radius: 50%;
+  background: radial-gradient(circle at 60% 40%, var(--blanc), var(--offre-doux) 70%);
+  animation: heros-offre-entree 600ms var(--courbe) backwards;
+}
+
+.heros-offre__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 55% 60%;
+  -webkit-mask-image: radial-gradient(closest-side, #000 74%, transparent 100%);
+  mask-image: radial-gradient(closest-side, #000 74%, transparent 100%);
+}
+
+.heros-offre__vignette {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  gap: var(--esp-3);
+  padding: var(--esp-3) var(--esp-4) var(--esp-3) var(--esp-3);
+  border: 1px solid color-mix(in srgb, var(--doux) 60%, transparent);
+  border-radius: 14px;
+  background: var(--blanc);
+  box-shadow: var(--ombre-carte);
+  /* Entrée décalée, puis flottement lent et désynchronisé d'une vignette à l'autre */
+  animation:
+    heros-offre-entree 520ms var(--courbe) calc(300ms + var(--rang) * 140ms) backwards,
+    heros-offre-flotte 5s ease-in-out calc(var(--rang) * -1.6s) infinite alternate;
+}
+
+.heros-offre__vignette:nth-of-type(1) {
+  top: 8%;
+  left: 0;
+}
+
+.heros-offre__vignette:nth-of-type(2) {
+  top: 44%;
+  right: -4%;
+}
+
+.heros-offre__vignette:nth-of-type(3) {
+  bottom: 4%;
+  left: 6%;
+}
+
+.heros-offre__vignette-icone {
+  display: grid;
+  flex-shrink: 0;
+  place-items: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 50%;
+  background: var(--offre-doux);
+  color: var(--primaire);
+}
+
+.heros-offre__vignette-texte {
+  display: grid;
+  line-height: 1.3;
+}
+
+.heros-offre__vignette-titre {
+  font-size: var(--texte-s);
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.heros-offre__vignette-detail {
+  color: var(--encre-douce);
+  font-size: var(--texte-xs);
+  white-space: nowrap;
+}
+
+.heros-offre__mention {
+  position: absolute;
+  right: 0;
+  bottom: -1.75rem;
+  color: var(--encre-douce);
+  font-size: var(--texte-xs);
+}
+
+@keyframes heros-offre-entree {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+}
+
+@keyframes heros-offre-flotte {
+  to {
+    transform: translateY(-8px);
+  }
+}
+
+@media (max-width: 60rem) {
+  .heros-offre {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--esp-7);
+    padding-top: var(--esp-6);
+  }
+
+  .heros-offre__visuel {
+    width: min(100%, 30rem);
+    margin-inline: auto;
+  }
+}
+
+@media (max-width: 30rem) {
+  .heros-offre__actions > * {
+    width: 100%;
+  }
+
+  .heros-offre__vignette {
+    padding: var(--esp-2) var(--esp-3) var(--esp-2) var(--esp-2);
+  }
+
+  .heros-offre__vignette-icone {
+    width: 2rem;
+    height: 2rem;
+  }
+
+  .heros-offre__vignette:nth-of-type(2) {
+    right: 0;
+  }
+}

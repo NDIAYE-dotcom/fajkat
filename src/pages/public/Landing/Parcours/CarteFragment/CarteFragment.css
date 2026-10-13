@@ -1,0 +1,47 @@
+/* Fenêtre blanche des fragments (page publique : coins de 20 px et ombre douce autorisés). */
+.carte-fragment {
+  position: relative;
+  width: min(100%, 26rem);
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--doux) 60%, transparent);
+  border-radius: var(--rayon-carte);
+  background: var(--blanc);
+  box-shadow: var(--ombre-carte);
+  color: var(--encre);
+  font-size: var(--texte-s);
+  text-align: left;
+}
+
+.carte-fragment__tete {
+  display: flex;
+  align-items: center;
+  gap: var(--esp-3);
+  padding: var(--esp-3) var(--esp-4);
+  border-bottom: 1px solid var(--doux);
+}
+
+.carte-fragment__icone {
+  display: grid;
+  flex-shrink: 0;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 8px;
+  background: var(--offre-doux);
+  color: var(--primaire);
+}
+
+.carte-fragment__titre {
+  font-weight: 700;
+}
+
+.carte-fragment__precision {
+  margin-left: auto;
+  color: var(--encre-douce);
+  font-size: var(--texte-xs);
+  white-space: nowrap;
+}
+
+.carte-fragment__corps {
+  padding: var(--esp-4);
+}

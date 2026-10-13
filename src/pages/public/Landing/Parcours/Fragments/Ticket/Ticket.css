@@ -1,0 +1,90 @@
+/* Ticket thermique : police mono, bord bas dentelé, sortie par la fente de l'imprimante. */
+.ticket {
+  position: relative;
+  width: min(100%, 17rem);
+  padding-top: var(--esp-3);
+  overflow: hidden;
+}
+
+.ticket__fente {
+  position: absolute;
+  top: 0;
+  right: -0.75rem;
+  left: -0.75rem;
+  z-index: 1;
+  height: var(--esp-4);
+  border-radius: 8px;
+  background: var(--encre);
+}
+
+.ticket__papier {
+  display: grid;
+  gap: var(--esp-1);
+  padding: var(--esp-5) var(--esp-4) var(--esp-6);
+  background: var(--blanc);
+  box-shadow: var(--ombre-carte);
+  font-family: var(--police-mono);
+  font-size: var(--texte-xs);
+  text-align: center;
+  /* Bord bas dentelé, découpé dans le papier */
+  -webkit-mask:
+    conic-gradient(from -45deg at bottom, #0000, #000 1deg 89deg, #0000 90deg) bottom / 12px 51%
+      repeat-x,
+    linear-gradient(#000 0 0) top / 100% 50% no-repeat;
+  mask:
+    conic-gradient(from -45deg at bottom, #0000, #000 1deg 89deg, #0000 90deg) bottom / 12px 51%
+      repeat-x,
+    linear-gradient(#000 0 0) top / 100% 50% no-repeat;
+  transform: translateY(-105%);
+}
+
+.ticket[data-actif] .ticket__papier {
+  animation: ticket-sort 1100ms var(--courbe) 150ms both;
+}
+
+@keyframes ticket-sort {
+  from {
+    transform: translateY(-105%);
+  }
+
+  to {
+    transform: translateY(0);
+  }
+}
+
+.ticket__structure {
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.ticket__libelle {
+  color: var(--encre-douce);
+}
+
+.ticket__numero {
+  margin-block: var(--esp-2);
+  font-size: 2.75rem;
+  font-weight: 500;
+  line-height: 1;
+}
+
+.ticket__motif {
+  font-weight: 500;
+}
+
+.ticket__priorite {
+  margin: var(--esp-2) auto;
+  padding: 0.125rem var(--esp-2);
+  border: 1.5px solid var(--tampon);
+  border-radius: 4px;
+  color: var(--tampon);
+  text-transform: uppercase;
+}
+
+.ticket__ligne {
+  display: flex;
+  justify-content: space-between;
+  padding-top: var(--esp-1);
+  border-top: 1px dashed var(--doux);
+}

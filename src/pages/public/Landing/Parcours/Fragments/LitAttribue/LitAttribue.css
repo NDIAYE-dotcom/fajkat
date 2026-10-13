@@ -1,0 +1,105 @@
+.lit-attribue__compte {
+  display: flex;
+  align-items: center;
+  gap: var(--esp-1);
+  color: var(--encre-douce);
+}
+
+.lit-attribue__chiffres {
+  position: relative;
+  display: inline-block;
+  width: 0.75rem;
+  height: 1.4em;
+  overflow: hidden;
+  color: var(--encre);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.lit-attribue__chiffre {
+  position: absolute;
+  inset: 0;
+}
+
+.lit-attribue__chiffre--apres {
+  opacity: 0;
+  transform: translateY(100%);
+}
+
+.carte-fragment[data-actif] .lit-attribue__chiffre--avant {
+  animation: lit-attribue-sort 360ms var(--courbe) 900ms both;
+}
+
+.carte-fragment[data-actif] .lit-attribue__chiffre--apres {
+  animation: lit-attribue-entre 360ms var(--courbe) 900ms both;
+}
+
+@keyframes lit-attribue-sort {
+  to {
+    opacity: 0;
+    transform: translateY(-100%);
+  }
+}
+
+@keyframes lit-attribue-entre {
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.lit-attribue__plan {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--esp-2);
+  margin-top: var(--esp-3);
+}
+
+.lit-attribue__lit {
+  position: relative;
+  display: grid;
+  align-content: space-between;
+  min-height: 4.25rem;
+  padding: var(--esp-2);
+  overflow: hidden;
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--offre-doux) 60%, var(--blanc));
+  font-size: var(--texte-xs);
+}
+
+.lit-attribue__lit[data-etat='libre'],
+.lit-attribue__lit[data-etat='attribue'] {
+  border: 1.5px dashed var(--doux);
+  background: var(--blanc);
+}
+
+.lit-attribue__nom {
+  color: var(--encre-douce);
+}
+
+.lit-attribue__occupant {
+  font-weight: 700;
+}
+
+.lit-attribue__lit[data-etat='libre'] .lit-attribue__occupant,
+.lit-attribue__libre {
+  color: var(--primaire);
+  font-weight: 700;
+}
+
+/* Le lit libre devient « M. Diop » : calque plein qui apparaît par-dessus */
+.lit-attribue__nouveau {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: flex-end;
+  padding: var(--esp-2);
+  background: var(--primaire);
+  color: var(--blanc);
+  font-weight: 700;
+  opacity: 0;
+}
+
+.carte-fragment[data-actif] .lit-attribue__nouveau {
+  animation: lit-attribue-entre 420ms var(--courbe) 900ms both;
+}

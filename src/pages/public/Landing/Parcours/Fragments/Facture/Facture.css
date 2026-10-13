@@ -1,0 +1,96 @@
+.facture__actes {
+  display: grid;
+  gap: var(--esp-2);
+  padding: 0;
+  list-style: none;
+  color: var(--encre-douce);
+  font-size: var(--texte-xs);
+}
+
+.facture__acte,
+.facture__total {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--esp-3);
+}
+
+.facture__montant {
+  color: var(--encre);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.facture__total {
+  margin-top: var(--esp-3);
+  padding-top: var(--esp-2);
+  border-top: 1px solid var(--doux);
+  font-weight: 700;
+}
+
+/* Barre partagée : la part assurance s'étend depuis la gauche */
+.facture__barre {
+  display: block;
+  height: 10px;
+  margin-top: var(--esp-4);
+  overflow: hidden;
+  border-radius: 5px;
+  background: var(--accent);
+}
+
+.facture__barre-assurance {
+  display: block;
+  height: 100%;
+  background: var(--primaire);
+  transform: scaleX(0);
+  transform-origin: left;
+}
+
+.carte-fragment[data-actif] .facture__barre-assurance {
+  animation: facture-partage 700ms var(--courbe) 400ms both;
+}
+
+@keyframes facture-partage {
+  to {
+    transform: scaleX(var(--part));
+  }
+}
+
+.facture__parts {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--esp-3);
+  margin-top: var(--esp-2);
+  font-size: var(--texte-xs);
+}
+
+.facture__part {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  column-gap: var(--esp-2);
+  color: var(--encre-douce);
+}
+
+.facture__part strong {
+  grid-column: 2;
+  color: var(--encre);
+  font-size: var(--texte-s);
+  font-variant-numeric: tabular-nums;
+}
+
+.facture__pastille {
+  width: 0.625rem;
+  height: 0.625rem;
+  border-radius: 50%;
+  background: var(--accent);
+}
+
+.facture__pastille--assurance {
+  background: var(--primaire);
+}
+
+/* Le tampon se pose sous la part patient, sans la masquer */
+.facture__tampon {
+  display: table;
+  margin: var(--esp-3) 0 0 auto;
+}

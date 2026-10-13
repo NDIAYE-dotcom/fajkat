@@ -1,0 +1,70 @@
+/* Reçu thermique 80 mm : police mono, bord bas dentelé */
+.recu {
+  position: relative;
+  display: grid;
+  gap: var(--esp-2);
+  width: min(100%, 18rem);
+  padding: var(--esp-5) var(--esp-4) var(--esp-6);
+  background: var(--blanc);
+  box-shadow: var(--ombre-carte);
+  font-family: var(--police-mono);
+  font-size: var(--texte-xs);
+  -webkit-mask:
+    conic-gradient(from -45deg at bottom, #0000, #000 1deg 89deg, #0000 90deg) bottom / 12px 51%
+      repeat-x,
+    linear-gradient(#000 0 0) top / 100% 50% no-repeat;
+  mask:
+    conic-gradient(from -45deg at bottom, #0000, #000 1deg 89deg, #0000 90deg) bottom / 12px 51%
+      repeat-x,
+    linear-gradient(#000 0 0) top / 100% 50% no-repeat;
+}
+
+.recu__titre {
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.recu__sous-titre {
+  padding-bottom: var(--esp-2);
+  border-bottom: 1px dashed var(--doux);
+  color: var(--encre-douce);
+  text-align: center;
+}
+
+.recu__lignes {
+  display: grid;
+  gap: var(--esp-2);
+  padding: 0;
+  list-style: none;
+}
+
+.recu__ligne,
+.recu__total {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--esp-3);
+}
+
+.recu__montant {
+  white-space: nowrap;
+}
+
+.recu__total {
+  padding-top: var(--esp-2);
+  border-top: 1px dashed var(--encre);
+  font-size: var(--texte-m);
+  font-weight: 500;
+}
+
+.recu__paiement {
+  color: var(--encre-douce);
+  text-align: center;
+}
+
+/* Le tampon se pose sous le texte, sans le masquer */
+.recu__tampon {
+  justify-self: end;
+  margin-top: var(--esp-1);
+}

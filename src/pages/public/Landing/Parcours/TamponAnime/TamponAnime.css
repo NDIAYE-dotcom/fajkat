@@ -1,0 +1,30 @@
+.tampon-anime {
+  display: inline-block;
+  padding: var(--esp-1) var(--esp-3);
+  border: 3px solid var(--tampon);
+  border-radius: 6px;
+  color: var(--tampon);
+  font-size: var(--texte-l);
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  line-height: 1.1;
+  text-transform: uppercase;
+  opacity: 0;
+  transform: rotate(-6deg) scale(1.4);
+}
+
+.tampon-anime[data-actif] {
+  animation: tampon-anime-abat 180ms var(--courbe) var(--delai) both;
+}
+
+@keyframes tampon-anime-abat {
+  from {
+    opacity: 0;
+    transform: rotate(-6deg) scale(1.4);
+  }
+
+  to {
+    opacity: 1;
+    transform: rotate(-6deg) scale(1);
+  }
+}

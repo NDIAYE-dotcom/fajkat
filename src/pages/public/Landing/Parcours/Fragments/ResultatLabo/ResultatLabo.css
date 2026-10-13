@@ -1,0 +1,66 @@
+.resultat-labo__tableau {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--texte-xs);
+}
+
+.resultat-labo__tableau th {
+  padding-bottom: var(--esp-2);
+  border-bottom: 1px solid var(--doux);
+  color: var(--encre-douce);
+  font-weight: 400;
+  text-align: left;
+}
+
+.resultat-labo__tableau td {
+  padding-block: var(--esp-2);
+  border-bottom: 1px solid color-mix(in srgb, var(--doux) 60%, transparent);
+}
+
+/* Les lignes arrivent l'une après l'autre */
+.resultat-labo__ligne {
+  opacity: 0;
+}
+
+.carte-fragment[data-actif] .resultat-labo__ligne {
+  animation: resultat-labo-ligne 360ms var(--courbe) calc(300ms + var(--i) * 300ms) both;
+}
+
+@keyframes resultat-labo-ligne {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.resultat-labo__valeur {
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.resultat-labo__valeur[data-bas],
+.resultat-labo__signal {
+  color: var(--tampon);
+}
+
+.resultat-labo__norme {
+  color: var(--encre-douce);
+}
+
+.resultat-labo__pied {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--esp-3);
+  margin-top: var(--esp-4);
+}
+
+.resultat-labo__transmis {
+  color: var(--encre-douce);
+  font-size: var(--texte-xs);
+}

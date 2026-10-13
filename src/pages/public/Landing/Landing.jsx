@@ -4,8 +4,7 @@ import { OffreProvider } from '../../../context/OffreContext.jsx'
 import { useOffre } from '../../../hooks/useOffre.js'
 import ChoixStructure from './ChoixStructure/ChoixStructure.jsx'
 import EnTete from './EnTete/EnTete.jsx'
-import OffreClinique from './OffreClinique/OffreClinique.jsx'
-import OffrePoste from './OffrePoste/OffrePoste.jsx'
+import PageOffre from './PageOffre/PageOffre.jsx'
 import './Landing.css'
 
 // Sans View Transitions API, chaque changement de vue se fait par un simple fondu CSS.
@@ -49,9 +48,8 @@ function ContenuLanding() {
     document.getElementById(decodeURIComponent(hash.slice(1)))?.scrollIntoView({ block: 'start' })
   }, [hash, key, type])
 
-  let vue = <ChoixStructure />
-  if (offre?.type === 'clinique') vue = <OffreClinique offre={offre} />
-  else if (offre) vue = <OffrePoste offre={offre} />
+  // La clé remonte la page à chaque changement d'offre : le parcours repart de sa première étape.
+  const vue = offre ? <PageOffre key={offre.type} offre={offre} /> : <ChoixStructure />
 
   return (
     <>

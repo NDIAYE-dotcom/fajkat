@@ -1,0 +1,87 @@
+/* Page d'une offre. La couleur de l'offre est locale à la page :
+   Poste de santé = sarcelle ; Clinique = bleu de la maquette (exception page publique).
+   L'en-tête du site, hors de cette page, garde la couleur Fajkat. */
+.page-offre--poste_sante {
+  --offre-doux: var(--surface);
+}
+
+.page-offre--clinique {
+  --primaire: var(--clinique);
+  --offre-doux: var(--clinique-doux);
+}
+
+.page-offre__conteneur {
+  max-width: var(--largeur-max);
+  margin-inline: auto;
+  padding-inline: var(--gouttiere);
+}
+
+.page-offre__h2 {
+  max-width: 34rem;
+  font-size: var(--titre-2);
+}
+
+/* Modules par famille : titre de la famille à gauche (collant), registre à droite */
+.page-offre__modules {
+  scroll-margin-top: var(--hauteur-entete);
+  padding-block: var(--esp-8) var(--esp-6);
+}
+
+.page-offre__modules .etat-avancement {
+  margin-block: var(--esp-5) var(--esp-7);
+}
+
+.page-offre__famille {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+  gap: var(--esp-6);
+}
+
+.page-offre__famille + .page-offre__famille {
+  margin-top: var(--esp-7);
+}
+
+.page-offre__famille-tete {
+  position: sticky;
+  top: calc(var(--hauteur-entete) + var(--esp-5));
+  align-self: start;
+}
+
+.page-offre__famille-numero {
+  color: var(--primaire);
+  font-family: var(--police-titre);
+  font-size: var(--titre-2);
+  font-weight: 600;
+  line-height: 1;
+}
+
+.page-offre__famille-titre {
+  margin-top: var(--esp-2);
+  font-size: var(--titre-3);
+}
+
+.page-offre__famille-intro {
+  margin-top: var(--esp-2);
+  color: var(--encre-douce);
+  font-size: var(--texte-s);
+}
+
+.page-offre__tarif {
+  scroll-margin-top: var(--hauteur-entete);
+  padding-block: var(--esp-6);
+}
+
+@media (max-width: 48rem) {
+  .page-offre__famille {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--esp-4);
+  }
+
+  .page-offre__famille-tete {
+    position: static;
+  }
+
+  .page-offre__modules {
+    padding-block: var(--esp-7) var(--esp-5);
+  }
+}

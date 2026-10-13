@@ -1,0 +1,125 @@
+.stock__produit {
+  font-size: var(--texte-l);
+  font-weight: 700;
+}
+
+.stock__conditionnement {
+  color: var(--encre-douce);
+  font-size: var(--texte-xs);
+}
+
+.stock__compteur {
+  display: flex;
+  align-items: baseline;
+  gap: var(--esp-3);
+  margin-top: var(--esp-4);
+}
+
+/* Les deux nombres sont superposés : 24 monte et s'efface, 23 arrive par le bas. */
+.stock__chiffres {
+  position: relative;
+  display: inline-block;
+  width: 3.5rem;
+  height: 3.25rem;
+  overflow: hidden;
+  font-size: 3rem;
+  font-weight: 700;
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+}
+
+.stock__chiffre {
+  position: absolute;
+  inset: 0;
+}
+
+.stock__chiffre--apres {
+  color: var(--primaire);
+  opacity: 0;
+  transform: translateY(100%);
+}
+
+.carte-fragment[data-actif] .stock__chiffre--avant {
+  animation: stock-sort 420ms var(--courbe) 900ms both;
+}
+
+.carte-fragment[data-actif] .stock__chiffre--apres {
+  animation: stock-entre 420ms var(--courbe) 900ms both;
+}
+
+@keyframes stock-sort {
+  to {
+    opacity: 0;
+    transform: translateY(-100%);
+  }
+}
+
+@keyframes stock-entre {
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.stock__unite {
+  color: var(--encre-douce);
+}
+
+.stock__jauge {
+  display: block;
+  height: 8px;
+  margin-top: var(--esp-3);
+  overflow: hidden;
+  border-radius: 4px;
+  background: var(--offre-doux);
+}
+
+.stock__remplissage {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--primaire);
+  transform: scaleX(var(--avant));
+  transform-origin: left;
+}
+
+.carte-fragment[data-actif] .stock__remplissage {
+  animation: stock-jauge 420ms var(--courbe) 900ms both;
+}
+
+@keyframes stock-jauge {
+  to {
+    transform: scaleX(var(--apres));
+  }
+}
+
+.stock__seuil {
+  margin-top: var(--esp-2);
+  color: var(--encre-douce);
+  font-size: var(--texte-xs);
+}
+
+.stock__sortie {
+  margin-top: var(--esp-4);
+  padding: var(--esp-2) var(--esp-3);
+  border-radius: 8px;
+  background: var(--offre-doux);
+  font-weight: 700;
+  opacity: 0;
+}
+
+.carte-fragment[data-actif] .stock__sortie {
+  animation: stock-entre-bas 360ms var(--courbe) 300ms both;
+}
+
+@keyframes stock-entre-bas {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
