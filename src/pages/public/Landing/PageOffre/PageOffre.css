@@ -21,67 +21,30 @@
   font-size: var(--titre-2);
 }
 
-/* Modules par famille : titre de la famille à gauche (collant), registre à droite */
+/* Modules par famille (onglets) */
 .page-offre__modules {
   scroll-margin-top: var(--hauteur-entete);
-  padding-block: var(--esp-8) var(--esp-6);
+  padding-top: var(--esp-8);
 }
 
-.page-offre__modules .etat-avancement {
-  margin-block: var(--esp-5) var(--esp-7);
-}
-
-.page-offre__famille {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
-  gap: var(--esp-6);
-}
-
-.page-offre__famille + .page-offre__famille {
-  margin-top: var(--esp-7);
-}
-
-.page-offre__famille-tete {
-  position: sticky;
-  top: calc(var(--hauteur-entete) + var(--esp-5));
-  align-self: start;
-}
-
-.page-offre__famille-numero {
+.page-offre__surtitre {
   color: var(--primaire);
-  font-family: var(--police-titre);
-  font-size: var(--titre-2);
-  font-weight: 600;
-  line-height: 1;
+  font-size: var(--texte-xs);
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
 }
 
-.page-offre__famille-titre {
-  margin-top: var(--esp-2);
-  font-size: var(--titre-3);
+.page-offre__h2 {
+  margin-top: var(--esp-3);
 }
 
-.page-offre__famille-intro {
-  margin-top: var(--esp-2);
-  color: var(--encre-douce);
-  font-size: var(--texte-s);
-}
-
-.page-offre__tarif {
-  scroll-margin-top: var(--hauteur-entete);
-  padding-block: var(--esp-6);
+.page-offre__avancement {
+  margin-block: var(--esp-5) var(--esp-6);
 }
 
 @media (max-width: 48rem) {
-  .page-offre__famille {
-    grid-template-columns: minmax(0, 1fr);
-    gap: var(--esp-4);
-  }
-
-  .page-offre__famille-tete {
-    position: static;
-  }
-
   .page-offre__modules {
-    padding-block: var(--esp-7) var(--esp-5);
+    padding-top: var(--esp-7);
   }
 }

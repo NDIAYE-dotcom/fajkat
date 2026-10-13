@@ -73,6 +73,8 @@
   --ombre-flottante: 0 6px 16px rgb(23 48 44 / 12%);
   /* Page publique uniquement : ombres douces des cartes */
   --ombre-carte: 0 1px 2px rgb(23 48 44 / 6%), 0 12px 32px rgb(23 48 44 / 8%);
+  /* Ombre qui suit la forme d'un papier découpé (bord dentelé) : filter, pas box-shadow */
+  --ombre-papier: drop-shadow(0 10px 18px rgb(23 48 44 / 14%));
   --ombre-carte-survol: 0 2px 4px rgb(23 48 44 / 8%), 0 22px 48px rgb(23 48 44 / 16%);
 
   /* Mouvement */

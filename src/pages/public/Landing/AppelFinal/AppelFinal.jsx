@@ -1,47 +1,67 @@
-import { ArrowRight } from 'lucide-react'
+import { ArrowLeftRight } from 'lucide-react'
 import Button from '../../../../components/ui/Button/Button.jsx'
+import { useApparition } from '../../../../hooks/useApparition.js'
 import { useOffre } from '../../../../hooks/useOffre.js'
-import { getOffre, prixOffreParMois } from '../../../../lib/offres.js'
+import { autreOffre } from '../../../../lib/offres.js'
+import BoutonDemo from '../BoutonDemo/BoutonDemo.jsx'
 import './AppelFinal.css'
 
-// Dernière section d'une page d'offre : rappel du tarif et passage direct à l'autre offre.
-export default function AppelFinal({ titre, autreType, questionAutre }) {
+// Dernière section d'une page d'offre, dans le style des cartes de l'écran de choix :
+// demande de démo, ou passage direct à l'autre offre.
+export default function AppelFinal({ titre, questionAutre, image }) {
   const { offre, choisirOffre } = useOffre()
-  const autre = getOffre(autreType)
+  const autre = autreOffre(offre.type)
+  const [ref, apparu] = useApparition()
 
   return (
-    <section className="appel-final" aria-labelledby="appel-final-titre">
-      <div className="appel-final__interieur">
-        <div className="appel-final__texte">
-          <h2 id="appel-final-titre" className="appel-final__titre">
+    <section
+      ref={ref}
+      className="appel-final"
+      data-apparu={apparu || undefined}
+      aria-labelledby="appel-final-titre"
+    >
+      <div className="appel-final__carte apparition">
+        {/* Fond dégradé et illustration, découpés aux coins de la carte */}
+        <span className="appel-final__feuille" aria-hidden="true">
+          <span className="appel-final__cercle">
+            <img
+              className="appel-final__image"
+              src={image}
+              alt=""
+              width="720"
+              height="480"
+              decoding="async"
+            />
+          </span>
+        </span>
+
+        <div className="appel-final__contenu">
+          <p className="appel-final__surtitre apparition" style={{ '--rang': 1 }}>
+            Offre {offre.nom}
+          </p>
+          <h2
+            id="appel-final-titre"
+            className="appel-final__titre apparition"
+            style={{ '--rang': 2 }}
+          >
             {titre}
           </h2>
-          <p className="appel-final__rappel">
-            Offre {offre.nom}&nbsp;:{' '}
-            <span className="appel-final__prix">{prixOffreParMois(offre)}</span>
+          <div className="appel-final__actions apparition" style={{ '--rang': 3 }}>
+            <BoutonDemo offre={offre} taille="grande" />
+            <Button
+              variante="secondaire"
+              taille="grande"
+              onClick={() => choisirOffre(autre.type, { transition: true })}
+              iconeFin={<ArrowLeftRight size={18} />}
+            >
+              Voir l’offre {autre.nom}
+            </Button>
+          </div>
+          <p className="appel-final__question apparition" style={{ '--rang': 4 }}>
+            {questionAutre}
           </p>
         </div>
-        <Button
-          to={`/inscription?offre=${offre.type}`}
-          taille="grande"
-          iconeFin={<ArrowRight size={18} />}
-        >
-          Inscrire ma structure
-        </Button>
       </div>
-
-      {autre && (
-        <p className="appel-final__autre">
-          {questionAutre}{' '}
-          <Button
-            variante="discret"
-            data-offre={autre.type}
-            onClick={() => choisirOffre(autre.type)}
-          >
-            Voir l’offre {autre.nom} ({prixOffreParMois(autre)})
-          </Button>
-        </p>
-      )}
     </section>
   )
 }

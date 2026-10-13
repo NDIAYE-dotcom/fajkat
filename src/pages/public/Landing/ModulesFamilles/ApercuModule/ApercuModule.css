@@ -1,0 +1,81 @@
+.apercu-module {
+  display: grid;
+  padding: 0;
+  list-style: none;
+}
+
+.apercu-module__ligne {
+  display: flex;
+  align-items: center;
+  gap: var(--esp-3);
+  padding-block: var(--esp-2);
+  border-bottom: 1px solid color-mix(in srgb, var(--doux) 60%, transparent);
+  opacity: 0;
+}
+
+/* Les lignes arrivent l'une après l'autre quand l'aperçu devient actif */
+.carte-fragment[data-actif] .apercu-module__ligne {
+  animation: apercu-module-ligne 360ms var(--courbe) calc(150ms + var(--i) * 140ms) both;
+}
+
+@keyframes apercu-module-ligne {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.apercu-module__texte {
+  display: grid;
+  flex: 1;
+  min-width: 0;
+  line-height: 1.3;
+}
+
+.apercu-module__libelle {
+  font-weight: 700;
+}
+
+.apercu-module__detail {
+  color: var(--encre-douce);
+  font-size: var(--texte-xs);
+}
+
+.apercu-module__valeur {
+  flex-shrink: 0;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
+.apercu-module__badge {
+  flex-shrink: 0;
+  padding: 0.125rem var(--esp-2);
+  border: 1px solid var(--primaire);
+  border-radius: 4px;
+  color: var(--primaire);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.apercu-module__badge[data-alerte] {
+  border-color: var(--tampon);
+  color: var(--tampon);
+}
+
+.apercu-module__pied {
+  margin-top: var(--esp-3);
+  padding: var(--esp-2) var(--esp-3);
+  border-radius: 8px;
+  background: var(--offre-doux);
+  color: var(--primaire);
+  font-size: var(--texte-xs);
+  font-weight: 700;
+}

@@ -1,48 +1,125 @@
+/* Appel final : carte arrondie au dégradé doux, illustration dans un cercle qui déborde
+   (même langage que les cartes de l'écran de choix ; exception page publique). */
 .appel-final {
   max-width: var(--largeur-max);
   margin-inline: auto;
-  padding: var(--esp-8) var(--gouttiere) var(--esp-6);
+  padding: var(--esp-8) var(--gouttiere);
 }
 
-.appel-final__interieur {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--esp-5);
-  padding-block: var(--esp-6);
-  border-top: 2px solid var(--encre);
-  border-bottom: 3px double var(--doux);
+.appel-final__carte {
+  position: relative;
+  isolation: isolate;
+  padding: var(--esp-7) var(--esp-6);
+  border: 1px solid color-mix(in srgb, var(--doux) 55%, transparent);
+  border-radius: var(--rayon-carte);
+  box-shadow: var(--ombre-carte);
 }
 
-.appel-final__texte {
-  max-width: 40rem;
+.appel-final__feuille {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  border-radius: inherit;
+  background:
+    radial-gradient(
+      120% 90% at 100% 0%,
+      color-mix(in srgb, var(--offre-doux) 75%, transparent),
+      transparent 70%
+    ),
+    var(--fond);
+}
+
+.appel-final__cercle {
+  position: absolute;
+  top: -3rem;
+  right: -3rem;
+  width: min(42%, 24rem);
+  aspect-ratio: 1;
+  overflow: hidden;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--offre-doux) 80%, var(--blanc));
+}
+
+.appel-final__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 55% 60%;
+  -webkit-mask-image: radial-gradient(closest-side, #000 72%, transparent 100%);
+  mask-image: radial-gradient(closest-side, #000 72%, transparent 100%);
+}
+
+.appel-final__contenu {
+  max-width: 58%;
+}
+
+.appel-final__surtitre {
+  position: relative;
+  padding-bottom: var(--esp-3);
+  color: var(--primaire);
+  font-size: var(--texte-xs);
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+
+.appel-final__surtitre::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 2.5rem;
+  height: 3px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, var(--primaire), var(--accent));
 }
 
 .appel-final__titre {
-  font-size: var(--titre-2);
+  margin-top: var(--esp-4);
+  font-size: var(--titre-1);
+  line-height: 1.05;
 }
 
-.appel-final__rappel {
-  margin-top: var(--esp-2);
-  color: var(--encre-douce);
+.appel-final__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--esp-3);
+  margin-top: var(--esp-6);
 }
 
-.appel-final__prix {
-  color: var(--encre);
-  font-family: var(--police-mono);
-  font-variant-numeric: tabular-nums;
-  white-space: nowrap;
-}
-
-.appel-final__autre {
+.appel-final__question {
   margin-top: var(--esp-4);
   color: var(--encre-douce);
   font-size: var(--texte-s);
 }
 
+@media (max-width: 56rem) {
+  .appel-final__contenu {
+    max-width: none;
+  }
+
+  .appel-final__carte {
+    padding-top: 11rem;
+  }
+
+  .appel-final__cercle {
+    top: -2rem;
+    right: -2rem;
+    width: 13rem;
+  }
+}
+
 @media (max-width: 30rem) {
-  .appel-final__interieur > .button {
+  .appel-final__carte {
+    padding: 10rem var(--esp-4) var(--esp-5);
+  }
+
+  .appel-final__cercle {
+    width: 11rem;
+  }
+
+  .appel-final__actions > * {
     width: 100%;
   }
 }

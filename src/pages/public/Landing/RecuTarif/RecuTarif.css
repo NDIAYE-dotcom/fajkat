@@ -1,0 +1,183 @@
+.recu-tarif {
+  scroll-margin-top: var(--hauteur-entete);
+}
+
+.recu-tarif__interieur {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: var(--esp-7);
+  align-items: center;
+  max-width: var(--largeur-max);
+  margin-inline: auto;
+  padding: var(--esp-8) var(--gouttiere) 0;
+}
+
+.recu-tarif__surtitre {
+  color: var(--primaire);
+  font-size: var(--texte-xs);
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+
+.recu-tarif__titre {
+  margin-top: var(--esp-3);
+  font-size: var(--titre-2);
+}
+
+.recu-tarif__notes {
+  display: grid;
+  gap: var(--esp-2);
+  margin-top: var(--esp-4);
+  padding-left: var(--esp-5);
+  color: var(--encre-douce);
+}
+
+.recu-tarif__colonne {
+  display: grid;
+  justify-items: center;
+  gap: var(--esp-5);
+}
+
+/* Imprimante : une fente sombre ; le reçu glisse dessous, masqué tant qu'il n'est pas sorti */
+.recu-tarif__imprimante {
+  position: relative;
+  width: min(100%, 20rem);
+  padding-top: var(--esp-3);
+  /* L'ombre suit le bord dentelé du reçu (un box-shadow serait coupé par le masque) */
+  filter: var(--ombre-papier);
+}
+
+.recu-tarif__fente {
+  position: absolute;
+  top: 0;
+  right: -1rem;
+  left: -1rem;
+  z-index: 1;
+  height: 1.25rem;
+  border-radius: 10px;
+  background: var(--encre);
+  box-shadow: var(--ombre-flottante);
+}
+
+.recu-tarif__sortie {
+  overflow: hidden;
+}
+
+.recu-tarif__recu {
+  display: grid;
+  gap: var(--esp-2);
+  padding: var(--esp-6) var(--esp-5) var(--esp-7);
+  background: var(--blanc);
+  font-family: var(--police-mono);
+  font-size: var(--texte-xs);
+  /* Bord bas dentelé, découpé dans le papier */
+  -webkit-mask:
+    conic-gradient(from -45deg at bottom, #0000, #000 1deg 89deg, #0000 90deg) bottom / 14px 51%
+      repeat-x,
+    linear-gradient(#000 0 0) top / 100% 50% no-repeat;
+  mask:
+    conic-gradient(from -45deg at bottom, #0000, #000 1deg 89deg, #0000 90deg) bottom / 14px 51%
+      repeat-x,
+    linear-gradient(#000 0 0) top / 100% 50% no-repeat;
+  transform: translateY(-101%);
+  transition: transform 1400ms var(--courbe) 150ms;
+}
+
+.recu-tarif[data-apparu] .recu-tarif__recu {
+  transform: none;
+}
+
+.recu-tarif__marque {
+  font-size: var(--texte-m);
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.recu-tarif__libelle {
+  padding-bottom: var(--esp-3);
+  border-bottom: 1px dashed var(--encre);
+  color: var(--encre-douce);
+  text-align: center;
+}
+
+.recu-tarif__prix {
+  display: grid;
+  justify-items: center;
+  padding-block: var(--esp-3);
+  border-bottom: 1px dashed var(--encre);
+}
+
+.recu-tarif__montant {
+  color: var(--primaire);
+  font-size: 2rem;
+  font-weight: 500;
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+}
+
+.recu-tarif__periode {
+  color: var(--encre-douce);
+}
+
+.recu-tarif__rubrique {
+  margin-top: var(--esp-2);
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.recu-tarif__lignes {
+  display: grid;
+  gap: var(--esp-1);
+  padding: 0;
+  list-style: none;
+}
+
+.recu-tarif__ligne {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--esp-3);
+}
+
+.recu-tarif__ligne span:last-child {
+  flex-shrink: 0;
+  font-variant-numeric: tabular-nums;
+}
+
+.recu-tarif__info {
+  color: var(--encre-douce);
+}
+
+.recu-tarif__passage {
+  margin-top: var(--esp-2);
+  padding-top: var(--esp-3);
+  border-top: 1px dashed var(--encre);
+  text-align: center;
+}
+
+.recu-tarif__etat {
+  justify-self: center;
+  margin-top: var(--esp-2);
+  padding: 0.125rem var(--esp-2);
+  border: 1.5px solid var(--tampon);
+  border-radius: 4px;
+  color: var(--tampon);
+  text-transform: uppercase;
+  transform: rotate(-2deg);
+}
+
+@media (max-width: 56rem) {
+  .recu-tarif__interieur {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .recu-tarif__recu {
+    transform: none;
+    transition: none;
+  }
+}

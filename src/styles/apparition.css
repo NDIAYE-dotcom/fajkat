@@ -1,0 +1,25 @@
+/* Apparitions au défilement (hook useApparition).
+   Un élément « .apparition » reste masqué et 16 px plus bas tant que son conteneur
+   n'a pas reçu data-apparu ; il monte ensuite en fondu, décalé de 80 ms par --rang.
+   Seuls transform et opacity sont animés. */
+.apparition {
+  opacity: 0;
+  transform: translateY(16px);
+  transition:
+    opacity 480ms var(--courbe),
+    transform 480ms var(--courbe);
+  transition-delay: calc(var(--rang, 0) * 80ms);
+}
+
+[data-apparu] .apparition {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .apparition {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}

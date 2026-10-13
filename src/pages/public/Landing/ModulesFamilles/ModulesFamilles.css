@@ -1,0 +1,201 @@
+/* Onglets façon intercalaire, liste à gauche, aperçu collant à droite. */
+.modules-familles__onglets {
+  display: flex;
+  gap: var(--esp-1);
+  overflow-x: auto;
+  border-bottom: 2px solid var(--primaire);
+  scrollbar-width: none;
+}
+
+.modules-familles__onglet {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: var(--esp-2);
+  min-height: 48px;
+  padding: var(--esp-2) var(--esp-4);
+  border: 1px solid var(--doux);
+  border-bottom: 0;
+  border-radius: 10px 10px 0 0;
+  background: var(--surface);
+  color: var(--encre-douce);
+  font-size: var(--texte-s);
+  font-weight: 700;
+  cursor: pointer;
+  transition:
+    background-color var(--duree) var(--courbe),
+    color var(--duree) var(--courbe);
+}
+
+.modules-familles__onglet[aria-selected='true'] {
+  border-color: var(--primaire);
+  background: var(--primaire);
+  color: var(--blanc);
+}
+
+.modules-familles__onglet[aria-selected='false']:hover {
+  color: var(--encre);
+}
+
+.modules-familles__compte {
+  display: grid;
+  place-items: center;
+  min-width: 1.5rem;
+  height: 1.5rem;
+  padding-inline: var(--esp-1);
+  border-radius: 999px;
+  background: var(--blanc);
+  color: var(--encre);
+  font-size: var(--texte-xs);
+  font-variant-numeric: tabular-nums;
+}
+
+.modules-familles__intro {
+  margin-top: var(--esp-4);
+  color: var(--encre-douce);
+}
+
+.modules-familles__grille {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: var(--esp-7);
+  margin-top: var(--esp-4);
+}
+
+/* Liste : lignes de registre, la ligne ouverte est mise en évidence */
+.modules-familles__liste {
+  padding: 0;
+  list-style: none;
+  border-top: 2px solid var(--encre);
+}
+
+.modules-familles__module {
+  border-bottom: 1px solid var(--doux);
+  scroll-margin-top: calc(var(--hauteur-entete) + var(--esp-4));
+}
+
+.modules-familles__bouton {
+  display: flex;
+  align-items: center;
+  gap: var(--esp-3);
+  width: 100%;
+  min-height: 52px;
+  padding: var(--esp-2) var(--esp-2) var(--esp-2) var(--esp-3);
+  border: 0;
+  border-left: 3px solid transparent;
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+  transition:
+    background-color var(--duree) var(--courbe),
+    border-color var(--duree) var(--courbe);
+}
+
+.modules-familles__bouton:hover {
+  background: color-mix(in srgb, var(--offre-doux) 50%, transparent);
+}
+
+.modules-familles__bouton[aria-expanded='true'] {
+  border-left-color: var(--primaire);
+  background: var(--offre-doux);
+}
+
+.modules-familles__titre {
+  flex: 1;
+  min-width: 0;
+  font-weight: 700;
+}
+
+/* Petit tampon « PHARE » */
+.modules-familles__phare {
+  flex-shrink: 0;
+  padding: 0 var(--esp-1);
+  border: 1.5px solid var(--primaire);
+  border-radius: 3px;
+  color: var(--primaire);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  line-height: 1.5;
+  text-transform: uppercase;
+  transform: rotate(-3deg);
+}
+
+.modules-familles__chevron {
+  flex-shrink: 0;
+  color: var(--encre-douce);
+  transition: transform var(--duree) var(--courbe);
+}
+
+.modules-familles__bouton[aria-expanded='true'] .modules-familles__chevron {
+  transform: rotate(180deg);
+}
+
+.modules-familles__detail {
+  padding: 0 var(--esp-3) var(--esp-4) calc(var(--esp-3) + 3px);
+  background: var(--offre-doux);
+}
+
+.modules-familles__description {
+  color: var(--encre-douce);
+  font-size: var(--texte-s);
+}
+
+.modules-familles__reserve {
+  margin-top: var(--esp-2);
+  color: var(--encre-douce);
+  font-size: var(--texte-xs);
+  font-weight: 700;
+}
+
+/* Aperçu collant, qui change avec un fondu et un léger glissement */
+.modules-familles__apercu {
+  position: sticky;
+  top: calc(var(--hauteur-entete) + var(--esp-5));
+  align-self: start;
+}
+
+.modules-familles__ecran {
+  display: grid;
+  justify-items: center;
+  gap: var(--esp-3);
+  animation: modules-familles-change 280ms var(--courbe);
+}
+
+@keyframes modules-familles-change {
+  from {
+    opacity: 0;
+    transform: translateX(16px);
+  }
+}
+
+.modules-familles__mention {
+  color: var(--encre-douce);
+  font-size: var(--texte-xs);
+}
+
+.modules-familles__apercu-mobile {
+  display: none;
+}
+
+/* Téléphone : accordéon, l'aperçu s'ouvre sous le module choisi */
+@media (max-width: 48rem) {
+  .modules-familles__grille {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .modules-familles__apercu {
+    display: none;
+  }
+
+  .modules-familles__apercu-mobile {
+    display: grid;
+    justify-items: center;
+    margin-top: var(--esp-4);
+    animation: modules-familles-change 280ms var(--courbe);
+  }
+
+  .modules-familles__onglet {
+    padding-inline: var(--esp-3);
+  }
+}
