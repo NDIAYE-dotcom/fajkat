@@ -1,0 +1,63 @@
+/* Tampon centré sur son parent (qui doit être positionné). */
+.tampon-frappe {
+  position: absolute;
+  top: 45%;
+  left: 50%;
+  z-index: 2;
+  transform: translate(-50%, -50%) rotate(-6deg);
+  pointer-events: none;
+  animation: tampon-frappe-abat 180ms var(--courbe) both;
+}
+
+.tampon-frappe__filtres {
+  position: absolute;
+}
+
+/* Double bordure : le cadre extérieur, puis un filet intérieur. */
+.tampon-frappe__encre {
+  position: relative;
+  display: block;
+  padding: var(--esp-3) var(--esp-5);
+  border: 4px solid var(--tampon);
+  border-radius: 6px;
+  color: var(--tampon);
+  font-family: var(--police-texte);
+  font-size: clamp(1.25rem, 0.9rem + 1.8vw, 2.25rem);
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  mix-blend-mode: multiply;
+  filter: url('#tampon-frappe-encre');
+}
+
+.tampon-frappe__encre::before {
+  content: '';
+  position: absolute;
+  inset: 4px;
+  border: 1.5px solid var(--tampon);
+  border-radius: 3px;
+}
+
+/* 1,4 -> 1 en 180 ms, avec un léger rebond à l'impact. */
+@keyframes tampon-frappe-abat {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) rotate(-6deg) scale(1.4);
+  }
+
+  55% {
+    opacity: 1;
+    transform: translate(-50%, -50%) rotate(-6deg) scale(0.94);
+  }
+
+  80% {
+    transform: translate(-50%, -50%) rotate(-6deg) scale(1.03);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translate(-50%, -50%) rotate(-6deg) scale(1);
+  }
+}

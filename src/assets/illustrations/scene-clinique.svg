@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 420">
+  <!-- Fajkat — scène « Clinique » (version provisoire, à remplacer par le dessin définitif).
+       Convention : un id par élément ; « zone » = contour fermé teinté au survol. -->
+  <path id="zone" d="M162,62 H478 V380 H162 Z"/>
+  <path id="sol" d="M0,380 H600"/>
+  <path id="herbe" d="M130,380 l3,-7 M136,380 l-2,-6 M492,380 l2,-6 M570,380 l3,-7"/>
+  <g id="batiment">
+    <path id="acrotere" d="M162,70 H478 V62 H162 Z"/>
+    <path id="facade" d="M170,380 V70 M470,70 V380"/>
+    <path id="planchers" d="M170,150 H470 M170,230 H470 M170,300 H470"/>
+    <path id="enseigne" d="M295,62 V20 H345 V62"/>
+    <path id="croix" d="M314,26 H326 V35 H335 V47 H326 V56 H314 V47 H305 V35 H314 Z"/>
+    <g id="fenetres-etage-2">
+      <rect x="190" y="90" width="32" height="40"/>
+      <rect x="246" y="90" width="32" height="40"/>
+      <rect x="302" y="90" width="32" height="40"/>
+      <rect x="358" y="90" width="32" height="40"/>
+      <rect x="414" y="90" width="32" height="40"/>
+    </g>
+    <g id="fenetres-etage-1">
+      <rect x="190" y="170" width="32" height="40"/>
+      <rect x="246" y="170" width="32" height="40"/>
+      <rect x="302" y="170" width="32" height="40"/>
+      <rect x="358" y="170" width="32" height="40"/>
+      <rect x="414" y="170" width="32" height="40"/>
+    </g>
+    <g id="fenetres-rez-haut">
+      <rect x="190" y="248" width="32" height="40"/>
+      <rect x="246" y="248" width="32" height="40"/>
+      <rect x="302" y="248" width="32" height="40"/>
+      <rect x="358" y="248" width="32" height="40"/>
+      <rect x="414" y="248" width="32" height="40"/>
+    </g>
+    <g id="entree">
+      <path id="auvent" d="M236,306 H404 V316 H236 Z"/>
+      <path id="piliers" d="M244,316 V380 M396,316 V380"/>
+      <path id="portes-vitrees" d="M282,374 V326 H358 V374 M320,326 V374"/>
+      <path id="marches" d="M270,374 H370 M262,380 V374"/>
+    </g>
+    <rect id="vitrine-gauche" x="186" y="326" width="40" height="36"/>
+    <rect id="vitrine-droite" x="414" y="326" width="40" height="36"/>
+  </g>
+  <path id="arbuste" d="M40,380 C30,360 46,346 60,352 C66,336 92,338 94,356 C110,356 112,378 100,380"/>
+  <path id="lampadaire" d="M520,380 V250 Q520,236 534,236 H546 M540,236 V244 H552 V236"/>
+  <path id="oiseaux" d="M60,96 q6,-6 12,0 q6,-6 12,0 M96,120 q5,-5 10,0 q5,-5 10,0"/>
+</svg>

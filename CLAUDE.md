@@ -144,3 +144,4 @@ INTERDITS ABSOLUS (signes d'un design généré automatiquement) :
 - Étape 0 — CLAUDE.md créé.
 - Étape 1 — 13/10/2026 — Projet Vite + React JS initialisé : dépendances, arborescence, client Supabase, utilitaires de formatage, routeur, pages provisoires, ESLint et Prettier. Lint, format et build validés ; aucune migration métier créée.
 - Étape 2 — 13/10/2026 — Identité visuelle « registre vivant » (tokens, base, polices) et page d’accueil : choix obligatoire Poste de santé / Clinique, deux pages d’offre distinctes, offres et tarifs centralisés dans src/lib/offres.js, modules marqués « Prévu ». Aucune migration.
+- Étape 2b-A — 13/10/2026 — Refonte de la page publique, partie A : écran de choix en scène dessinée au trait (poste / clinique), tracé animé, fiche épinglée, tampon et View Transitions ; SVG remplaçables dans src/assets/illustrations (règle dans docs/illustrations.md). Aucune migration.

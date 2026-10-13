@@ -1,0 +1,61 @@
+/* Dessin au trait : encre, 1,75 px, sans remplissage, quel que soit le fichier source.
+   Variables réglables par le parent :
+   --illustration-zone-opacite : aplat de la zone survolée (0 par défaut) ;
+   --illustration-teinte       : couleur de cet aplat (couleur primaire par défaut) ;
+   --illustration-couleur      : couleur du trait (encre par défaut). */
+.illustration {
+  color: var(--illustration-couleur, var(--encre));
+  line-height: 0;
+}
+
+.illustration svg {
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+.illustration svg * {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: calc(1.75 / var(--illustration-echelle, 1));
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.illustration svg [data-zone] {
+  fill: var(--illustration-teinte, var(--primaire));
+  stroke: none;
+  opacity: var(--illustration-zone-opacite, 0);
+  transition: opacity var(--duree) var(--courbe);
+}
+
+/* Tracé à la main : chaque trait se dessine de son début à sa fin. */
+.illustration[data-trace='oui']
+  svg
+  :is(path, line, polyline, polygon, rect, circle, ellipse):not([data-zone]) {
+  stroke-dasharray: var(--longueur);
+  stroke-dashoffset: var(--longueur);
+  animation: illustration-trace var(--illustration-duree-trait) var(--courbe) var(--delai) both;
+}
+
+@keyframes illustration-trace {
+  from {
+    opacity: 0;
+  }
+
+  5% {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 1;
+    stroke-dashoffset: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .illustration[data-trace='oui'] svg * {
+    animation: none !important;
+    stroke-dasharray: none;
+  }
+}

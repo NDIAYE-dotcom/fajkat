@@ -4,6 +4,10 @@ import { useOffre } from '../../../hooks/useOffre.js'
 import ChoixStructure from './ChoixStructure/ChoixStructure.jsx'
 import OffreClinique from './OffreClinique/OffreClinique.jsx'
 import OffrePoste from './OffrePoste/OffrePoste.jsx'
+import './Landing.css'
+
+// Sans View Transitions API, chaque changement de vue se fait par un simple fondu CSS.
+const FONDU_SECOURS = typeof document !== 'undefined' && !document.startViewTransition
 
 // Page d'accueil : écran de choix obligatoire, puis la page de l'offre choisie.
 export default function Landing() {
@@ -35,6 +39,14 @@ function ContenuLanding() {
     document.getElementById('titre-page')?.focus()
   }, [type])
 
-  if (!offre) return <ChoixStructure />
-  return offre.type === 'clinique' ? <OffreClinique offre={offre} /> : <OffrePoste offre={offre} />
+  let vue = <ChoixStructure />
+  if (offre?.type === 'clinique') vue = <OffreClinique offre={offre} />
+  else if (offre) vue = <OffrePoste offre={offre} />
+
+  if (!FONDU_SECOURS) return vue
+  return (
+    <div key={type ?? 'choix'} className="landing-fondu">
+      {vue}
+    </div>
+  )
 }

@@ -1,0 +1,17 @@
+/* Fondu de secours entre l'écran de choix et la page d'une offre,
+   pour les navigateurs qui ne gèrent pas la View Transitions API. */
+.landing-fondu {
+  animation: landing-fondu 240ms var(--courbe) both;
+}
+
+@keyframes landing-fondu {
+  from {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .landing-fondu {
+    animation: none;
+  }
+}

@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 420">
+  <!-- Fajkat — scène « Poste de santé » (version provisoire, à remplacer par le dessin définitif).
+       Convention : un id par élément ; « zone » = contour fermé teinté au survol. -->
+  <path id="zone" d="M122,233 H418 V380 H122 Z"/>
+  <path id="sol" d="M0,380 H600"/>
+  <path id="herbe" d="M20,380 l3,-7 M26,380 l-2,-6 M204,380 l2,-6 M424,380 l3,-7 M431,380 l-2,-5"/>
+  <g id="neem">
+    <path id="neem-tronc" d="M62,380 C66,340 64,300 70,262 M88,380 C84,340 86,300 82,262"/>
+    <path id="neem-branches" d="M70,262 C60,245 48,232 36,224 M82,262 C92,246 104,234 118,226 M76,262 V220"/>
+    <path id="neem-feuillage" d="M24,228 C4,222 2,192 22,182 C10,160 26,136 50,140 C54,112 88,104 104,124 C124,110 150,126 144,150 C164,160 160,192 140,198 C148,222 124,238 104,230 C94,246 64,246 54,232 C44,240 30,238 24,228 Z"/>
+    <path id="neem-feuilles" d="M44,190 l8,-6 M70,160 l6,-8 M100,176 l8,-4 M120,204 l6,-6 M60,214 l8,-2 M88,140 l4,-7"/>
+  </g>
+  <g id="batiment">
+    <path id="toit" d="M122,233 H418 V245 H122 Z"/>
+    <path id="murs" d="M130,245 V380 M410,245 V380"/>
+    <path id="citerne" d="M362,233 V212 Q362,205 375,205 Q388,205 388,212 V233 M362,219 H388"/>
+    <path id="panneau" d="M220,200 H320 V226 H220 Z M240,226 V233 M300,226 V233"/>
+    <path id="croix" d="M270,205 V221 M262,213 H278"/>
+    <path id="panneau-texte" d="M230,209 H256 M230,216 H250 M284,209 H310 M284,216 H304"/>
+    <path id="porte" d="M245,375 V300 H295 V375 M270,300 V375 M265,340 V348 M275,340 V348"/>
+    <path id="marche" d="M238,375 H302 V380 M238,375 V380"/>
+    <path id="fenetre-gauche" d="M155,270 H215 V320 H155 Z M170,270 V320 M185,270 V320 M200,270 V320 M151,324 H219"/>
+    <path id="fenetre-droite" d="M325,270 H385 V320 H325 Z M340,270 V320 M355,270 V320 M370,270 V320 M321,324 H389"/>
+    <path id="soubassement" d="M302,345 H410"/>
+  </g>
+  <g id="banc">
+    <path id="banc-dossier" d="M150,334 H225 M155,334 V354 M220,334 V354"/>
+    <path id="banc-assise" d="M145,354 H230 V360 H145 Z M152,360 V380 M223,360 V380"/>
+  </g>
+  <g id="moto-ambulance">
+    <path id="remorque" d="M430,362 V326 Q430,308 448,308 H492 Q505,308 505,326 V362 Z"/>
+    <path id="remorque-croix" d="M467,320 V340 M457,330 H477"/>
+    <circle id="remorque-roue" cx="467" cy="368" r="12"/>
+    <path id="attelage" d="M505,352 H526"/>
+    <circle id="moto-roue-arriere" cx="538" cy="365" r="15"/>
+    <circle id="moto-roue-avant" cx="584" cy="365" r="15"/>
+    <path id="moto-cadre" d="M538,365 L552,342 H574 L584,365 M552,342 L558,332 H572 L574,342 M540,338 H556 M574,342 L580,320 M574,320 H588"/>
+  </g>
+  <path id="oiseaux" d="M470,90 q6,-6 12,0 q6,-6 12,0 M510,112 q5,-5 10,0 q5,-5 10,0"/>
+</svg>

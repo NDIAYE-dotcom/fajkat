@@ -33,12 +33,13 @@ export function OffreProvider({ children }) {
   // Une valeur inconnue est ignorée et ramène à l'écran de choix.
   const offre = getOffre(parametres.get('offre'))
 
+  // transition : passage animé par la View Transitions API (ignoré si le navigateur ne la gère pas).
   const choisirOffre = useCallback(
-    (type) => {
+    (type, { transition = false } = {}) => {
       if (!getOffre(type)) return
       memoriserOffre(type)
       setDerniereOffre(type)
-      setParametres({ offre: type })
+      setParametres({ offre: type }, { viewTransition: transition })
       window.scrollTo(0, 0)
     },
     [setParametres],

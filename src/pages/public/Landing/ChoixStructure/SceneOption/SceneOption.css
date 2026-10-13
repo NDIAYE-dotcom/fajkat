@@ -1,0 +1,156 @@
+/* Le bouton n'a pas l'air d'un bouton : c'est le dessin lui-même. */
+.scene-option {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  border-radius: var(--rayon-panneau);
+  background: none;
+  text-align: left;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: opacity var(--duree) var(--courbe);
+}
+
+.scene-option:focus-visible {
+  outline-offset: 6px;
+  border-radius: var(--rayon-panneau);
+}
+
+.scene-option__cadre {
+  position: relative;
+  display: block;
+  isolation: isolate;
+}
+
+/* Survol, focus clavier ou dessin tamponné : aplat à 12 % et fiche visible. */
+.scene-option:is(:hover, :focus-visible),
+.scene-option--frappe {
+  --illustration-zone-opacite: 0.12;
+}
+
+.scene-option__fiche {
+  top: 6%;
+  z-index: 1;
+  opacity: 0;
+  transform: translateY(-6px) rotate(2deg);
+  transition:
+    opacity var(--duree) var(--courbe),
+    transform var(--duree) var(--courbe);
+}
+
+/* Fiches dans le ciel libre : au-dessus du neem pour le poste, à gauche de l'enseigne pour la clinique. */
+.scene-option--poste_sante .scene-option__fiche {
+  top: 2%;
+  left: 1%;
+}
+
+.scene-option--clinique .scene-option__fiche {
+  left: 2%;
+  transform: translateY(-6px) rotate(-2deg);
+}
+
+.scene-option:is(:hover, :focus-visible) .scene-option__fiche {
+  opacity: 1;
+  transform: translateY(0) rotate(2deg);
+}
+
+.scene-option--clinique:is(:hover, :focus-visible) .scene-option__fiche {
+  transform: translateY(0) rotate(-2deg);
+}
+
+/* Pendant le coup de tampon, la fiche s'efface (même si le pointeur est encore dessus). */
+.scene-option.scene-option--frappe .scene-option__fiche {
+  opacity: 0;
+}
+
+.scene-option--estompe {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.scene-option__legende {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: var(--esp-3) var(--esp-2) 0;
+}
+
+.scene-option--clinique .scene-option__legende {
+  align-items: flex-end;
+  text-align: right;
+}
+
+.scene-option__nom {
+  font-family: var(--police-titre);
+  font-size: var(--titre-3);
+  font-weight: 600;
+  line-height: 1.15;
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 0.2em;
+  transition: text-decoration-color var(--duree) var(--courbe);
+}
+
+.scene-option:is(:hover, :focus-visible) .scene-option__nom {
+  text-decoration-color: var(--primaire);
+}
+
+.scene-option__reperage {
+  color: var(--encre-douce);
+  font-family: var(--police-mono);
+  font-size: var(--texte-xs);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.scene-option__rappel {
+  color: var(--primaire);
+}
+
+/* Écrans tactiles : pas de survol, la fiche reste affichée en permanence. */
+@media (hover: none) {
+  .scene-option__fiche {
+    opacity: 1;
+    transform: rotate(2deg);
+  }
+
+  .scene-option--clinique .scene-option__fiche {
+    transform: rotate(-2deg);
+  }
+}
+
+/* Téléphone : les dessins sont empilés, la légende passe à gauche pour les deux. */
+@media (max-width: 40rem) {
+  .scene-option--clinique .scene-option__legende {
+    align-items: flex-start;
+    text-align: left;
+  }
+
+  /* Le ciel vide au-dessus du poste est rogné pour gagner de la hauteur. */
+  .scene-option--poste_sante .scene-option__dessin {
+    margin-top: -16%;
+  }
+
+  /* La fiche quitte le dessin et s'épingle à droite de la légende. */
+  .scene-option .scene-option__fiche {
+    top: calc(100% + var(--esp-3));
+    right: 0;
+    left: auto;
+    padding: var(--esp-2) var(--esp-3) var(--esp-1);
+  }
+
+  .scene-option__nom {
+    font-size: 1.25rem;
+  }
+
+  .scene-option__reperage {
+    letter-spacing: 0.02em;
+  }
+
+  .scene-option .scene-option__fiche :is(.fiche-epinglee__nom, .fiche-epinglee__prix) {
+    font-size: var(--texte-xs);
+  }
+}

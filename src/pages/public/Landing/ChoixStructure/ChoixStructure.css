@@ -1,10 +1,11 @@
-/* Écran de choix : tient dans la hauteur visible, sans défilement. */
+/* Écran de choix : une grande scène dessinée au trait, dont chaque moitié est un choix. */
 .choix {
   display: grid;
   grid-template-rows: auto 1fr auto;
   min-height: 100vh;
   min-height: 100svh;
   padding-inline: var(--gouttiere);
+  overflow-x: clip;
 }
 
 .choix__entete {
@@ -42,15 +43,15 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: var(--esp-6);
+  gap: var(--esp-5);
   width: 100%;
   max-width: var(--largeur-max);
   margin-inline: auto;
-  padding-block: var(--esp-6);
+  padding-block: var(--esp-5) var(--esp-6);
 }
 
 .choix__intro {
-  max-width: 44rem;
+  position: relative;
 }
 
 .choix__surtitre {
@@ -71,22 +72,43 @@
   outline: none;
 }
 
+/* Le mot souligné au stylo */
+.choix__mot {
+  position: relative;
+  display: inline-block;
+}
+
+.choix__soulignement {
+  position: absolute;
+  left: -3%;
+  bottom: -0.22em;
+  width: 106%;
+  --illustration-couleur: var(--laterite);
+  pointer-events: none;
+}
+
 .choix__texte {
   margin-top: var(--esp-3);
   color: var(--encre-douce);
   font-size: var(--texte-l);
 }
 
-.choix__options {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: var(--esp-5);
-  padding: 0;
-  list-style: none;
+/* La flèche part de la consigne et descend vers la jonction des deux dessins. */
+.choix__fleche {
+  position: absolute;
+  top: calc(100% + var(--esp-2));
+  left: 34%;
+  width: 8rem;
+  --illustration-couleur: var(--laterite);
+  pointer-events: none;
 }
 
-.choix__option {
-  display: flex;
+/* Les deux dessins partagent la même ligne de sol : une seule scène. */
+.choix__scene {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: end;
+  width: 100%;
 }
 
 .choix__pied {
@@ -99,156 +121,16 @@
   font-size: var(--texte-s);
 }
 
-/* Feuillet : un bouton complet, présenté comme une page de registre. */
-.feuillet {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  padding: var(--esp-5) var(--esp-5) var(--esp-5) calc(var(--esp-5) + var(--esp-6));
-  border: 1px solid var(--ligne);
-  border-top: 6px solid var(--primaire);
-  border-radius: var(--rayon-panneau);
-  background: var(--papier-clair);
-  color: var(--encre);
-  text-align: left;
-  cursor: pointer;
-  transition:
-    border-color var(--duree) var(--courbe),
-    transform var(--duree) var(--courbe);
-}
-
-/* Marge rouge du registre */
-.feuillet::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: var(--esp-6);
-  width: 1px;
-  background: var(--marge-registre);
-  transition:
-    width var(--duree) var(--courbe),
-    background-color var(--duree) var(--courbe);
-}
-
-.feuillet:hover {
-  border-color: var(--primaire);
-  transform: translateY(-2px);
-}
-
-.feuillet:hover::before {
-  width: 2px;
-  background: var(--tampon);
-}
-
-.feuillet:focus-visible {
-  outline-offset: 4px;
-  border-radius: var(--rayon-panneau);
-}
-
-.feuillet__reperage {
-  color: var(--primaire);
-  font-family: var(--police-mono);
-  font-size: var(--texte-xs);
-  font-weight: 500;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-}
-
-.feuillet__nom {
-  margin-top: var(--esp-2);
-  font-family: var(--police-titre);
-  font-size: var(--titre-2);
-  font-weight: 600;
-  line-height: 1.1;
-}
-
-.feuillet__description {
-  margin-top: var(--esp-3);
-  max-width: 32rem;
-  color: var(--encre-douce);
-}
-
-/* Pied du feuillet : le tarif, souligné d'un double trait comme un total de registre */
-.feuillet__pied {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--esp-4);
-  margin-top: auto;
-  padding-top: var(--esp-5);
-}
-
-.feuillet__prix {
-  display: inline-flex;
-  align-items: baseline;
-  gap: var(--esp-1);
-  padding-bottom: var(--esp-1);
-  border-bottom: 3px double var(--ligne-forte);
-  font-family: var(--police-mono);
-  font-variant-numeric: tabular-nums;
-}
-
-.feuillet__montant {
-  font-size: var(--texte-l);
-  font-weight: 500;
-}
-
-.feuillet__periode {
-  color: var(--encre-douce);
-  font-size: var(--texte-s);
-}
-
-.feuillet__action {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--esp-2);
-  min-height: 44px;
-  padding: var(--esp-2) var(--esp-4);
-  border-radius: var(--rayon-champ);
-  background: var(--primaire);
-  color: var(--sur-primaire);
-  font-size: var(--texte-s);
-  font-weight: 700;
-  transition: background-color var(--duree) var(--courbe);
-}
-
-.feuillet:hover .feuillet__action {
-  background: var(--encre);
-}
-
-.feuillet__fleche {
-  flex-shrink: 0;
-  transition: transform var(--duree) var(--courbe);
-}
-
-.feuillet:hover .feuillet__fleche {
-  transform: translateX(3px);
-}
-
-.feuillet__rappel {
-  position: absolute;
-  top: var(--esp-4);
-  right: var(--esp-4);
-  padding: 2px var(--esp-2);
-  border-radius: var(--rayon-champ);
-  background: var(--primaire-doux);
-  color: var(--encre);
-  font-size: var(--texte-xs);
-}
-
-/* Tablette étroite et téléphone : les feuillets s'empilent et se resserrent */
-@media (max-width: 48rem) {
-  .choix__options {
-    grid-template-columns: minmax(0, 1fr);
-    gap: var(--esp-4);
+/* Écran large mais peu haut (portable 1366 × 768) : la largeur de la scène est bornée
+   par la hauteur disponible, pour que dessins et légendes restent visibles sans défiler.
+   Un dessin fait 600 × 420 : la scène (deux dessins) est 0,35 fois moins haute que large. */
+@media (min-width: 40.01rem) {
+  .choix__scene {
+    width: min(100%, max(36rem, calc((100svh - 25rem) / 0.35)));
   }
 }
 
-/* Téléphone : tout doit tenir dans 360 × 640 sans défilement.
-   Le feuillet passe en grille : nom et prix sur une ligne, description, puis bouton. */
+/* Téléphone : les deux dessins s'empilent, chacun cliquable en entier. */
 @media (max-width: 40rem) {
   .choix__entete {
     min-height: 3rem;
@@ -258,6 +140,14 @@
     justify-content: flex-start;
     gap: var(--esp-4);
     padding-block: var(--esp-4);
+  }
+
+  .choix__intro {
+    padding-right: 4.5rem;
+  }
+
+  .choix__titre {
+    max-width: 14ch;
   }
 
   .choix__surtitre {
@@ -274,75 +164,17 @@
     line-height: 1.4;
   }
 
-  .choix__options {
-    gap: var(--esp-4);
+  .choix__fleche {
+    top: auto;
+    right: 0;
+    bottom: -1.75rem;
+    left: auto;
+    width: 4.5rem;
   }
 
-  .feuillet {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) auto;
-    grid-template-areas:
-      'nom prix'
-      'description description'
-      'action action';
-    align-items: baseline;
-    column-gap: var(--esp-3);
-    padding: var(--esp-3) var(--esp-3) var(--esp-3) calc(var(--esp-3) + var(--esp-4));
-  }
-
-  .feuillet::before {
-    left: var(--esp-3);
-  }
-
-  /* Le repérage redit la description : on le garde pour les grands écrans */
-  .feuillet__reperage {
-    display: none;
-  }
-
-  .feuillet__nom {
-    grid-area: nom;
-    margin-top: 0;
-    font-size: 1.375rem;
-  }
-
-  .feuillet__description {
-    grid-area: description;
-    margin-top: var(--esp-1);
-    font-size: var(--texte-s);
-    line-height: 1.35;
-  }
-
-  .feuillet__pied {
-    display: contents;
-  }
-
-  .feuillet__prix {
-    grid-area: prix;
-    padding-bottom: 0;
-    border-bottom-width: 0;
-  }
-
-  .feuillet__montant {
-    font-size: var(--texte-s);
-  }
-
-  .feuillet__periode {
-    font-size: var(--texte-xs);
-  }
-
-  .feuillet__action {
-    grid-area: action;
-    justify-content: space-between;
-    margin-top: var(--esp-3);
-    padding-inline: var(--esp-3);
-    font-size: 0.875rem;
-  }
-
-  /* Le rappel devient un onglet posé sur le bord supérieur du feuillet */
-  .feuillet__rappel {
-    top: -0.8rem;
-    right: var(--esp-3);
-    border: 1px solid var(--primaire);
+  .choix__scene {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--esp-6);
   }
 
   .choix__pied {

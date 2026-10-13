@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 24">
+  <!-- Fajkat — soulignement au stylo (provisoire). -->
+  <path id="trait-1" d="M4,13 C60,7 120,17 180,10 S260,8 296,11"/>
+  <path id="trait-2" d="M30,19 C100,15 180,20 250,16"/>
+</svg>
