@@ -1,0 +1,81 @@
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--esp-2);
+  min-height: 44px;
+  padding: var(--esp-2) var(--esp-5);
+  border: 2px solid transparent;
+  border-radius: var(--rayon-champ);
+  font-family: var(--police-texte);
+  font-size: var(--texte-s);
+  font-weight: 700;
+  line-height: 1.2;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  transition:
+    background-color var(--duree) var(--courbe),
+    border-color var(--duree) var(--courbe),
+    color var(--duree) var(--courbe);
+}
+
+.button:active {
+  transform: translateY(1px);
+}
+
+.button__icone {
+  display: inline-flex;
+  transition: transform var(--duree) var(--courbe);
+}
+
+.button:hover .button__icone {
+  transform: translateX(3px);
+}
+
+.button--grande {
+  min-height: 52px;
+  padding-inline: var(--esp-6);
+  font-size: var(--texte-m);
+}
+
+.button--primaire {
+  background: var(--primaire);
+  color: var(--sur-primaire);
+}
+
+.button--primaire:hover {
+  background: var(--encre);
+}
+
+.button--secondaire {
+  background: transparent;
+  border-color: var(--ligne-forte);
+  color: var(--encre);
+}
+
+.button--secondaire:hover {
+  background: var(--papier-clair);
+  border-color: var(--encre);
+}
+
+.button--discret {
+  min-height: 44px;
+  padding-inline: var(--esp-1);
+  background: transparent;
+  color: var(--primaire);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.25em;
+}
+
+.button--discret:hover {
+  color: var(--encre);
+  text-decoration-thickness: 2px;
+}
+
+@media (max-width: 30rem) {
+  .button--grande {
+    padding-inline: var(--esp-4);
+  }
+}

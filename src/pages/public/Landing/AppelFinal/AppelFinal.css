@@ -1,0 +1,48 @@
+.appel-final {
+  max-width: var(--largeur-max);
+  margin-inline: auto;
+  padding: var(--esp-8) var(--gouttiere) var(--esp-6);
+}
+
+.appel-final__interieur {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--esp-5);
+  padding-block: var(--esp-6);
+  border-top: 2px solid var(--encre);
+  border-bottom: 3px double var(--ligne-forte);
+}
+
+.appel-final__texte {
+  max-width: 40rem;
+}
+
+.appel-final__titre {
+  font-size: var(--titre-2);
+}
+
+.appel-final__rappel {
+  margin-top: var(--esp-2);
+  color: var(--encre-douce);
+}
+
+.appel-final__prix {
+  color: var(--encre);
+  font-family: var(--police-mono);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.appel-final__autre {
+  margin-top: var(--esp-4);
+  color: var(--encre-douce);
+  font-size: var(--texte-s);
+}
+
+@media (max-width: 30rem) {
+  .appel-final__interieur > .button {
+    width: 100%;
+  }
+}

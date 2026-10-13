@@ -1,0 +1,73 @@
+/* Tableau façon registre : filets horizontaux fins, numéro en marge */
+.registre-modules {
+  padding: 0;
+  list-style: none;
+  border-top: 2px solid var(--encre);
+}
+
+.registre-modules__ligne {
+  display: grid;
+  grid-template-columns: 3rem minmax(0, 1fr) auto;
+  gap: var(--esp-4);
+  align-items: start;
+  padding-block: var(--esp-4);
+  border-bottom: var(--trait);
+  transition: background-color var(--duree) var(--courbe);
+}
+
+.registre-modules__ligne:hover {
+  background: var(--papier-clair);
+}
+
+.registre-modules__numero {
+  padding-top: 0.2em;
+  padding-left: var(--esp-2);
+  border-right: 1px solid var(--marge-registre);
+  color: var(--encre-douce);
+  font-family: var(--police-mono);
+  font-size: var(--texte-s);
+  font-variant-numeric: tabular-nums;
+}
+
+.registre-modules__titre {
+  font-family: var(--police-texte);
+  font-size: var(--texte-m);
+  font-weight: 700;
+  line-height: 1.35;
+  letter-spacing: 0;
+}
+
+.registre-modules__description {
+  margin-top: var(--esp-1);
+  color: var(--encre-douce);
+  font-size: var(--texte-s);
+  max-width: var(--largeur-texte);
+}
+
+.registre-modules__reserve {
+  margin-top: var(--esp-2);
+  color: var(--attention);
+  font-size: var(--texte-xs);
+  font-weight: 700;
+}
+
+.registre-modules__statut {
+  padding-top: 0.15em;
+  padding-right: var(--esp-2);
+}
+
+@media (max-width: 40rem) {
+  .registre-modules__ligne {
+    grid-template-columns: 2.25rem minmax(0, 1fr);
+    gap: var(--esp-3);
+  }
+
+  .registre-modules__statut {
+    grid-column: 2;
+    padding: 0;
+  }
+
+  .registre-modules__numero {
+    padding-left: 0;
+  }
+}

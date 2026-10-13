@@ -1,0 +1,22 @@
+.statut-module {
+  display: inline-block;
+  padding: 2px var(--esp-2);
+  border: 1px solid currentColor;
+  border-radius: 999px;
+  font-family: var(--police-mono);
+  font-size: var(--texte-xs);
+  font-weight: 500;
+  line-height: 1.4;
+  white-space: nowrap;
+}
+
+.statut-module--prevu {
+  color: var(--encre-douce);
+  border-style: dashed;
+}
+
+.statut-module--disponible {
+  border-color: var(--succes);
+  background: var(--succes);
+  color: var(--papier-clair);
+}

@@ -1,0 +1,53 @@
+.pied-de-page {
+  border-top: var(--trait);
+  background: var(--papier-2);
+}
+
+.pied-de-page__interieur {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--esp-4);
+  max-width: var(--largeur-max);
+  margin-inline: auto;
+  padding: var(--esp-5) var(--gouttiere);
+  font-size: var(--texte-s);
+}
+
+.pied-de-page__marque {
+  color: var(--encre-douce);
+}
+
+.pied-de-page__nom {
+  margin-right: var(--esp-2);
+  color: var(--encre);
+  font-family: var(--police-titre);
+  font-weight: 600;
+}
+
+.pied-de-page__liens {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--esp-2) var(--esp-5);
+  padding: 0;
+  list-style: none;
+}
+
+.pied-de-page__lien {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0;
+  border: 0;
+  background: none;
+  font-size: var(--texte-s);
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 0.25em;
+  cursor: pointer;
+}
+
+.pied-de-page__lien:hover {
+  text-decoration-thickness: 2px;
+}

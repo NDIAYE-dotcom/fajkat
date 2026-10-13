@@ -1,0 +1,26 @@
+.tampon {
+  display: inline-block;
+  padding: var(--esp-1) var(--esp-2);
+  border: 2px solid currentColor;
+  border-radius: 4px;
+  font-family: var(--police-mono);
+  font-size: var(--texte-xs);
+  font-weight: 500;
+  line-height: 1.2;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  transform: rotate(-2deg);
+}
+
+.tampon--alerte {
+  color: var(--tampon);
+}
+
+.tampon--primaire {
+  color: var(--primaire);
+}
+
+.tampon--neutre {
+  color: var(--encre-douce);
+}

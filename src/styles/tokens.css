@@ -1,0 +1,83 @@
+/* Jetons de design Fajkat — « le registre vivant ».
+   Aucune couleur en dur ailleurs : tous les composants passent par ces variables. */
+
+:root {
+  /* Papier et encre */
+  --papier: #f7f3ea;
+  --papier-2: #efe8d8;
+  --papier-clair: #fcfaf5;
+  --ligne: #ddd3c0;
+  --ligne-forte: #c9bda5;
+  --encre: #1e2433;
+  --encre-douce: #4d5466;
+
+  /* Couleurs des offres */
+  --vert-soin: #1f6b52;
+  --vert-soin-doux: #e2ece5;
+  --indigo: #33408f;
+  --indigo-doux: #e3e5f1;
+
+  /* Accents */
+  --laterite: #c46a2f;
+  --tampon: #b3362b;
+  --marge-registre: #d98b7f;
+  --surligneur: #f2d46b;
+  --succes: #2f7d4a;
+  --attention: #b7791f;
+
+  /* Couleur primaire : neutre tant qu'aucune offre n'est choisie */
+  --primaire: var(--encre);
+  --primaire-doux: var(--papier-2);
+  --sur-primaire: var(--papier-clair);
+
+  /* Typographies */
+  --police-titre: 'Spectral', Georgia, 'Times New Roman', serif;
+  --police-texte: 'Atkinson Hyperlegible', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --police-mono: 'IBM Plex Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
+
+  --texte-xs: 0.8125rem;
+  --texte-s: 0.9375rem;
+  --texte-m: 1.0625rem;
+  --texte-l: 1.25rem;
+  --titre-3: clamp(1.25rem, 1.1rem + 0.6vw, 1.5rem);
+  --titre-2: clamp(1.625rem, 1.25rem + 1.5vw, 2.375rem);
+  --titre-1: clamp(2rem, 1.35rem + 2.9vw, 3.5rem);
+
+  /* Espacements */
+  --esp-1: 0.25rem;
+  --esp-2: 0.5rem;
+  --esp-3: 0.75rem;
+  --esp-4: 1rem;
+  --esp-5: 1.5rem;
+  --esp-6: 2rem;
+  --esp-7: 3rem;
+  --esp-8: 4rem;
+  --esp-9: 6rem;
+
+  /* Mise en page */
+  --largeur-max: 72rem;
+  --largeur-texte: 38rem;
+  --gouttiere: clamp(1rem, 4vw, 2.5rem);
+  --hauteur-entete: 3.75rem;
+
+  /* Formes */
+  --rayon-champ: 6px;
+  --rayon-panneau: 10px;
+  --trait: 1px solid var(--ligne);
+  --ombre-modale: 0 12px 32px rgb(30 36 51 / 18%);
+
+  /* Mouvement */
+  --duree: 180ms;
+  --courbe: cubic-bezier(0.2, 0.7, 0.3, 1);
+}
+
+/* Le thème suit l'offre : sur <html> pour toute la page, ou sur un élément pour un aperçu local. */
+[data-offre='poste_sante'] {
+  --primaire: var(--vert-soin);
+  --primaire-doux: var(--vert-soin-doux);
+}
+
+[data-offre='clinique'] {
+  --primaire: var(--indigo);
+  --primaire-doux: var(--indigo-doux);
+}
