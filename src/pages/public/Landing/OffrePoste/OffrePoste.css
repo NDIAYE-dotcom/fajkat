@@ -57,7 +57,9 @@
 .offre-poste__journee {
   padding-block: var(--esp-8);
   border-block: var(--trait);
-  background: var(--papier-2);
+  background: var(--section-fond);
+  color: var(--section-texte);
+  --focus: var(--section-focus);
 }
 
 .offre-poste__etapes {
@@ -84,7 +86,7 @@
   left: 0;
   width: 12px;
   height: 12px;
-  border: 2px solid var(--papier-2);
+  border: 2px solid var(--section-fond);
   border-radius: 50%;
   background: var(--primaire);
 }

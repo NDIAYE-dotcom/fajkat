@@ -1,7 +1,9 @@
 import { useEffect, useRef } from 'react'
+import { useLocation } from 'react-router-dom'
 import { OffreProvider } from '../../../context/OffreContext.jsx'
 import { useOffre } from '../../../hooks/useOffre.js'
 import ChoixStructure from './ChoixStructure/ChoixStructure.jsx'
+import EnTete from './EnTete/EnTete.jsx'
 import OffreClinique from './OffreClinique/OffreClinique.jsx'
 import OffrePoste from './OffrePoste/OffrePoste.jsx'
 import './Landing.css'
@@ -22,6 +24,7 @@ function ContenuLanding() {
   const { offre } = useOffre()
   const type = offre?.type ?? null
   const premierAffichage = useRef(true)
+  const { hash, key } = useLocation()
 
   useEffect(() => {
     document.title = offre
@@ -39,14 +42,27 @@ function ContenuLanding() {
     document.getElementById('titre-page')?.focus()
   }, [type])
 
+  // Lien du menu « Plateforme » (#module-patients…) : on amène le module à l'écran.
+  // Placé après l'effet de focus, pour passer après lui quand l'offre change en même temps.
+  useEffect(() => {
+    if (!hash) return
+    document.getElementById(decodeURIComponent(hash.slice(1)))?.scrollIntoView({ block: 'start' })
+  }, [hash, key, type])
+
   let vue = <ChoixStructure />
   if (offre?.type === 'clinique') vue = <OffreClinique offre={offre} />
   else if (offre) vue = <OffrePoste offre={offre} />
 
-  if (!FONDU_SECOURS) return vue
   return (
-    <div key={type ?? 'choix'} className="landing-fondu">
-      {vue}
-    </div>
+    <>
+      <EnTete />
+      {FONDU_SECOURS ? (
+        <div key={type ?? 'choix'} className="landing-fondu">
+          {vue}
+        </div>
+      ) : (
+        vue
+      )}
+    </>
   )
 }

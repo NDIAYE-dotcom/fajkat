@@ -41,7 +41,7 @@
 
 .button--primaire {
   background: var(--primaire);
-  color: var(--sur-primaire);
+  color: var(--fond);
 }
 
 .button--primaire:hover {
@@ -50,12 +50,12 @@
 
 .button--secondaire {
   background: transparent;
-  border-color: var(--ligne-forte);
+  border-color: var(--doux);
   color: var(--encre);
 }
 
 .button--secondaire:hover {
-  background: var(--papier-clair);
+  background: var(--fond);
   border-color: var(--encre);
 }
 

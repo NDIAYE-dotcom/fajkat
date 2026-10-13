@@ -12,17 +12,19 @@
   align-items: start;
   padding-block: var(--esp-4);
   border-bottom: var(--trait);
+  /* Arrivée depuis le menu « Plateforme » : la ligne n'est pas cachée sous l'en-tête fixe. */
+  scroll-margin-top: calc(var(--hauteur-entete) + var(--esp-4));
   transition: background-color var(--duree) var(--courbe);
 }
 
 .registre-modules__ligne:hover {
-  background: var(--papier-clair);
+  background: var(--fond);
 }
 
 .registre-modules__numero {
   padding-top: 0.2em;
   padding-left: var(--esp-2);
-  border-right: 1px solid var(--marge-registre);
+  border-right: 1px solid var(--accent);
   color: var(--encre-douce);
   font-family: var(--police-mono);
   font-size: var(--texte-s);
@@ -46,7 +48,7 @@
 
 .registre-modules__reserve {
   margin-top: var(--esp-2);
-  color: var(--attention);
+  color: var(--encre-douce);
   font-size: var(--texte-xs);
   font-weight: 700;
 }

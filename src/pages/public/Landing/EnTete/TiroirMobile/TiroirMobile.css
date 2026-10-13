@@ -1,0 +1,96 @@
+.tiroir-mobile__ouvrir,
+.tiroir-mobile__fermer {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--esp-2);
+  min-height: 44px;
+  padding: 0 var(--esp-3);
+  border: 1px solid var(--doux);
+  border-radius: var(--rayon-champ);
+  background: var(--fond);
+  font-size: var(--texte-s);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.tiroir-mobile {
+  position: fixed;
+  inset: 0;
+  z-index: 30;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  background: var(--fond);
+  animation: tiroir-mobile-ouvre 180ms var(--courbe) both;
+}
+
+@keyframes tiroir-mobile-ouvre {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+}
+
+.tiroir-mobile__barre {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: var(--hauteur-entete);
+  padding-inline: var(--gouttiere);
+  border-bottom: var(--trait);
+}
+
+.tiroir-mobile__marque {
+  font-family: var(--police-titre);
+  font-size: var(--texte-l);
+  font-weight: 600;
+}
+
+.tiroir-mobile__corps {
+  display: grid;
+  align-content: start;
+  gap: var(--esp-4);
+  padding: var(--esp-4) var(--gouttiere) var(--esp-6);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.tiroir-mobile__changer {
+  display: flex;
+  align-items: center;
+  gap: var(--esp-2);
+  min-height: 48px;
+  padding: var(--esp-2) var(--esp-3);
+  border: 1px solid var(--doux);
+  border-left: 4px solid var(--primaire);
+  border-radius: var(--rayon-champ);
+  background: var(--fond);
+  font-size: var(--texte-s);
+  font-weight: 700;
+  text-align: left;
+  cursor: pointer;
+}
+
+.tiroir-mobile__rubrique {
+  font-family: var(--police-titre);
+  font-size: var(--titre-3);
+  font-weight: 600;
+}
+
+.tiroir-mobile__actions {
+  display: flex;
+  flex-direction: column-reverse;
+  align-items: stretch;
+  gap: var(--esp-1);
+  padding: var(--esp-3) var(--gouttiere);
+  border-top: var(--trait);
+  background: var(--surface);
+}
+
+.tiroir-mobile__connexion {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  font-size: var(--texte-s);
+  font-weight: 700;
+}

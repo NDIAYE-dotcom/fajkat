@@ -9,7 +9,7 @@ export default function RegistreModules({ fonctionnalites, debut = 1, niveauTitr
   return (
     <ol className="registre-modules" start={debut}>
       {fonctionnalites.map((f, index) => (
-        <li key={f.code} className="registre-modules__ligne">
+        <li key={f.code} id={`module-${f.code}`} className="registre-modules__ligne">
           <span className="registre-modules__numero" aria-hidden="true">
             {String(debut + index).padStart(2, '0')}
           </span>

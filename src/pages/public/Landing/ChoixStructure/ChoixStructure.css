@@ -1,61 +1,17 @@
-/* Écran de choix : une grande scène dessinée au trait, dont chaque moitié est un choix. */
+/* Écran de choix : deux grands panneaux, chacun avec un aperçu animé du produit. */
 .choix {
-  display: grid;
-  grid-template-rows: auto 1fr auto;
-  min-height: 100vh;
-  min-height: 100svh;
-  padding-inline: var(--gouttiere);
-  overflow-x: clip;
-}
-
-.choix__entete {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 100%;
-  max-width: var(--largeur-max);
-  margin-inline: auto;
-  min-height: var(--hauteur-entete);
-  border-bottom: var(--trait);
-}
-
-.choix__marque {
-  font-family: var(--police-titre);
-  font-size: var(--texte-l);
-  font-weight: 600;
-  letter-spacing: 0.01em;
-}
-
-.choix__connexion {
-  display: inline-flex;
-  align-items: center;
-  min-height: 44px;
-  font-size: var(--texte-s);
-  font-weight: 700;
-  text-underline-offset: 0.25em;
-}
-
-.choix__connexion:hover {
-  text-decoration-thickness: 2px;
-}
-
-.choix__corps {
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  gap: var(--esp-5);
+  gap: var(--esp-4);
   width: 100%;
   max-width: var(--largeur-max);
+  min-height: calc(100svh - var(--hauteur-entete));
   margin-inline: auto;
-  padding-block: var(--esp-5) var(--esp-6);
-}
-
-.choix__intro {
-  position: relative;
+  padding: var(--esp-4) var(--gouttiere) var(--esp-3);
 }
 
 .choix__surtitre {
-  margin-bottom: var(--esp-3);
+  margin-bottom: var(--esp-2);
   color: var(--encre-douce);
   font-family: var(--police-mono);
   font-size: var(--texte-xs);
@@ -83,73 +39,98 @@
   left: -3%;
   bottom: -0.22em;
   width: 106%;
-  --illustration-couleur: var(--laterite);
+  --illustration-couleur: var(--accent);
   pointer-events: none;
 }
 
 .choix__texte {
+  max-width: var(--largeur-texte);
   margin-top: var(--esp-3);
   color: var(--encre-douce);
   font-size: var(--texte-l);
+  line-height: 1.45;
 }
 
-/* La flèche part de la consigne et descend vers la jonction des deux dessins. */
-.choix__fleche {
-  position: absolute;
-  top: calc(100% + var(--esp-2));
-  left: 34%;
-  width: 8rem;
-  --illustration-couleur: var(--laterite);
-  pointer-events: none;
+.choix__panneaux {
+  display: flex;
+  flex: 1;
+  gap: var(--esp-4);
 }
 
-/* Les deux dessins partagent la même ligne de sol : une seule scène. */
-.choix__scene {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  align-items: end;
-  width: 100%;
+/* Survol (souris uniquement) : le panneau visé passe à 60 %, l'autre s'estompe.
+   flex-basis 0 + flex-grow 1,5 contre 1 = 60 / 40. */
+@media (hover: hover) and (min-width: 48.01rem) {
+  .choix__panneaux:not([data-frappe]) .panneau-offre:is(:hover, :focus-visible) {
+    flex-grow: 1.5;
+  }
+
+  .choix__panneaux:not([data-frappe])
+    .panneau-offre:is(:hover, :focus-visible)
+    .panneau-offre__ecran {
+    transform: scale(1.04);
+  }
+
+  .choix__panneaux:not([data-frappe]):has(.panneau-offre:is(:hover, :focus-visible))
+    .panneau-offre:not(:hover, :focus-visible) {
+    opacity: 0.55;
+  }
+}
+
+/* Après le clic : le panneau tamponné garde la place, l'autre s'efface. */
+.panneau-offre--frappe {
+  flex-grow: 1.5;
+}
+
+.panneau-offre--estompe {
+  opacity: 0.35;
 }
 
 .choix__pied {
-  width: 100%;
-  max-width: var(--largeur-max);
-  margin-inline: auto;
-  padding-block: var(--esp-4);
+  padding-top: var(--esp-3);
   border-top: var(--trait);
   color: var(--encre-douce);
   font-size: var(--texte-s);
 }
 
-/* Écran large mais peu haut (portable 1366 × 768) : la largeur de la scène est bornée
-   par la hauteur disponible, pour que dessins et légendes restent visibles sans défiler.
-   Un dessin fait 600 × 420 : la scène (deux dessins) est 0,35 fois moins haute que large. */
-@media (min-width: 40.01rem) {
-  .choix__scene {
-    width: min(100%, max(36rem, calc((100svh - 25rem) / 0.35)));
-  }
-}
-
-/* Téléphone : les deux dessins s'empilent, chacun cliquable en entier. */
-@media (max-width: 40rem) {
-  .choix__entete {
-    min-height: 3rem;
-  }
-
-  .choix__corps {
-    justify-content: flex-start;
-    gap: var(--esp-4);
-    padding-block: var(--esp-4);
-  }
-
-  .choix__intro {
-    padding-right: 4.5rem;
+/* Écran peu haut (portable 1366 × 768) : on resserre pour garder les deux panneaux entiers. */
+@media (min-width: 48.01rem) and (max-height: 52rem) {
+  .choix__surtitre {
+    display: none;
   }
 
   .choix__titre {
-    max-width: 14ch;
+    font-size: clamp(2rem, 1.4rem + 2vw, 2.75rem);
   }
 
+  .choix__texte {
+    margin-top: var(--esp-2);
+    font-size: var(--texte-m);
+  }
+}
+
+/* Tablette et téléphone : les panneaux s'empilent, un toucher choisit directement. */
+@media (max-width: 48rem) {
+  .choix {
+    gap: var(--esp-4);
+    padding-top: var(--esp-4);
+  }
+
+  .choix {
+    min-height: 0;
+  }
+
+  /* Empilés, les panneaux gardent leur hauteur naturelle : la page défile. */
+  .choix__panneaux {
+    flex: none;
+    flex-direction: column;
+  }
+
+  .choix__panneaux .panneau-offre {
+    flex: none;
+  }
+}
+
+@media (max-width: 30rem) {
   .choix__surtitre {
     display: none;
   }
@@ -161,24 +142,9 @@
   .choix__texte {
     margin-top: var(--esp-2);
     font-size: var(--texte-s);
-    line-height: 1.4;
-  }
-
-  .choix__fleche {
-    top: auto;
-    right: 0;
-    bottom: -1.75rem;
-    left: auto;
-    width: 4.5rem;
-  }
-
-  .choix__scene {
-    grid-template-columns: minmax(0, 1fr);
-    gap: var(--esp-6);
   }
 
   .choix__pied {
-    padding-block: var(--esp-2);
     font-size: var(--texte-xs);
   }
 }

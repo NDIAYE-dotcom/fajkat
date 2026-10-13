@@ -78,7 +78,7 @@
 }
 
 .sommaire-clinique__lien:hover {
-  background: var(--primaire-doux);
+  background: var(--surface);
 }
 
 .sommaire-clinique__numero {
@@ -109,7 +109,8 @@
   scroll-margin-top: var(--hauteur-entete);
   padding-block: var(--esp-6);
   border-block: var(--trait);
-  background: var(--primaire-doux);
+  background: var(--section-fond);
+  --focus: var(--section-focus);
 }
 
 /* Modules par pôle : titre du pôle à gauche (collant), registre à droite */
@@ -161,7 +162,9 @@
 .offre-clinique__equipes {
   padding-block: var(--esp-7);
   border-top: var(--trait);
-  background: var(--papier-2);
+  background: var(--section-fond);
+  color: var(--section-texte);
+  --focus: var(--section-focus);
 }
 
 .offre-clinique__roles {
@@ -172,7 +175,7 @@
 
 .offre-clinique__role {
   padding: var(--esp-2) var(--esp-5);
-  border-left: 1px solid var(--ligne-forte);
+  border-left: 1px solid var(--section-filet);
 }
 
 .offre-clinique__role:first-child {
@@ -186,7 +189,7 @@
 
 .offre-clinique__role-texte {
   margin-top: var(--esp-1);
-  color: var(--encre-douce);
+  color: var(--section-texte-doux);
   font-size: var(--texte-s);
 }
 
@@ -216,7 +219,7 @@
   .offre-clinique__role:first-child {
     padding: var(--esp-3) 0;
     border-left: 0;
-    border-top: 1px solid var(--ligne-forte);
+    border-top: 1px solid var(--section-filet);
   }
 }
 

@@ -1,34 +1,32 @@
-/* Jetons de design Fajkat — « le registre vivant ».
+/* Jetons de design Fajkat — « le registre vivant », tons menthe et sarcelle.
    Aucune couleur en dur ailleurs : tous les composants passent par ces variables. */
 
 :root {
-  /* Papier et encre */
-  --papier: #f7f3ea;
-  --papier-2: #efe8d8;
-  --papier-clair: #fcfaf5;
-  --ligne: #ddd3c0;
-  --ligne-forte: #c9bda5;
-  --encre: #1e2433;
-  --encre-douce: #4d5466;
+  /* Palette */
+  --fond: #f7fffd; /* fond des pages */
+  --surface: #d9f5ef; /* sections alternées, panneaux, aperçus */
+  --doux: #a7e3d4; /* filets, bordures, survols, badges */
+  /* Décor uniquement (illustrations, icônes, graphiques) : JAMAIS en texte sur fond clair
+     ni en fond de bouton à texte blanc (contraste 2,3:1). */
+  --accent: #5bb9a6;
+  --primaire: #2f5d57; /* boutons, liens, titres, sections sombres (texte --fond : 7,3:1) */
 
-  /* Couleurs des offres */
-  --vert-soin: #1f6b52;
-  --vert-soin-doux: #e2ece5;
-  --indigo: #33408f;
-  --indigo-doux: #e3e5f1;
+  /* Texte */
+  --encre: #17302c;
+  --encre-douce: #4a6b66;
 
-  /* Accents */
-  --laterite: #c46a2f;
-  --tampon: #b3362b;
-  --marge-registre: #d98b7f;
-  --surligneur: #f2d46b;
-  --succes: #2f7d4a;
-  --attention: #b7791f;
+  /* Couleurs fonctionnelles, réservées aux statuts */
+  --tampon: #b3362b; /* urgences, erreurs, tampons */
+  --attention: #b7791f; /* avertissements : jamais en texte sur fond clair */
+  --succes: var(--primaire);
 
-  /* Couleur primaire : neutre tant qu'aucune offre n'est choisie */
-  --primaire: var(--encre);
-  --primaire-doux: var(--papier-2);
-  --sur-primaire: var(--papier-clair);
+  /* Ambiance des sections alternées : claire par défaut (Poste de santé),
+     sombre pour la Clinique (voir [data-offre] en bas de fichier). */
+  --section-fond: var(--surface);
+  --section-texte: var(--encre);
+  --section-texte-doux: var(--encre-douce);
+  --section-filet: var(--doux);
+  --section-focus: var(--primaire);
 
   /* Typographies */
   --police-titre: 'Spectral', Georgia, 'Times New Roman', serif;
@@ -63,21 +61,29 @@
   /* Formes */
   --rayon-champ: 6px;
   --rayon-panneau: 10px;
-  --trait: 1px solid var(--ligne);
-  --ombre-modale: 0 12px 32px rgb(30 36 51 / 18%);
+  --trait: 1px solid var(--doux);
+  --ombre-modale: 0 12px 32px rgb(23 48 44 / 18%);
+  --ombre-flottante: 0 6px 16px rgb(23 48 44 / 12%);
 
   /* Mouvement */
   --duree: 180ms;
   --courbe: cubic-bezier(0.2, 0.7, 0.3, 1);
 }
 
-/* Le thème suit l'offre : sur <html> pour toute la page, ou sur un élément pour un aperçu local. */
+/* L'offre ne change pas la couleur primaire, seulement l'ambiance des sections :
+   Poste de santé = sections claires (--fond, --surface) ; Clinique = sections sombres. */
 [data-offre='poste_sante'] {
-  --primaire: var(--vert-soin);
-  --primaire-doux: var(--vert-soin-doux);
+  --section-fond: var(--surface);
+  --section-texte: var(--encre);
+  --section-texte-doux: var(--encre-douce);
+  --section-filet: var(--doux);
+  --section-focus: var(--primaire);
 }
 
 [data-offre='clinique'] {
-  --primaire: var(--indigo);
-  --primaire-doux: var(--indigo-doux);
+  --section-fond: var(--primaire);
+  --section-texte: var(--fond);
+  --section-texte-doux: var(--surface);
+  --section-filet: var(--accent);
+  --section-focus: var(--fond);
 }

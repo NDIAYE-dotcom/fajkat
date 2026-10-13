@@ -1,7 +1,7 @@
 import Button from '../../../../components/ui/Button/Button.jsx'
 import AppelFinal from '../AppelFinal/AppelFinal.jsx'
-import EnteteOffre from '../EnteteOffre/EnteteOffre.jsx'
 import EtatAvancement from '../EtatAvancement/EtatAvancement.jsx'
+import { famillesOffre } from '../../../../lib/offres.js'
 import PiedDePage from '../PiedDePage/PiedDePage.jsx'
 import PrixOffre from '../PrixOffre/PrixOffre.jsx'
 import RegistreModules from '../RegistreModules/RegistreModules.jsx'
@@ -29,18 +29,16 @@ function pluriel(nombre, mot) {
 }
 
 export default function OffreClinique({ offre }) {
-  // Numérotation continue des modules d'un pôle à l'autre.
-  const poles = offre.poles.map((pole, index) => ({
+  // Numérotation continue des modules d'une famille à l'autre.
+  const familles = famillesOffre(offre)
+  const poles = familles.map((pole, index) => ({
     ...pole,
     numero: NUMEROS_POLES[index],
-    debut:
-      1 + offre.poles.slice(0, index).reduce((total, p) => total + p.fonctionnalites.length, 0),
+    debut: 1 + familles.slice(0, index).reduce((total, p) => total + p.fonctionnalites.length, 0),
   }))
 
   return (
     <>
-      <EnteteOffre />
-
       <main className="offre-clinique">
         <section className="offre-clinique__entree" aria-labelledby="titre-page">
           <div className="offre-clinique__accroche">

@@ -5,9 +5,9 @@
   flex-direction: column;
   gap: var(--esp-5);
   padding: var(--esp-5) var(--esp-5) var(--esp-5) calc(var(--esp-5) + var(--esp-5));
-  border: 1px solid var(--ligne);
+  border: 1px solid var(--doux);
   border-radius: var(--rayon-panneau);
-  background: var(--papier-clair);
+  background: var(--fond);
 }
 
 .prix-offre::before {
@@ -17,7 +17,7 @@
   bottom: 0;
   left: var(--esp-5);
   width: 1px;
-  background: var(--marge-registre);
+  background: var(--accent);
 }
 
 .prix-offre__libelle {
@@ -39,7 +39,7 @@
 
 .prix-offre__chiffre {
   padding-bottom: var(--esp-1);
-  border-bottom: 3px double var(--ligne-forte);
+  border-bottom: 3px double var(--doux);
   font-family: var(--police-mono);
   font-size: clamp(1.75rem, 1.4rem + 1.5vw, 2.5rem);
   font-weight: 500;

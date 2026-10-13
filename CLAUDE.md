@@ -83,19 +83,24 @@ fajkat/
 
 ## 7. Design — « touche humaine », jamais un look généré par IA
 Concept : « le registre vivant ». L'interface s'inspire des objets réels du soin au Sénégal : le grand registre ligné, le carnet de santé, la fiche cartonnée, le tampon encreur, l'annotation au stylo. Sobre, chaleureux, lisible sur un téléphone d'entrée de gamme en plein soleil.
-Palette (tokens) :
-- --papier #F7F3EA (fond) · --papier-2 #EFE8D8 (surfaces) · --ligne #DDD3C0 (filets)
-- --encre #1E2433 (texte) · --encre-douce #4D5466 (texte secondaire)
-- --vert-soin #1F6B52 (primaire Poste de santé) · --indigo #33408F (primaire Clinique)
-- --laterite #C46A2F (accent chaleureux) · --tampon #B3362B (alertes, urgences) · --surligneur #F2D46B (mise en évidence)
-- --succes #2F7D4A · --attention #B7791F
-Le thème suit l'offre : html[data-offre="poste_sante"] ou html[data-offre="clinique"] redéfinit --primaire et --primaire-doux.
+Palette (tokens), tons menthe et sarcelle :
+- --fond #F7FFFD : fond des pages
+- --surface #D9F5EF : sections alternées, panneaux, aperçus
+- --doux #A7E3D4 : filets, bordures, survols, badges
+- --accent #5BB9A6 : illustrations, icônes, graphiques, décor. JAMAIS pour du texte sur fond clair ni pour un bouton à texte blanc (contraste 2,3:1, insuffisant).
+- --primaire #2F5D57 : boutons, liens, titres, sections sombres (texte --fond dessus : 7,3:1).
+Lisibilité : --encre #17302C (texte courant) · --encre-douce #4A6B66 (texte secondaire).
+Couleurs fonctionnelles, uniquement pour les statuts : --tampon #B3362B (urgences, erreurs, tampons) · --attention #B7791F (avertissements, jamais en texte sur fond clair) · --succes = --primaire.
+Les deux offres partagent la même palette ; html[data-offre] ne change pas la couleur primaire, seulement l'ambiance des sections (variables --section-fond, --section-texte, --section-texte-doux, --section-filet, --section-focus) :
+- Poste de santé : ambiance claire (sections --fond et --surface, accents --accent).
+- Clinique : davantage de sections sombres (fond --primaire, texte --fond).
+Tout texte respecte le contraste AA (4,5:1, ou 3:1 pour le texte de grande taille).
 Typographies, auto-hébergées via @fontsource :
 - Titres : Spectral (600), éditoriale et humaine.
 - Texte et interface : Atkinson Hyperlegible, conçue pour une lisibilité maximale.
 - Chiffres, numéros de dossier, montants, doses : IBM Plex Mono avec chiffres tabulaires.
 Signatures visuelles, à utiliser avec mesure :
-- Tableaux façon registre : filets horizontaux fins, marge rouge à gauche des panneaux importants.
+- Tableaux façon registre : filets horizontaux fins, marge colorée (--accent) à gauche des panneaux importants.
 - Badges « tampon » : bordure 2 px, majuscules, légère rotation de -2°, pour PAYÉ, URGENT, VACCINÉ, RÉFÉRÉ.
 - Menu latéral en onglets d'intercalaire.
 - Illustrations au trait (1,75 px, couleur encre), dessinées ou commandées, jamais générées par IA.
@@ -145,3 +150,4 @@ INTERDITS ABSOLUS (signes d'un design généré automatiquement) :
 - Étape 1 — 13/10/2026 — Projet Vite + React JS initialisé : dépendances, arborescence, client Supabase, utilitaires de formatage, routeur, pages provisoires, ESLint et Prettier. Lint, format et build validés ; aucune migration métier créée.
 - Étape 2 — 13/10/2026 — Identité visuelle « registre vivant » (tokens, base, polices) et page d’accueil : choix obligatoire Poste de santé / Clinique, deux pages d’offre distinctes, offres et tarifs centralisés dans src/lib/offres.js, modules marqués « Prévu ». Aucune migration.
 - Étape 2b-A — 13/10/2026 — Refonte de la page publique, partie A : écran de choix en scène dessinée au trait (poste / clinique), tracé animé, fiche épinglée, tampon et View Transitions ; SVG remplaçables dans src/assets/illustrations (règle dans docs/illustrations.md). Aucune migration.
+- Étape 2c-A — 13/10/2026 — Refonte de la page publique, partie A : en-tête commun avec menu « Plateforme » (3 familles, tiroir plein écran sur mobile) et bouton de démo WhatsApp ; écran de choix en deux panneaux avec aperçus animés en HTML/CSS (file d'attente, plan des lits), 60 / 40 au survol, tampon puis View Transition ; catalogue des 38 modules de la section 6 dans src/lib/modules.js, phares et contact démo dans src/lib/offres.js. Aucune migration.

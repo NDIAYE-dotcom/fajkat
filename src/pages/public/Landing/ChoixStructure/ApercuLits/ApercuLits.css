@@ -1,0 +1,152 @@
+/* Plan des lits miniature. Uniquement des <span> (on est dans un bouton). */
+.apercu-lits {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-3);
+  height: 100%;
+  padding: var(--esp-3);
+  overflow: hidden;
+  border: var(--trait);
+  border-radius: var(--rayon-panneau);
+  background: var(--fond);
+  font-size: var(--texte-s);
+  text-align: left;
+}
+
+.apercu-lits__barre {
+  display: flex;
+  justify-content: space-between;
+  padding-bottom: var(--esp-2);
+  border-bottom: var(--trait);
+  color: var(--encre-douce);
+  font-size: var(--texte-xs);
+  font-weight: 700;
+}
+
+.apercu-lits__service {
+  color: var(--primaire);
+}
+
+.apercu-lits__plan {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--esp-2);
+}
+
+.apercu-lits__lit {
+  position: relative;
+  display: block;
+  height: 3.5rem;
+  overflow: hidden;
+  border: 1px solid var(--doux);
+  border-radius: var(--rayon-champ);
+  background: var(--fond);
+}
+
+.apercu-lits__nom {
+  position: absolute;
+  top: var(--esp-1);
+  left: var(--esp-2);
+  z-index: 1;
+  color: var(--encre-douce);
+  font-family: var(--police-mono);
+  font-size: 0.625rem;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.apercu-lits__couche {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: flex-end;
+  padding: var(--esp-1) var(--esp-2);
+  font-size: var(--texte-xs);
+  font-weight: 700;
+  line-height: 1.2;
+  opacity: 0;
+  transition: opacity 260ms var(--courbe);
+}
+
+.apercu-lits__couche--libre {
+  border: 1.5px dashed var(--succes);
+  border-radius: inherit;
+  color: var(--succes);
+}
+
+.apercu-lits__couche--occupe {
+  background: var(--surface);
+  color: var(--primaire);
+  font-family: var(--police-mono);
+  font-weight: 500;
+}
+
+/* Hachures : le lit attend l'équipe de nettoyage */
+.apercu-lits__couche--nettoyage {
+  background: repeating-linear-gradient(-45deg, var(--surface) 0 6px, var(--fond) 6px 12px);
+  color: var(--encre);
+}
+
+.apercu-lits__lit[data-etat='libre'] .apercu-lits__couche--libre,
+.apercu-lits__lit[data-etat='occupe'] .apercu-lits__couche--occupe,
+.apercu-lits__lit[data-etat='nettoyage'] .apercu-lits__couche--nettoyage {
+  opacity: 1;
+}
+
+/* Cerne bref autour du lit qui vient de changer */
+.apercu-lits__repere {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  border: 2px solid var(--accent);
+  border-radius: inherit;
+  opacity: 0;
+  animation: apercu-lits-repere 900ms var(--courbe);
+}
+
+@keyframes apercu-lits-repere {
+  20% {
+    opacity: 1;
+  }
+}
+
+.apercu-lits__legende {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--esp-1) var(--esp-4);
+  color: var(--encre-douce);
+  font-size: var(--texte-xs);
+}
+
+.apercu-lits__compte {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--esp-1);
+}
+
+.apercu-lits__puce {
+  display: inline-block;
+  width: 0.625rem;
+  height: 0.625rem;
+  border-radius: 2px;
+}
+
+.apercu-lits__compte--libre .apercu-lits__puce {
+  border: 1.5px dashed var(--succes);
+}
+
+.apercu-lits__compte--occupe .apercu-lits__puce {
+  background: var(--primaire);
+}
+
+.apercu-lits__compte--nettoyage .apercu-lits__puce {
+  background: var(--accent);
+}
+
+.apercu-lits__nombre {
+  color: var(--encre);
+  font-family: var(--police-mono);
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+}

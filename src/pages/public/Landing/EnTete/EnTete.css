@@ -1,0 +1,160 @@
+.en-tete {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  border-bottom: var(--trait);
+  background: var(--fond);
+}
+
+/* Offre choisie : liseré de sa couleur, comme l'onglet d'un intercalaire */
+.en-tete--offre {
+  box-shadow: inset 0 3px 0 var(--primaire);
+}
+
+.en-tete__interieur {
+  display: flex;
+  align-items: center;
+  gap: var(--esp-5);
+  max-width: var(--largeur-max);
+  min-height: var(--hauteur-entete);
+  margin-inline: auto;
+  padding-inline: var(--gouttiere);
+}
+
+.en-tete__marque {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  font-family: var(--police-titre);
+  font-size: var(--texte-l);
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  text-decoration: none;
+}
+
+.en-tete__nav {
+  display: flex;
+  align-items: center;
+}
+
+.en-tete__offre {
+  display: flex;
+  align-items: center;
+  gap: var(--esp-3);
+  padding-left: var(--esp-4);
+  border-left: var(--trait);
+}
+
+.en-tete__offre-nom {
+  display: flex;
+  align-items: center;
+  gap: var(--esp-2);
+  font-size: var(--texte-s);
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.en-tete__pastille {
+  width: 0.625rem;
+  height: 0.625rem;
+  border-radius: 50%;
+  background: var(--primaire);
+}
+
+.en-tete__prix {
+  color: var(--encre-douce);
+  font-family: var(--police-mono);
+  font-size: var(--texte-xs);
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+}
+
+.en-tete__changer {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--esp-2);
+  min-height: 44px;
+  padding: 0 var(--esp-3);
+  border: 1px solid var(--doux);
+  border-radius: var(--rayon-champ);
+  background: var(--fond);
+  font-size: var(--texte-s);
+  font-weight: 700;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: border-color var(--duree) var(--courbe);
+}
+
+.en-tete__changer:hover {
+  border-color: var(--encre);
+}
+
+.en-tete__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--esp-4);
+  margin-left: auto;
+}
+
+.en-tete__connexion {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  font-size: var(--texte-s);
+  font-weight: 700;
+  text-underline-offset: 0.25em;
+  white-space: nowrap;
+}
+
+.en-tete__connexion:hover {
+  text-decoration-thickness: 2px;
+}
+
+.en-tete__menu-mobile {
+  display: none;
+}
+
+@media (max-width: 68rem) {
+  .en-tete__prix,
+  .en-tete__changer-suite {
+    display: none;
+  }
+}
+
+/* Petit écran : menu, connexion et changement d'offre passent dans le tiroir. */
+@media (max-width: 56rem) {
+  .en-tete__interieur {
+    gap: var(--esp-3);
+  }
+
+  .en-tete__nav,
+  .en-tete__connexion,
+  .en-tete__changer {
+    display: none;
+  }
+
+  .en-tete__actions {
+    gap: var(--esp-2);
+  }
+
+  .en-tete__menu-mobile {
+    display: contents;
+  }
+}
+
+@media (max-width: 30rem) {
+  .en-tete__offre {
+    padding-left: var(--esp-3);
+  }
+
+  .en-tete__offre-nom {
+    font-size: var(--texte-xs);
+  }
+}
+
+/* 360 px : la marque, la démo et le menu tiennent ; le nom de l'offre est dans le tiroir. */
+@media (max-width: 24rem) {
+  .en-tete__offre {
+    display: none;
+  }
+}

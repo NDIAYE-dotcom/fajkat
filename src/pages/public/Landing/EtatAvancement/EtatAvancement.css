@@ -5,7 +5,7 @@
   align-items: start;
   padding: var(--esp-4) var(--esp-5);
   border-left: 3px solid var(--primaire);
-  background: var(--primaire-doux);
+  background: var(--surface);
 }
 
 .etat-avancement__texte {

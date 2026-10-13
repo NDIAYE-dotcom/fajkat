@@ -1,0 +1,33 @@
+.bouton-demo .button__texte {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--esp-2);
+}
+
+.bouton-demo__icone {
+  flex-shrink: 0;
+}
+
+.bouton-demo__court {
+  display: none;
+}
+
+/* Petit écran : « Démo » à l'écran, « Demander une démo » pour les lecteurs d'écran. */
+@media (max-width: 30rem) {
+  .bouton-demo--compact {
+    padding-inline: var(--esp-3);
+  }
+
+  .bouton-demo--compact .bouton-demo__long {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+  }
+
+  .bouton-demo--compact .bouton-demo__court {
+    display: inline;
+  }
+}

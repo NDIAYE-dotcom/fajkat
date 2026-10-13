@@ -18,5 +18,5 @@
 .statut-module--disponible {
   border-color: var(--succes);
   background: var(--succes);
-  color: var(--papier-clair);
+  color: var(--fond);
 }

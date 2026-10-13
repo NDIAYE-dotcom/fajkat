@@ -1,0 +1,155 @@
+.liste-plateforme {
+  display: grid;
+  gap: var(--esp-5);
+}
+
+/* Bascule Poste de santé / Clinique, comme deux onglets d'intercalaire */
+.liste-plateforme__bascule {
+  display: flex;
+  gap: var(--esp-1);
+  border-bottom: 2px solid var(--primaire);
+}
+
+.liste-plateforme__onglet {
+  min-height: 44px;
+  padding: var(--esp-2) var(--esp-4);
+  border: 1px solid var(--doux);
+  border-bottom: 0;
+  border-radius: var(--rayon-champ) var(--rayon-champ) 0 0;
+  background: var(--surface);
+  color: var(--encre-douce);
+  font-size: var(--texte-s);
+  font-weight: 700;
+  cursor: pointer;
+  transition:
+    background-color var(--duree) var(--courbe),
+    color var(--duree) var(--courbe);
+}
+
+.liste-plateforme__onglet[aria-pressed='true'] {
+  border-color: var(--primaire);
+  background: var(--primaire);
+  color: var(--fond);
+}
+
+.liste-plateforme__onglet[aria-pressed='false']:hover {
+  color: var(--encre);
+}
+
+.liste-plateforme__familles {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--esp-6);
+}
+
+.liste-plateforme__famille {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-3);
+  padding-top: var(--esp-3);
+  border-top: var(--trait);
+}
+
+.liste-plateforme__titre {
+  color: var(--primaire);
+  font-family: var(--police-mono);
+  font-size: var(--texte-xs);
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.liste-plateforme__intro {
+  color: var(--encre-douce);
+  font-size: var(--texte-s);
+  line-height: 1.4;
+}
+
+.liste-plateforme__phares {
+  display: grid;
+  padding: 0;
+  list-style: none;
+}
+
+/* Lignes de registre : filet fin sous chaque module phare */
+.liste-plateforme__phare {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--esp-3);
+  min-height: 44px;
+  border-bottom: var(--trait);
+  font-family: var(--police-titre);
+  font-size: var(--texte-m);
+  font-weight: 600;
+  text-decoration: none;
+  transition: color var(--duree) var(--courbe);
+}
+
+.liste-plateforme__phare:hover {
+  color: var(--primaire);
+}
+
+.liste-plateforme__phare:hover .liste-plateforme__phare-nom {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.2em;
+}
+
+/* Petit tampon « Phare » */
+.liste-plateforme__marque {
+  flex-shrink: 0;
+  padding: 0 var(--esp-1);
+  border: 1.5px solid var(--primaire);
+  border-radius: 3px;
+  color: var(--primaire);
+  font-family: var(--police-mono);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  line-height: 1.5;
+  text-transform: uppercase;
+  transform: rotate(-3deg);
+}
+
+.liste-plateforme__autres {
+  color: var(--encre-douce);
+  font-size: var(--texte-s);
+  line-height: 1.9;
+}
+
+.liste-plateforme__aussi {
+  font-weight: 700;
+}
+
+.liste-plateforme__autre {
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.liste-plateforme__autre:hover {
+  color: var(--primaire);
+  text-decoration: underline;
+}
+
+.liste-plateforme__note {
+  padding-top: var(--esp-3);
+  border-top: var(--trait);
+  color: var(--encre-douce);
+  font-family: var(--police-mono);
+  font-size: var(--texte-xs);
+}
+
+@media (max-width: 56rem) {
+  /* Au doigt : chaque module devient une cible de 44 px. */
+  .liste-plateforme__autre {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+  }
+
+  .liste-plateforme__familles {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--esp-5);
+  }
+}

@@ -1,7 +1,6 @@
 import { Printer, Smartphone, WifiOff } from 'lucide-react'
 import Button from '../../../../components/ui/Button/Button.jsx'
 import AppelFinal from '../AppelFinal/AppelFinal.jsx'
-import EnteteOffre from '../EnteteOffre/EnteteOffre.jsx'
 import EtatAvancement from '../EtatAvancement/EtatAvancement.jsx'
 import PiedDePage from '../PiedDePage/PiedDePage.jsx'
 import PrixOffre from '../PrixOffre/PrixOffre.jsx'
@@ -62,8 +61,6 @@ const TERRAIN = [
 export default function OffrePoste({ offre }) {
   return (
     <>
-      <EnteteOffre />
-
       <main className="offre-poste">
         <section className="offre-poste__entree" aria-labelledby="titre-page">
           <div className="offre-poste__accroche">

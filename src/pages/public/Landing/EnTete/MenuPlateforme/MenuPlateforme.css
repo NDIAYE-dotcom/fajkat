@@ -1,0 +1,62 @@
+.menu-plateforme {
+  position: static;
+}
+
+.menu-plateforme__bouton {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--esp-1);
+  min-height: 44px;
+  padding: 0 var(--esp-2);
+  border: 0;
+  border-radius: var(--rayon-champ);
+  background: transparent;
+  font-size: var(--texte-s);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.menu-plateforme__bouton:hover,
+.menu-plateforme__bouton[aria-expanded='true'] {
+  color: var(--primaire);
+}
+
+.menu-plateforme__chevron {
+  transition: transform var(--duree) var(--courbe);
+}
+
+.menu-plateforme__bouton[aria-expanded='true'] .menu-plateforme__chevron {
+  transform: rotate(180deg);
+}
+
+/* Le panneau s'aligne sur toute la largeur de l'en-tête, juste dessous.
+   Marge rouge à gauche, comme la page d'un registre. */
+.menu-plateforme__panneau {
+  position: absolute;
+  top: 100%;
+  right: var(--gouttiere);
+  left: var(--gouttiere);
+  max-width: var(--largeur-max);
+  max-height: calc(100svh - var(--hauteur-entete) - var(--esp-5));
+  margin-inline: auto;
+  padding: var(--esp-5) var(--esp-6) var(--esp-5) calc(var(--esp-6) + var(--esp-3));
+  overflow-y: auto;
+  border: var(--trait);
+  border-radius: 0 0 var(--rayon-panneau) var(--rayon-panneau);
+  background:
+    linear-gradient(var(--accent), var(--accent)) var(--esp-5) 0 / 2px 100% no-repeat,
+    var(--fond);
+  box-shadow: var(--ombre-modale);
+  animation: menu-plateforme-ouvre 170ms var(--courbe) both;
+}
+
+.menu-plateforme__panneau[hidden] {
+  display: none;
+}
+
+@keyframes menu-plateforme-ouvre {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+}

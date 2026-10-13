@@ -12,7 +12,7 @@
   gap: var(--esp-5);
   padding-block: var(--esp-6);
   border-top: 2px solid var(--encre);
-  border-bottom: 3px double var(--ligne-forte);
+  border-bottom: 3px double var(--doux);
 }
 
 .appel-final__texte {

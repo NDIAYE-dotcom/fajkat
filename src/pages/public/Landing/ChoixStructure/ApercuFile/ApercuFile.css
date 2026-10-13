@@ -1,0 +1,134 @@
+/* Écran d'accueil miniature. Uniquement des <span> (on est dans un bouton). */
+.apercu-file {
+  --hauteur-ticket: 2rem;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-3);
+  height: 100%;
+  padding: var(--esp-3);
+  overflow: hidden;
+  border: var(--trait);
+  border-radius: var(--rayon-panneau);
+  background: var(--fond);
+  font-size: var(--texte-s);
+  text-align: left;
+}
+
+.apercu-file__barre {
+  display: flex;
+  justify-content: space-between;
+  padding-bottom: var(--esp-2);
+  border-bottom: var(--trait);
+  color: var(--encre-douce);
+  font-size: var(--texte-xs);
+  font-weight: 700;
+}
+
+.apercu-file__heure {
+  font-family: var(--police-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Le ticket appelé, en grand */
+.apercu-file__appel {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--esp-3);
+  padding: var(--esp-2) var(--esp-3);
+  border-radius: var(--rayon-champ);
+  background: var(--primaire);
+  color: var(--fond);
+}
+
+.apercu-file__appel-libelle {
+  font-size: var(--texte-xs);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.apercu-file__appel-ticket {
+  display: grid;
+  justify-items: end;
+  line-height: 1.2;
+  animation: apercu-file-appel 260ms var(--courbe) both;
+}
+
+.apercu-file__appel-numero {
+  font-family: var(--police-mono);
+  font-size: 1.5rem;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+}
+
+.apercu-file__appel-salle {
+  font-size: var(--texte-xs);
+  opacity: 0.85;
+}
+
+@keyframes apercu-file-appel {
+  from {
+    opacity: 0;
+    transform: translateY(40%);
+  }
+}
+
+/* Les tickets en attente : chacun placé selon sa position, l'avance est une translation. */
+.apercu-file__liste {
+  position: relative;
+  display: block;
+  flex-shrink: 0;
+  height: calc(var(--hauteur-ticket) * 3);
+}
+
+.apercu-file__ticket {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--esp-3);
+  height: var(--hauteur-ticket);
+  padding-inline: var(--esp-2);
+  border-bottom: 1px dashed var(--doux);
+  transform: translateY(calc(var(--position) * var(--hauteur-ticket)));
+  transition:
+    transform 420ms var(--courbe),
+    opacity 320ms var(--courbe);
+}
+
+.apercu-file__ticket[data-masque] {
+  opacity: 0;
+}
+
+.apercu-file__numero {
+  font-family: var(--police-mono);
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+}
+
+.apercu-file__motif {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  color: var(--encre-douce);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.apercu-file__priorite {
+  flex-shrink: 0;
+  padding: 0 var(--esp-1);
+  border: 1.5px solid var(--primaire);
+  border-radius: 3px;
+  color: var(--primaire);
+  font-family: var(--police-mono);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  transform: rotate(-2deg);
+}
