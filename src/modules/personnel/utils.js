@@ -1,5 +1,6 @@
 // Module Personnel : liens d'invitation, message WhatsApp, statuts, matrice des permissions.
 
+import dayjs from 'dayjs'
 import { formatDate } from '../../lib/format.js'
 import { ENTREES, featureIncluse, ROLES, TOUS_LES_ROLES } from '../../router/navigation.js'
 import { libelleRole as libelleRoleEquipe, rolesPour } from '../admin/utils.js'
@@ -124,4 +125,71 @@ export const POIDS_MAX_PIECE = 10 * 1024 * 1024
 export function formatPoids(octets) {
   if (octets < 1024 * 1024) return `${Math.max(1, Math.round(octets / 1024))} Ko`
   return `${(octets / (1024 * 1024)).toLocaleString('fr-FR', { maximumFractionDigits: 1 })} Mo`
+}
+
+// --- Planning des gardes -------------------------------------------------------
+
+// Jour du calendrier 'AAAA-MM-JJ' : manipulé sans fuseau (une date de garde n'a pas d'heure).
+const JOUR = 'YYYY-MM-DD'
+
+// Aujourd'hui dans le fuseau de la structure.
+export function aujourdhui() {
+  return dayjs.tz().format(JOUR)
+}
+
+// Lundi de la semaine qui contient ce jour.
+export function lundiDe(jour) {
+  const d = dayjs(jour)
+  return d.subtract((d.day() + 6) % 7, 'day').format(JOUR)
+}
+
+export function decalerJours(jour, nombre) {
+  return dayjs(jour).add(nombre, 'day').format(JOUR)
+}
+
+export function joursDeLaSemaine(lundi) {
+  return Array.from({ length: 7 }, (_, i) => decalerJours(lundi, i))
+}
+
+// « lundi 3 novembre » ; court : « lun. 3/11 ».
+export function libelleJour(jour, { court = false } = {}) {
+  return dayjs(jour).format(court ? 'ddd D/MM' : 'dddd D MMMM')
+}
+
+export function formatJour(jour) {
+  return dayjs(jour).format('DD/MM/YYYY')
+}
+
+// '08:00:00' -> '08:00'
+export function heureCourte(heure) {
+  return heure ? heure.slice(0, 5) : ''
+}
+
+// « 08:00 – 20:00 » ; fin avant ou égale au début : le créneau finit le lendemain.
+export function horairesCreneau(creneau) {
+  const debut = heureCourte(creneau.start_time)
+  const fin = heureCourte(creneau.end_time)
+  if (debut === fin) return `${debut} – ${fin} le lendemain (24 h)`
+  if (fin < debut) return `${debut} – ${fin} le lendemain`
+  return `${debut} – ${fin}`
+}
+
+// Affectations rangées par case : « AAAA-MM-JJ|creneauId » -> [{ id, membre }].
+export function indexerAffectations(affectations, membres) {
+  const parId = new Map((membres ?? []).map((m) => [m.id, m]))
+  const cases = new Map()
+  for (const a of affectations ?? []) {
+    const cle = `${a.shift_date}|${a.shift_type_id}`
+    const liste = cases.get(cle) ?? []
+    liste.push({ id: a.id, membre: parId.get(a.membership_id) ?? null, membreId: a.membership_id })
+    cases.set(cle, liste)
+  }
+  for (const liste of cases.values()) {
+    liste.sort((a, b) => nomMembre(a.membre).localeCompare(nomMembre(b.membre), 'fr'))
+  }
+  return cases
+}
+
+export function nomMembre(membre) {
+  return membre?.profil?.full_name || 'Membre sans nom'
 }

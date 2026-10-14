@@ -20,6 +20,8 @@ export const cles = {
   fiche: (orgId, membreId) => ['personnel', 'fiche', orgId, membreId],
   maFiche: (orgId, userId) => ['personnel', 'ma-fiche', orgId, userId],
   pieces: (ficheId) => ['personnel', 'pieces', ficheId],
+  creneaux: (orgId) => ['personnel', 'creneaux', orgId],
+  affectations: (orgId, du, au) => ['personnel', 'affectations', orgId, du, au],
   invitationPublique: (jeton) => ['invitation', jeton],
 }
 
@@ -194,6 +196,74 @@ export async function retirerPiece(pieceId) {
     .select('id')
   if (error) throw traduireErreur(error, 'La pièce jointe n’a pas pu être retirée.')
   if (!data?.length) throw new Error('Vous n’avez pas les droits nécessaires pour la retirer.')
+}
+
+// --- Planning des gardes ---------------------------------------------------------
+
+// Créneaux de la structure (Jour, Nuit, Garde par défaut), actifs ou non.
+export async function chargerCreneaux(orgId) {
+  const { data, error } = await client()
+    .from('shift_types')
+    .select('id, label, start_time, end_time, sort_order, is_active')
+    .eq('org_id', orgId)
+    .is('deleted_at', null)
+    .order('sort_order')
+  if (error) throw traduireErreur(error, 'Impossible de charger les créneaux du planning.')
+  return data ?? []
+}
+
+// creneau : { id?, label, start_time, end_time, is_active, sort_order? }.
+export async function enregistrerCreneau(orgId, creneau) {
+  const champs = {
+    label: creneau.label.trim(),
+    start_time: creneau.start_time,
+    end_time: creneau.end_time,
+    is_active: creneau.is_active,
+  }
+  const requete = creneau.id
+    ? client().from('shift_types').update(champs).eq('id', creneau.id)
+    : client()
+        .from('shift_types')
+        .insert({ ...champs, org_id: orgId, sort_order: creneau.sort_order ?? 0 })
+  const { data, error } = await requete.select('id')
+  if (error?.code === '23505') throw new Error('Un autre créneau porte déjà ce nom.')
+  if (error) throw traduireErreur(error, 'Le créneau n’a pas pu être enregistré. Réessayez.')
+  if (!data?.length) throw new Error('Vous n’avez pas les droits nécessaires pour ce créneau.')
+}
+
+// du, au : 'AAAA-MM-JJ' inclus.
+export async function chargerAffectations(orgId, du, au) {
+  const { data, error } = await client()
+    .from('shift_assignments')
+    .select('id, shift_type_id, membership_id, shift_date')
+    .eq('org_id', orgId)
+    .is('deleted_at', null)
+    .gte('shift_date', du)
+    .lte('shift_date', au)
+  if (error) throw traduireErreur(error, 'Impossible de charger le planning.')
+  return data ?? []
+}
+
+export async function affecter(orgId, { creneauId, membreId, date }) {
+  const { error } = await client().from('shift_assignments').insert({
+    org_id: orgId,
+    shift_type_id: creneauId,
+    membership_id: membreId,
+    shift_date: date,
+  })
+  if (error?.code === '23505') throw new Error('Ce membre est déjà affecté à ce créneau.')
+  if (error) throw traduireErreur(error, 'L’affectation n’a pas pu être enregistrée. Réessayez.')
+}
+
+// Retrait doux : l'historique du planning reste dans le journal.
+export async function retirerAffectation(affectationId) {
+  const { data, error } = await client()
+    .from('shift_assignments')
+    .update({ deleted_at: new Date().toISOString() })
+    .eq('id', affectationId)
+    .select('id')
+  if (error) throw traduireErreur(error, 'Le retrait n’a pas pu être enregistré. Réessayez.')
+  if (!data?.length) throw new Error('Vous n’avez pas les droits nécessaires pour ce retrait.')
 }
 
 // --- Invitations -------------------------------------------------------------

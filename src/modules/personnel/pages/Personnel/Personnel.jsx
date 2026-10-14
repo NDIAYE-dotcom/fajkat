@@ -27,11 +27,12 @@ import MatricePermissions from '../../components/MatricePermissions/MatricePermi
 import ModaleInviter from '../../components/ModaleInviter/ModaleInviter.jsx'
 import ModaleMembre from '../../components/ModaleMembre/ModaleMembre.jsx'
 import OngletInvitations from '../../components/OngletInvitations/OngletInvitations.jsx'
+import PlanningSemaine from '../../components/PlanningSemaine/PlanningSemaine.jsx'
 import { statutInvitation } from '../../utils.js'
 import './Personnel.css'
 
 const ENTREE = entreeDepuisChemin('/app/personnel')
-const ONGLETS = ['membres', 'invitations', 'permissions']
+const ONGLETS = ['membres', 'planning', 'invitations', 'permissions']
 
 export default function Personnel() {
   return (
@@ -131,6 +132,11 @@ function PagePersonnel() {
                 onFiche={setFicheOuverte}
               />
             ),
+          },
+          {
+            id: 'planning',
+            libelle: 'Planning',
+            contenu: <PlanningSemaine structure={structure} modifiable moi={utilisateur?.id} />,
           },
           {
             id: 'invitations',

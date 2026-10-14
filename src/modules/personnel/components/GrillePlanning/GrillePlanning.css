@@ -1,0 +1,137 @@
+/* Grand écran : tableau façon registre. */
+.grille-planning__defilement {
+  display: none;
+  overflow-x: auto;
+  border-left: 3px solid var(--accent);
+}
+
+.grille-planning__table {
+  width: 100%;
+  min-width: 52rem;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+.grille-planning__table th,
+.grille-planning__table td {
+  padding: var(--esp-2) var(--esp-3);
+  border-bottom: 1px solid var(--doux);
+  text-align: left;
+  vertical-align: top;
+}
+
+.grille-planning__table thead th {
+  font-size: var(--texte-s);
+  color: var(--encre-douce);
+  text-transform: capitalize;
+}
+
+.grille-planning__coin {
+  width: 9rem;
+}
+
+.grille-planning__jour--aujourdhui {
+  background: var(--surface);
+}
+
+.grille-planning__table thead .grille-planning__jour--aujourdhui {
+  color: var(--primaire);
+  font-weight: 700;
+}
+
+.grille-planning__creneau {
+  display: flex;
+  flex-direction: column;
+  font-weight: 700;
+  color: var(--encre);
+}
+
+.grille-planning__horaires {
+  font-family: var(--police-mono);
+  font-size: var(--texte-xs);
+  font-weight: 400;
+  color: var(--encre-douce);
+}
+
+.grille-planning__noms {
+  margin: 0 0 var(--esp-1);
+  padding: 0;
+  list-style: none;
+}
+
+.grille-planning__noms li {
+  padding: 2px 0;
+}
+
+.grille-planning__nom--moi {
+  font-weight: 700;
+  color: var(--primaire);
+}
+
+.grille-planning__vide {
+  display: block;
+  font-size: var(--texte-s);
+  color: var(--encre-douce);
+}
+
+/* Téléphone : liste jour par jour. */
+.grille-planning__liste {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-4);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.grille-planning__journee {
+  padding-left: var(--esp-3);
+  border-left: 3px solid var(--doux);
+}
+
+.grille-planning__journee--aujourdhui {
+  border-left-color: var(--accent);
+}
+
+.grille-planning__titre-jour {
+  font-size: var(--texte-l);
+  color: var(--primaire);
+  text-transform: capitalize;
+}
+
+.grille-planning__aujourdhui {
+  font-size: var(--texte-s);
+  font-weight: 400;
+  color: var(--encre-douce);
+  text-transform: none;
+}
+
+.grille-planning__creneaux {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.grille-planning__ligne {
+  display: grid;
+  grid-template-columns: minmax(6.5rem, auto) 1fr;
+  gap: var(--esp-2) var(--esp-3);
+  align-items: start;
+  padding: var(--esp-3) 0;
+  border-bottom: 1px solid var(--doux);
+}
+
+.grille-planning__ligne > :last-child:not(:nth-child(2)) {
+  grid-column: 1 / -1;
+  justify-self: start;
+}
+
+@media (min-width: 640px) {
+  .grille-planning__defilement {
+    display: block;
+  }
+
+  .grille-planning__liste {
+    display: none;
+  }
+}

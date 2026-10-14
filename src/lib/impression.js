@@ -1,15 +1,17 @@
 // Impression d'un seul élément de l'écran (un reçu, une ordonnance) sans le reste de l'interface.
 // Les règles de mise en page sont dans src/styles/print.css.
 
-const FORMATS = ['a4', 'a5', 'ticket']
+const FORMATS = ['a4', 'a4-paysage', 'a5', 'ticket']
 
 // Marge de sécurité ajoutée à la hauteur mesurée du ticket (coupe du papier comprise).
 const MARGE_TICKET_MM = 12
 const MM_PAR_PIXEL = 25.4 / 96
 
-// Le format se déduit de la classe de l'élément : .ticket-80, .impression-a5, sinon A4.
+// Le format se déduit de la classe de l'élément : .ticket-80, .impression-a5,
+// .impression-a4-paysage, sinon A4.
 function formatDe(element) {
   if (element.classList.contains('ticket-80')) return 'ticket'
+  if (element.classList.contains('impression-a4-paysage')) return 'a4-paysage'
   if (element.classList.contains('impression-a5')) return 'a5'
   return 'a4'
 }

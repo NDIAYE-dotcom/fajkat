@@ -1,0 +1,28 @@
+.planning-semaine {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-4);
+}
+
+.planning-semaine__entete {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-3);
+}
+
+.planning-semaine__titre {
+  font-size: var(--titre-3);
+  color: var(--primaire);
+}
+
+.planning-semaine__date {
+  font-family: var(--police-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+.planning-semaine__navigation,
+.planning-semaine__outils {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--esp-2);
+}

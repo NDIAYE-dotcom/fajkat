@@ -5,6 +5,7 @@
    Usage :
    - document A4 (par défaut) : <article class="impression-a4">…</article>
    - document A5             : <article class="impression-a5">…</article>
+   - A4 paysage (planning)   : <article class="impression-a4-paysage">…</article>
    - ticket 80 mm            : <div class="ticket-80">…</div>
    - imprimer un seul élément de l'écran : imprimer(element) dans src/lib/impression.js
    - masquer à l'impression : .impression-masquee ; visible seulement imprimé : .impression-seule */
@@ -91,6 +92,12 @@
   @page a5 {
     size: A5 portrait;
     margin: 10mm 9mm 11mm;
+  }
+
+  /* Planning des gardes, affiché au mur. */
+  @page a4-paysage {
+    size: A4 landscape;
+    margin: 10mm 10mm 12mm;
   }
 
   /* Ticket : rouleau de 80 mm, sans marges. La hauteur réelle du ticket est fixée au moment
@@ -223,12 +230,17 @@
 
   /* Documents */
   .impression-a4,
+  .impression-a4-paysage,
   .impression-a5 {
     width: auto;
     max-width: none;
     margin: 0;
     padding: 0;
     border: 0;
+  }
+
+  .impression-a4-paysage {
+    page: a4-paysage;
   }
 
   .impression-a5 {

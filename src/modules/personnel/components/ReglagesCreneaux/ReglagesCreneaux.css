@@ -1,0 +1,41 @@
+.reglages-creneaux {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-4);
+}
+
+.reglages-creneaux__ligne {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-3);
+  margin: 0;
+  padding: 0 0 var(--esp-4);
+  border: 0;
+  border-bottom: 1px solid var(--doux);
+}
+
+.reglages-creneaux__legende {
+  margin-bottom: var(--esp-2);
+  padding: 0;
+  font-weight: 700;
+  color: var(--primaire);
+}
+
+.reglages-creneaux__horaires {
+  font-family: var(--police-mono);
+  font-size: var(--texte-s);
+  font-weight: 400;
+  color: var(--encre-douce);
+}
+
+.reglages-creneaux__champs {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--esp-3);
+}
+
+@media (min-width: 480px) {
+  .reglages-creneaux__champs {
+    grid-template-columns: 2fr 1fr 1fr;
+  }
+}

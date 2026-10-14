@@ -1,0 +1,35 @@
+@media print {
+  .planning-impression__entete {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: 4mm;
+  }
+
+  .planning-impression__table {
+    table-layout: fixed;
+    font-size: 9.5pt;
+  }
+
+  .planning-impression__table th:first-child {
+    width: 30mm;
+  }
+
+  .planning-impression__table td {
+    border-left: var(--impression-filet);
+  }
+
+  .planning-impression__jour {
+    text-transform: capitalize;
+  }
+
+  .planning-impression__horaires {
+    font-size: 8pt;
+    font-weight: 400;
+  }
+
+  .planning-impression__pied {
+    margin-top: 4mm;
+    font-size: 8pt;
+  }
+}

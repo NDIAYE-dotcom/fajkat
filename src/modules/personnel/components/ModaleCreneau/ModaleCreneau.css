@@ -1,0 +1,41 @@
+.modale-creneau {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-5);
+}
+
+.modale-creneau__titre {
+  margin-bottom: var(--esp-2);
+  font-size: var(--texte-l);
+  color: var(--primaire);
+}
+
+.modale-creneau__vide,
+.modale-creneau__role {
+  font-size: var(--texte-s);
+  color: var(--encre-douce);
+}
+
+.modale-creneau__liste {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.modale-creneau__ligne {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--esp-2);
+  padding: var(--esp-2) 0;
+  border-bottom: 1px solid var(--doux);
+}
+
+.modale-creneau__ajout {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-3);
+  padding-top: var(--esp-4);
+  border-top: 1px solid var(--doux);
+}
