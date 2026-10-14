@@ -2,6 +2,7 @@ import { X } from 'lucide-react'
 import { useId } from 'react'
 import { useDialogue } from '../../../hooks/useDialogue.js'
 import Button from '../Button/Button.jsx'
+import Icone from '../Icone/Icone.jsx'
 import './Drawer.css'
 
 // Tiroir latéral : détail d'un patient depuis une liste, filtres, panier de la caisse.
@@ -34,7 +35,7 @@ export default function Drawer({
           <Button
             variante="secondaire"
             className="drawer__fermer"
-            iconeDebut={<X />}
+            iconeDebut={<Icone icone={X} />}
             onClick={onFermer}
           >
             Fermer

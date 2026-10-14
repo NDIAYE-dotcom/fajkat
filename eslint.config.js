@@ -28,6 +28,22 @@ export default defineConfig([
       'no-unused-vars': ['error', { varsIgnorePattern: '^[A-Z_]' }],
     },
   },
+  // Application connectée : les icônes passent par <Icone> (taille 20, trait 1,5, accessibilité).
+  // La page publique (src/pages/public) garde ses propres réglages.
+  {
+    files: ['src/components/ui/**/*.jsx', 'src/modules/**/*.jsx', 'src/pages/Atelier/**/*.jsx'],
+    ignores: ['src/components/ui/Icone/Icone.jsx'],
+    rules: {
+      'no-restricted-syntax': [
+        'error',
+        {
+          selector: 'JSXAttribute[name.name=/^(size|strokeWidth|absoluteStrokeWidth)$/]',
+          message:
+            'Icônes : utilisez <Icone icone={…} taille={…} epaisseur={…} /> (src/components/ui/Icone).',
+        },
+      ],
+    },
+  },
   {
     files: ['*.config.js'],
     languageOptions: { globals: globals.node },

@@ -1,5 +1,6 @@
 import { ChevronDown } from 'lucide-react'
 import { useChamp } from '../Field/useChamp.js'
+import Icone from '../Icone/Icone.jsx'
 import '../Input/Input.css'
 import './Select.css'
 
@@ -32,7 +33,7 @@ export default function Select({ options, placeholder, className = '', ref, chil
         ))}
         {children}
       </select>
-      <ChevronDown className="select__chevron" aria-hidden="true" />
+      <Icone icone={ChevronDown} className="select__chevron" />
     </div>
   )
 }

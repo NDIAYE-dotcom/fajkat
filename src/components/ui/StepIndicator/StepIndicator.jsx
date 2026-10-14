@@ -1,4 +1,5 @@
 import { Check } from 'lucide-react'
+import Icone from '../Icone/Icone.jsx'
 import './StepIndicator.css'
 
 // Progression d'un formulaire en plusieurs étapes (inscription, nouveau patient…).
@@ -25,7 +26,7 @@ export default function StepIndicator({
               aria-current={etat === 'courant' ? 'step' : undefined}
             >
               <span className="step-indicator__marque" aria-hidden="true">
-                {etat === 'fait' ? <Check size={16} strokeWidth={2.5} /> : index + 1}
+                {etat === 'fait' ? <Icone icone={Check} taille={16} epaisseur={2.5} /> : index + 1}
               </span>
               <span className="step-indicator__libelle">
                 {etape}

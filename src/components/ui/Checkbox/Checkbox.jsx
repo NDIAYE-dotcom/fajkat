@@ -1,5 +1,6 @@
 import { Check } from 'lucide-react'
 import { useChamp } from '../Field/useChamp.js'
+import Icone from '../Icone/Icone.jsx'
 import './Checkbox.css'
 
 // Case à cocher : la case native reste dans le DOM (clavier, lecteurs d'écran, formulaires),
@@ -19,7 +20,7 @@ export default function Checkbox({ label, description, className = '', ref, ...p
     <label className={classes}>
       <input ref={ref} type="checkbox" className="checkbox__champ" {...attributs} />
       <span className="checkbox__case" aria-hidden="true">
-        <Check className="checkbox__coche" size={16} strokeWidth={3} />
+        <Icone icone={Check} className="checkbox__coche" taille={16} epaisseur={3} />
       </span>
       <span className="checkbox__texte">
         <span className="checkbox__libelle">{label}</span>

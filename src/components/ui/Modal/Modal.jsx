@@ -2,6 +2,7 @@ import { X } from 'lucide-react'
 import { useId } from 'react'
 import { useDialogue } from '../../../hooks/useDialogue.js'
 import Button from '../Button/Button.jsx'
+import Icone from '../Icone/Icone.jsx'
 import './Modal.css'
 
 // Fenêtre modale : confirmation, saisie courte. Focus piégé, Échap pour fermer,
@@ -46,7 +47,7 @@ export default function Modal({
           <Button
             variante="secondaire"
             className="modal__fermer"
-            iconeDebut={<X />}
+            iconeDebut={<Icone icone={X} />}
             onClick={onFermer}
           >
             Fermer

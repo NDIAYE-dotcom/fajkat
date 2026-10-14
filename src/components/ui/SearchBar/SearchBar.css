@@ -14,25 +14,3 @@
 .search-bar__loupe {
   color: var(--encre-douce);
 }
-
-.search-bar__effacer {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 44px;
-  height: 44px;
-  padding: 0;
-  border: 0;
-  border-radius: var(--rayon-champ);
-  background: transparent;
-  color: var(--encre-douce);
-  cursor: pointer;
-  transition:
-    background-color var(--duree) var(--courbe),
-    color var(--duree) var(--courbe);
-}
-
-.search-bar__effacer:hover {
-  background: var(--surface);
-  color: var(--encre);
-}

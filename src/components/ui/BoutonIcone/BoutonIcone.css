@@ -1,0 +1,28 @@
+.bouton-icone {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--rayon-champ);
+  background: transparent;
+  color: var(--encre-douce);
+  cursor: pointer;
+  transition:
+    background-color var(--duree) var(--courbe),
+    color var(--duree) var(--courbe);
+}
+
+.bouton-icone:hover {
+  background: var(--surface);
+  color: var(--encre);
+}
+
+.bouton-icone:disabled {
+  color: var(--encre-douce);
+  background: var(--surface);
+  cursor: not-allowed;
+}

@@ -1,6 +1,7 @@
 import { CircleAlert } from 'lucide-react'
 import { useId } from 'react'
 import { ChampContexte } from './useChamp.js'
+import Icone from '../Icone/Icone.jsx'
 import './Field.css'
 
 // Enveloppe d'un champ : libellé, aide, message d'erreur, reliés au champ par le contexte.
@@ -62,7 +63,7 @@ export default function Field({
 
       {erreur && (
         <p id={idErreur} className="field__erreur">
-          <CircleAlert className="field__erreur-icone" size={18} aria-hidden="true" />
+          <Icone icone={CircleAlert} className="field__erreur-icone" />
           <span>{erreur}</span>
         </p>
       )}

@@ -10,6 +10,7 @@ import {
   paysParCode,
 } from '../../../lib/pays.js'
 import Input from '../Input/Input.jsx'
+import Icone from '../Icone/Icone.jsx'
 import './PhoneInput.css'
 
 // Numéro collé ou tapé avec son indicatif (« +221 77… », « 00221 77… ») : on reconnaît le pays
@@ -79,7 +80,7 @@ export default function PhoneInput({
         <span className="phone-input__pays">
           <span className="phone-input__indicatif" aria-hidden="true">
             +{pays.indicatif}
-            <ChevronDown size={16} />
+            <Icone icone={ChevronDown} taille={16} />
           </span>
           <select
             className="phone-input__liste"

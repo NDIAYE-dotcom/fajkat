@@ -72,6 +72,10 @@
   font-weight: 700;
 }
 
+.toast .toast__fermer {
+  margin-top: calc(var(--esp-2) * -1);
+}
+
 .toast__message {
   font-size: var(--texte-s);
   color: var(--encre-douce);
@@ -88,27 +92,6 @@
   text-decoration: underline;
   text-underline-offset: 0.25em;
   cursor: pointer;
-}
-
-.toast__fermer {
-  display: inline-flex;
-  flex-shrink: 0;
-  align-items: center;
-  justify-content: center;
-  width: 44px;
-  height: 44px;
-  margin-top: calc(var(--esp-2) * -1);
-  padding: 0;
-  border: 0;
-  border-radius: var(--rayon-champ);
-  background: transparent;
-  color: var(--encre-douce);
-  cursor: pointer;
-}
-
-.toast__fermer:hover {
-  background: var(--surface);
-  color: var(--encre);
 }
 
 @keyframes toast-entree {

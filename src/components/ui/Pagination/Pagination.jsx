@@ -1,4 +1,5 @@
 import { ChevronLeft, ChevronRight } from 'lucide-react'
+import Icone from '../Icone/Icone.jsx'
 import './Pagination.css'
 
 // Pages affichées : la première, la dernière, et deux voisines de la page courante.
@@ -39,7 +40,7 @@ export default function Pagination({
           disabled={page <= 1}
           onClick={() => onChange(page - 1)}
         >
-          <ChevronLeft aria-hidden="true" />
+          <Icone icone={ChevronLeft} />
           Précédent
         </button>
 
@@ -76,7 +77,7 @@ export default function Pagination({
           onClick={() => onChange(page + 1)}
         >
           Suivant
-          <ChevronRight aria-hidden="true" />
+          <Icone icone={ChevronRight} />
         </button>
       </div>
     </nav>

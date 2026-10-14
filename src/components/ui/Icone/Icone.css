@@ -1,0 +1,6 @@
+/* L'icône prend la couleur du texte qu'elle accompagne (currentColor) et ne se tasse jamais. */
+.icone {
+  display: inline-block;
+  flex-shrink: 0;
+  vertical-align: -0.2em;
+}

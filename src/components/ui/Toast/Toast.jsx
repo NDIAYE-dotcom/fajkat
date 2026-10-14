@@ -1,13 +1,19 @@
 import { CircleAlert, CircleCheck, Info, TriangleAlert, X } from 'lucide-react'
 import { useEffect, useRef } from 'react'
+import BoutonIcone from '../BoutonIcone/BoutonIcone.jsx'
+import Icone from '../Icone/Icone.jsx'
 import './Toast.css'
 
-const ICONES = { info: Info, succes: CircleCheck, attention: TriangleAlert, erreur: CircleAlert }
+const ICONES_TON = {
+  info: Info,
+  succes: CircleCheck,
+  attention: TriangleAlert,
+  erreur: CircleAlert,
+}
 const PREFIXES = { info: 'Information', succes: 'Réussi', attention: 'Attention', erreur: 'Erreur' }
 
 // Une notification. Le minuteur s'arrête quand on la survole ou qu'on y place le focus.
 export default function Toast({ ton = 'info', titre, message, action, duree, onFermer }) {
-  const Icone = ICONES[ton]
   const minuteur = useRef(null)
 
   function demarrer() {
@@ -32,7 +38,7 @@ export default function Toast({ ton = 'info', titre, message, action, duree, onF
       onFocus={suspendre}
       onBlur={demarrer}
     >
-      <Icone className="toast__icone" aria-hidden="true" />
+      <Icone icone={ICONES_TON[ton]} className="toast__icone" />
       <div className="toast__texte">
         <p className="toast__titre">
           <span className="sr-only">{PREFIXES[ton]} : </span>
@@ -52,14 +58,12 @@ export default function Toast({ ton = 'info', titre, message, action, duree, onF
           </button>
         )}
       </div>
-      <button
-        type="button"
+      <BoutonIcone
+        icone={X}
+        label="Fermer la notification"
         className="toast__fermer"
-        aria-label="Fermer la notification"
         onClick={onFermer}
-      >
-        <X aria-hidden="true" />
-      </button>
+      />
     </li>
   )
 }

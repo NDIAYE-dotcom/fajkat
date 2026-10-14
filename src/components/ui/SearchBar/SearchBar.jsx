@@ -2,6 +2,8 @@ import { Search, X } from 'lucide-react'
 import { useId, useRef } from 'react'
 import Input from '../Input/Input.jsx'
 import Spinner from '../Spinner/Spinner.jsx'
+import BoutonIcone from '../BoutonIcone/BoutonIcone.jsx'
+import Icone from '../Icone/Icone.jsx'
 import './SearchBar.css'
 
 // Barre de recherche : libellé lu par les lecteurs d'écran, bouton d'effacement,
@@ -32,12 +34,7 @@ export default function SearchBar({
   let suffixe = null
   if (chargement) suffixe = <Spinner libelle="Recherche en cours" taille={18} />
   else if (valeur && !disabled) {
-    suffixe = (
-      <button type="button" className="search-bar__effacer" onClick={effacer}>
-        <X aria-hidden="true" />
-        <span className="sr-only">Effacer la recherche</span>
-      </button>
-    )
+    suffixe = <BoutonIcone icone={X} label="Effacer la recherche" onClick={effacer} />
   }
 
   return (
@@ -56,7 +53,7 @@ export default function SearchBar({
         value={valeur}
         disabled={disabled}
         onChange={(evenement) => onChange?.(evenement.target.value)}
-        prefixe={<Search className="search-bar__loupe" aria-hidden="true" />}
+        prefixe={<Icone icone={Search} className="search-bar__loupe" />}
         suffixe={suffixe}
       />
     </form>
