@@ -93,9 +93,11 @@
     margin: 10mm 9mm 11mm;
   }
 
-  /* Ticket : la largeur du papier (rouleau 80 mm) est fixée par le pilote de l'imprimante
-     thermique ; on supprime seulement les marges pour ne pas perdre de papier. */
+  /* Ticket : rouleau de 80 mm, sans marges. La hauteur réelle du ticket est fixée au moment
+     de l'impression par imprimer() (src/lib/impression.js) pour ne pas dérouler de papier blanc ;
+     297 mm n'est qu'une valeur de repli. */
   @page ticket {
+    size: 80mm 297mm;
     margin: 0;
   }
 
@@ -105,6 +107,7 @@
   *::after {
     background: transparent !important;
     color: var(--impression-encre) !important;
+    border-color: var(--impression-encre) !important;
     box-shadow: none !important;
     text-shadow: none !important;
     filter: none !important;
@@ -274,22 +277,21 @@
     transform: none;
   }
 
-  /* Impression d'un seul élément (src/lib/impression.js) : tout le reste est masqué. */
-  html[data-impression] body * {
-    visibility: hidden;
+  /* Impression d'un seul élément (src/lib/impression.js) : tout le reste sort du flux.
+     display: none et non visibility: hidden, qui laisserait des pages blanches derrière lui.
+     Les ascendants de l'élément restent affichés, sans marges ni mise en page propre. */
+  html[data-impression] body :not([data-imprime-chemin], [data-imprime], [data-imprime] *) {
+    display: none !important;
   }
 
-  html[data-impression] [data-imprime],
-  html[data-impression] [data-imprime] * {
-    visibility: visible;
-  }
-
-  html[data-impression] [data-imprime] {
-    position: absolute;
-    inset: 0 auto auto 0;
-  }
-
-  html[data-impression='ticket'] [data-imprime] {
-    inset-inline: 0;
+  html[data-impression] [data-imprime-chemin] {
+    display: block !important;
+    position: static !important;
+    width: auto !important;
+    max-width: none !important;
+    min-height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
   }
 }

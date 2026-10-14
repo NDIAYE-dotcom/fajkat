@@ -1,0 +1,79 @@
+.registre-jour {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-4);
+}
+
+.registre-jour__outils {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--esp-2) var(--esp-5);
+}
+
+.registre-jour__outils > :first-child {
+  flex: 1 1 18rem;
+}
+
+.registre-jour__reglages {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 var(--esp-5);
+}
+
+.registre-jour__patient {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--esp-3);
+  text-align: left;
+}
+
+/* Le nom ouvre le détail : bouton présenté comme un lien, 44 px de haut */
+.registre-jour__nom {
+  display: block;
+  min-height: 44px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  font-weight: 700;
+  text-align: left;
+  color: var(--primaire);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.2em;
+  cursor: pointer;
+}
+
+.registre-jour__nom:hover {
+  color: var(--encre);
+  text-decoration-thickness: 2px;
+}
+
+.registre-jour__quartier {
+  display: block;
+  margin-top: -0.6rem;
+  font-size: var(--texte-xs);
+  font-weight: 400;
+  color: var(--encre-douce);
+}
+
+.registre-jour__attente {
+  font-size: var(--texte-s);
+  color: var(--encre-douce);
+}
+
+.registre-jour__fiche {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: var(--esp-2) var(--esp-4);
+}
+
+.registre-jour__fiche dt {
+  font-weight: 700;
+  color: var(--encre-douce);
+}
+
+.registre-jour__chiffres {
+  font-family: var(--police-mono);
+  font-variant-numeric: tabular-nums;
+}

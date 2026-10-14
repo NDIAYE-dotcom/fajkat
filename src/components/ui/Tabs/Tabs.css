@@ -1,3 +1,9 @@
+.tabs {
+  /* Dans un conteneur flex, sans min-width: 0 les onglets élargiraient la page sur téléphone. */
+  min-width: 0;
+  max-width: 100%;
+}
+
 .tabs__liste {
   display: flex;
   gap: var(--esp-1);

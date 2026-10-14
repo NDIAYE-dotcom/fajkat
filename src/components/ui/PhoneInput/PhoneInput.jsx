@@ -25,7 +25,9 @@ function analyserSaisie(chiffres, paysCourant) {
       return { pays, national: sansZeros.slice(pays.indicatif.length) }
     }
   }
-  return { pays: paysCourant, national: chiffres.slice(0, longueurNationale(paysCourant)) }
+  // Numéro déjà complet : un chiffre de plus est refusé plutôt que d'effacer le dernier.
+  if (chiffres.length > longueurNationale(paysCourant)) return null
+  return { pays: paysCourant, national: chiffres }
 }
 
 // Téléphone : indicatif UEMOA + numéro national. Valeur au format E.164 (« +221771234567 »),
@@ -43,15 +45,20 @@ export default function PhoneInput({
   // champ vide : on garde le pays choisi dans la liste.
   const pays = parties?.pays ?? paysParCode(codePays) ?? paysParCode(PAYS_PAR_DEFAUT)
   const national = parties?.national ?? ''
-  const { ref: refChamp, memoriser } = useCurseurChiffres(ref)
+  const { ref: refChamp, memoriser, refuser } = useCurseurChiffres(ref)
 
   function emettre(paysChoisi, chiffres) {
     onChange?.(chiffres ? `+${paysChoisi.indicatif}${chiffres}` : '')
   }
 
   function surSaisie(evenement) {
-    memoriser(evenement)
     const resultat = analyserSaisie(evenement.target.value.replace(/\D/g, ''), pays)
+    // Saisie refusée : le champ garde sa valeur, le curseur reste où il était.
+    if (!resultat) {
+      refuser(evenement)
+      return
+    }
+    memoriser(evenement)
     if (resultat.pays.code !== pays.code) setCodePays(resultat.pays.code)
     emettre(resultat.pays, resultat.national)
   }

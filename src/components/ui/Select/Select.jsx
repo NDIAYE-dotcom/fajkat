@@ -7,7 +7,9 @@ import './Select.css'
 // Liste déroulante native : la plus fiable sur les téléphones Android d'entrée de gamme.
 // options : [{ valeur, libelle, desactive? }] ; ou des <option> en enfants.
 export default function Select({ options, placeholder, className = '', ref, children, ...props }) {
-  const { invalide, ...attributs } = useChamp(props)
+  // data-etat : état figé (survol, focus) pour la page /atelier, porté par l'enveloppe.
+  const { 'data-etat': etat, ...reste } = props
+  const { invalide, ...attributs } = useChamp(reste)
   const classes = [
     'input',
     'select',
@@ -19,7 +21,7 @@ export default function Select({ options, placeholder, className = '', ref, chil
     .join(' ')
 
   return (
-    <div className={classes}>
+    <div className={classes} data-etat={etat}>
       <select ref={ref} className="input__champ select__champ" {...attributs}>
         {placeholder && (
           <option value="" disabled={attributs.required}>

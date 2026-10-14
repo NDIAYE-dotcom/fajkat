@@ -6,7 +6,9 @@ import './Checkbox.css'
 // Case à cocher : la case native reste dans le DOM (clavier, lecteurs d'écran, formulaires),
 // seule son apparence est redessinée. Toute la ligne est cliquable (44 px de haut minimum).
 export default function Checkbox({ label, description, className = '', ref, ...props }) {
-  const { invalide, ...attributs } = useChamp(props)
+  // data-etat : état figé (survol, focus) pour la page /atelier, porté par l'enveloppe.
+  const { 'data-etat': etat, ...reste } = props
+  const { invalide, ...attributs } = useChamp(reste)
   const classes = [
     'checkbox',
     invalide && 'checkbox--erreur',
@@ -17,7 +19,7 @@ export default function Checkbox({ label, description, className = '', ref, ...p
     .join(' ')
 
   return (
-    <label className={classes}>
+    <label className={classes} data-etat={etat}>
       <input ref={ref} type="checkbox" className="checkbox__champ" {...attributs} />
       <span className="checkbox__case" aria-hidden="true">
         <Icone icone={Check} className="checkbox__coche" taille={16} epaisseur={3} />

@@ -1,0 +1,72 @@
+.atelier {
+  width: 100%;
+  max-width: var(--largeur-max);
+  margin: 0 auto;
+  padding: var(--esp-5) var(--gouttiere) var(--esp-8);
+}
+
+.atelier__entete {
+  margin-bottom: var(--esp-5);
+}
+
+.atelier__surtitre {
+  font-family: var(--police-mono);
+  font-size: var(--texte-xs);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--encre-douce);
+}
+
+.atelier__titre {
+  margin-top: var(--esp-2);
+  font-size: var(--titre-1);
+  color: var(--primaire);
+}
+
+.atelier__intro {
+  max-width: var(--largeur-texte);
+  margin-top: var(--esp-3);
+  color: var(--encre-douce);
+}
+
+/* Sommaire en onglets d'intercalaire, défilant sur téléphone */
+.atelier__sommaire {
+  margin-top: var(--esp-5);
+  overflow-x: auto;
+  scrollbar-width: thin;
+}
+
+.atelier__liens {
+  display: flex;
+  gap: var(--esp-1);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-bottom: 2px solid var(--primaire);
+}
+
+.atelier__lien {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 var(--esp-3);
+  border: 1px solid var(--doux);
+  border-bottom: 0;
+  border-radius: var(--rayon-champ) var(--rayon-champ) 0 0;
+  background: var(--surface);
+  font-size: var(--texte-s);
+  font-weight: 700;
+  color: var(--primaire);
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background-color var(--duree) var(--courbe);
+}
+
+.atelier__lien:hover {
+  background: var(--doux);
+  color: var(--encre);
+}
+
+.atelier__lien:focus-visible {
+  outline-offset: -3px;
+}

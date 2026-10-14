@@ -1,4 +1,6 @@
-import { useCallback, useMemo, useRef, useState } from 'react'
+import { useCallback, useMemo, useRef, useState, useSyncExternalStore } from 'react'
+import { createPortal } from 'react-dom'
+import { abonnerDialogues, dialogueDuDessus } from '../../../lib/dialoguesOuverts.js'
 import Toast from './Toast.jsx'
 import { DUREES_TOAST, ToastContexte } from './toastContexte.js'
 import './Toast.css'
@@ -9,8 +11,11 @@ const MAX_TOASTS = 4
 // Fournit useToast() à toute l'application. Deux zones annoncées en permanence
 // (une zone vide insérée en même temps que son texte n'est pas toujours lue) :
 // « polite » pour les informations, « assertive » pour les erreurs.
+// Toujours visibles : quand une modale ou un tiroir est ouvert, la zone est rendue à l'intérieur
+// du dialogue du dessus (couche supérieure, seule partie de la page qui reste active).
 export default function ToastProvider({ children }) {
   const [toasts, setToasts] = useState([])
+  const dialogue = useSyncExternalStore(abonnerDialogues, dialogueDuDessus, () => null)
   const compteur = useRef(0)
 
   const fermer = useCallback((id) => {
@@ -43,14 +48,18 @@ export default function ToastProvider({ children }) {
   return (
     <ToastContexte.Provider value={api}>
       {children}
-      <section className="toast-zone" aria-label="Notifications">
-        <ol className="toast-zone__liste" aria-live="assertive">
-          {zone((t) => t.ton === 'erreur')}
-        </ol>
-        <ol className="toast-zone__liste" aria-live="polite">
-          {zone((t) => t.ton !== 'erreur')}
-        </ol>
-      </section>
+      {typeof document !== 'undefined' &&
+        createPortal(
+          <section className="toast-zone" aria-label="Notifications">
+            <ol className="toast-zone__liste" aria-live="assertive">
+              {zone((t) => t.ton === 'erreur')}
+            </ol>
+            <ol className="toast-zone__liste" aria-live="polite">
+              {zone((t) => t.ton !== 'erreur')}
+            </ol>
+          </section>,
+          dialogue ?? document.body,
+        )}
     </ToastContexte.Provider>
   )
 }

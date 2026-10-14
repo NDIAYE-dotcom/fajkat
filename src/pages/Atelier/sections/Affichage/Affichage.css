@@ -1,0 +1,36 @@
+.affichage__panneaux {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr));
+  gap: var(--esp-4);
+  width: 100%;
+}
+
+.affichage__discret {
+  font-size: var(--texte-s);
+  color: var(--encre-douce);
+}
+
+.affichage__pleine-largeur {
+  width: 100%;
+}
+
+.affichage__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--esp-2);
+  margin-top: var(--esp-4);
+}
+
+.affichage__squelette {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-2);
+  width: 100%;
+}
+
+/* Trois boutons aux deux bords et au centre : teste le recadrage des info-bulles */
+.affichage__bords {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}

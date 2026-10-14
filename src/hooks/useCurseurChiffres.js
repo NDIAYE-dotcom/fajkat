@@ -15,6 +15,15 @@ export function useCurseurChiffres(refExterne) {
     chiffresAvant.current = value.slice(0, selectionStart ?? value.length).replace(/\D/g, '').length
   }
 
+  // Frappe refusée (numéro déjà complet) : la valeur ne change pas, donc aucun rendu ;
+  // React remet l'ancien texte et le curseur partirait en fin de champ. On le replace
+  // juste avant le caractère refusé, une fois le texte restauré.
+  function refuser(evenement) {
+    const noeud = evenement.target
+    const position = Math.max(0, (noeud.selectionStart ?? 0) - 1)
+    requestAnimationFrame(() => noeud.setSelectionRange(position, position))
+  }
+
   // Sans dépendances : s'exécute après chaque rendu, y compris quand la valeur n'a pas changé.
   useLayoutEffect(() => {
     const noeud = champ.current
@@ -30,5 +39,5 @@ export function useCurseurChiffres(refExterne) {
     chiffresAvant.current = null
   })
 
-  return { ref: champ, memoriser }
+  return { ref: champ, memoriser, refuser }
 }

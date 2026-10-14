@@ -1,0 +1,18 @@
+.champs-metier__grille {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr));
+  gap: var(--esp-5);
+  width: 100%;
+}
+
+.champs-metier__valeur {
+  margin-top: var(--esp-2);
+  font-size: var(--texte-s);
+  color: var(--encre-douce);
+  overflow-wrap: anywhere;
+}
+
+.champs-metier__valeur code {
+  font-family: var(--police-mono);
+  color: var(--encre);
+}

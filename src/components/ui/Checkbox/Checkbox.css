@@ -45,7 +45,7 @@
     transform var(--duree) var(--courbe);
 }
 
-.checkbox:hover .checkbox__case {
+.checkbox:is(:hover, [data-etat='survol']) .checkbox__case {
   border-color: var(--encre);
 }
 
@@ -59,7 +59,8 @@
   transform: none;
 }
 
-.checkbox__champ:focus-visible + .checkbox__case {
+.checkbox__champ:focus-visible + .checkbox__case,
+.checkbox[data-etat='focus'] .checkbox__case {
   outline: 3px solid var(--primaire);
   outline-offset: 2px;
 }
@@ -86,7 +87,7 @@
 }
 
 .checkbox--desactive .checkbox__case,
-.checkbox--desactive:hover .checkbox__case {
+.checkbox--desactive:is(:hover, [data-etat='survol']) .checkbox__case {
   border-color: var(--doux);
   background: var(--surface);
 }

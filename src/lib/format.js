@@ -53,6 +53,12 @@ export function formatDate(date) {
   return d ? d.format('DD/MM/YYYY') : ''
 }
 
+// « 14:30 »
+export function formatHeure(date) {
+  const d = versFuseau(date)
+  return d ? d.format('HH:mm') : ''
+}
+
 // « 13/10/2026 14:30 »
 export function formatDateHeure(date) {
   const d = versFuseau(date)

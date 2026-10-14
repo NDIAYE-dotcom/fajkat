@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react'
+import { empilerDialogue, retirerDialogue } from '../lib/dialoguesOuverts.js'
 
 const FOCALISABLES = [
   'a[href]',
@@ -32,11 +33,13 @@ export function useDialogue({ ouvert, onFermer, fermerSurVoile = true }) {
 
     declencheur.current = document.activeElement
     dialogue.showModal()
+    empilerDialogue(dialogue)
     ouverts += 1
     document.documentElement.style.overflow = 'hidden'
 
     return () => {
       if (dialogue.open) dialogue.close()
+      retirerDialogue(dialogue)
       ouverts -= 1
       if (ouverts === 0) document.documentElement.style.overflow = ''
       declencheur.current?.focus?.()
@@ -56,11 +59,32 @@ export function useDialogue({ ouvert, onFermer, fermerSurVoile = true }) {
     function surFermeture() {
       if (!dialogue.open) fermer.current?.()
     }
+    // Focus piégé : Tab sur le dernier élément revient au premier, Maj+Tab l'inverse.
+    // Écouteur natif (et non onKeyDown de React) : les notifications sont insérées dans le
+    // dialogue par un portail, et leurs événements React ne remontent pas jusqu'à lui.
+    function surTouche(evenement) {
+      if (evenement.key !== 'Tab') return
+      const elements = [...dialogue.querySelectorAll(FOCALISABLES)].filter(
+        (el) => el.getClientRects().length > 0,
+      )
+      if (elements.length === 0) return
+      const premier = elements[0]
+      const dernier = elements[elements.length - 1]
+      if (evenement.shiftKey && document.activeElement === premier) {
+        evenement.preventDefault()
+        dernier.focus()
+      } else if (!evenement.shiftKey && document.activeElement === dernier) {
+        evenement.preventDefault()
+        premier.focus()
+      }
+    }
     dialogue.addEventListener('cancel', surAnnulation)
     dialogue.addEventListener('close', surFermeture)
+    dialogue.addEventListener('keydown', surTouche)
     return () => {
       dialogue.removeEventListener('cancel', surAnnulation)
       dialogue.removeEventListener('close', surFermeture)
+      dialogue.removeEventListener('keydown', surTouche)
     }
   }, [])
 
@@ -68,23 +92,5 @@ export function useDialogue({ ouvert, onFermer, fermerSurVoile = true }) {
     if (fermerSurVoile && evenement.target === ref.current) fermer.current?.()
   }
 
-  // Focus piégé : Tab sur le dernier élément revient au premier, Maj+Tab l'inverse.
-  function onKeyDown(evenement) {
-    if (evenement.key !== 'Tab') return
-    const elements = [...ref.current.querySelectorAll(FOCALISABLES)].filter(
-      (el) => el.getClientRects().length > 0,
-    )
-    if (elements.length === 0) return
-    const premier = elements[0]
-    const dernier = elements[elements.length - 1]
-    if (evenement.shiftKey && document.activeElement === premier) {
-      evenement.preventDefault()
-      dernier.focus()
-    } else if (!evenement.shiftKey && document.activeElement === dernier) {
-      evenement.preventDefault()
-      premier.focus()
-    }
-  }
-
-  return { ref, onClick, onKeyDown }
+  return { ref, onClick }
 }

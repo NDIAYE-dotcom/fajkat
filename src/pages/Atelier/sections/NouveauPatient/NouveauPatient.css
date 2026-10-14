@@ -1,0 +1,79 @@
+.nouveau-patient {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-5);
+  max-width: 52rem;
+}
+
+.nouveau-patient__brouillon {
+  padding: var(--esp-2) var(--esp-4);
+  border-left: 4px solid var(--accent);
+  border-radius: var(--rayon-champ);
+  background: var(--surface);
+}
+
+.nouveau-patient__resume:not(:empty) {
+  padding: var(--esp-3) var(--esp-4);
+  border-left: 4px solid var(--tampon);
+  border-radius: var(--rayon-champ);
+  background: var(--fond);
+  font-weight: 700;
+  color: var(--tampon);
+}
+
+.nouveau-patient__groupe {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-4);
+  min-width: 0;
+  margin: 0;
+  padding: var(--esp-4);
+  border: var(--trait);
+  border-left: 4px solid var(--accent);
+  border-radius: var(--rayon-panneau);
+}
+
+.nouveau-patient__legende {
+  padding: 0 var(--esp-2);
+  font-family: var(--police-titre);
+  font-size: var(--titre-3);
+  font-weight: 600;
+  color: var(--primaire);
+}
+
+.nouveau-patient__grille {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
+  gap: var(--esp-4);
+}
+
+.nouveau-patient__ligne {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 var(--esp-5);
+}
+
+.nouveau-patient__pied {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-3);
+}
+
+.nouveau-patient__etat-brouillon {
+  font-size: var(--texte-s);
+  color: var(--encre-douce);
+}
+
+.nouveau-patient__actions {
+  display: flex;
+  flex-wrap: wrap-reverse;
+  justify-content: flex-end;
+  gap: var(--esp-2);
+}
+
+/* Téléphone : boutons pleine largeur, l'action principale en haut, près du pouce */
+@media (max-width: 30rem) {
+  .nouveau-patient__actions > * {
+    flex: 1 1 100%;
+  }
+}

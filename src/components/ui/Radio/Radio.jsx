@@ -5,7 +5,9 @@ import './Radio.css'
 // Bouton radio : même mise en page que Checkbox, case ronde.
 // À placer dans un <Field groupe> (fieldset + legend) avec le même « name ».
 export default function Radio({ label, description, className = '', ref, ...props }) {
-  const { invalide, ...attributs } = useChamp(props)
+  // data-etat : état figé (survol, focus) pour la page /atelier, porté par l'enveloppe.
+  const { 'data-etat': etat, ...reste } = props
+  const { invalide, ...attributs } = useChamp(reste)
   const classes = [
     'checkbox',
     'radio',
@@ -17,7 +19,7 @@ export default function Radio({ label, description, className = '', ref, ...prop
     .join(' ')
 
   return (
-    <label className={classes}>
+    <label className={classes} data-etat={etat}>
       <input ref={ref} type="radio" className="checkbox__champ" {...attributs} />
       <span className="checkbox__case radio__case" aria-hidden="true">
         <span className="radio__point" />

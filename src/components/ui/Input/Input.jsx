@@ -13,7 +13,9 @@ export default function Input({
   type = 'text',
   ...props
 }) {
-  const { invalide, ...attributs } = useChamp(props)
+  // data-etat : état figé (survol, focus) pour la page /atelier, porté par l'enveloppe.
+  const { 'data-etat': etat, ...reste } = props
+  const { invalide, ...attributs } = useChamp(reste)
   const classes = [
     'input',
     invalide && 'input--erreur',
@@ -25,7 +27,7 @@ export default function Input({
     .join(' ')
 
   return (
-    <div className={classes}>
+    <div className={classes} data-etat={etat}>
       {prefixe && <span className="input__affixe">{prefixe}</span>}
       <input
         ref={ref}

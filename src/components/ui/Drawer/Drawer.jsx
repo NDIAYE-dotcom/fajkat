@@ -17,7 +17,7 @@ export default function Drawer({
   children,
 }) {
   const idTitre = useId()
-  const { ref, onClick, onKeyDown } = useDialogue({ ouvert, onFermer })
+  const { ref, onClick } = useDialogue({ ouvert, onFermer })
 
   return (
     <dialog
@@ -25,7 +25,6 @@ export default function Drawer({
       className={`drawer drawer--${cote} ${className}`.trim()}
       aria-labelledby={idTitre}
       onClick={onClick}
-      onKeyDown={onKeyDown}
     >
       <div className="drawer__boite">
         <header className="drawer__entete">

@@ -59,7 +59,7 @@
     background-color var(--duree) var(--courbe);
 }
 
-.switch:hover .switch__piste {
+.switch:is(:hover, [data-etat='survol']) .switch__piste {
   border-color: var(--encre);
 }
 
@@ -73,7 +73,8 @@
   transform: translateX(20px);
 }
 
-.switch__champ:focus-visible + .switch__piste {
+.switch__champ:focus-visible + .switch__piste,
+.switch[data-etat='focus'] .switch__piste {
   outline: 3px solid var(--primaire);
   outline-offset: 2px;
 }
@@ -84,7 +85,7 @@
 }
 
 .switch--desactive .switch__piste,
-.switch--desactive:hover .switch__piste {
+.switch--desactive:is(:hover, [data-etat='survol']) .switch__piste {
   border-color: var(--doux);
   background: var(--surface);
 }

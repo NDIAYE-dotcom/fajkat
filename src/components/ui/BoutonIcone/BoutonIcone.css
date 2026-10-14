@@ -16,7 +16,7 @@
     color var(--duree) var(--courbe);
 }
 
-.bouton-icone:hover {
+.bouton-icone:is(:hover, [data-etat='survol']) {
   background: var(--surface);
   color: var(--encre);
 }
@@ -25,4 +25,9 @@
   color: var(--encre-douce);
   background: var(--surface);
   cursor: not-allowed;
+}
+
+.bouton-icone[data-etat='focus'] {
+  outline: 3px solid var(--primaire);
+  outline-offset: 3px;
 }

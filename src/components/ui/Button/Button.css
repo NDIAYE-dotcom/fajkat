@@ -20,6 +20,12 @@
     color var(--duree) var(--courbe);
 }
 
+/* Focus figé pour la page /atelier (même rendu que :focus-visible, base.css) */
+.button[data-etat='focus'] {
+  outline: 3px solid var(--primaire);
+  outline-offset: 3px;
+}
+
 .button:active {
   transform: translateY(1px);
 }
@@ -29,7 +35,7 @@
   transition: transform var(--duree) var(--courbe);
 }
 
-.button:hover .button__icone {
+.button:is(:hover, [data-etat='survol']) .button__icone {
   transform: translateX(3px);
 }
 
@@ -44,7 +50,7 @@
   color: var(--fond);
 }
 
-.button--primaire:hover {
+.button--primaire:is(:hover, [data-etat='survol']) {
   background: var(--encre);
 }
 
@@ -54,7 +60,7 @@
   color: var(--encre);
 }
 
-.button--secondaire:hover {
+.button--secondaire:is(:hover, [data-etat='survol']) {
   background: var(--fond);
   border-color: var(--encre);
 }
@@ -69,7 +75,7 @@
   text-underline-offset: 0.25em;
 }
 
-.button--discret:hover {
+.button--discret:is(:hover, [data-etat='survol']) {
   color: var(--encre);
   text-decoration-thickness: 2px;
 }

@@ -34,5 +34,7 @@ export const router = createBrowserRouter([
     path: '/app',
     lazy: composant(() => import('../modules/admin/pages/TableauDeBord/TableauDeBord.jsx')),
   },
+  // Vitrine du design system de l'application : accessible, non indexée (noindex, hors sitemap).
+  { path: '/atelier', lazy: composant(() => import('../pages/Atelier/Atelier.jsx')) },
   { path: '*', element: <NonTrouve /> },
 ])

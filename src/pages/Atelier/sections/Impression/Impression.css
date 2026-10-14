@@ -1,0 +1,77 @@
+.impression__colonne {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--esp-3);
+  max-width: 100%;
+}
+
+.impression__colonne--large {
+  width: min(100%, 148mm);
+}
+
+/* Aperçu à l'écran : une feuille bordée d'un filet (pas d'ombre hors des modales) */
+.impression__apercu,
+.impression__feuille {
+  border: var(--trait);
+}
+
+.impression__feuille {
+  width: 100%;
+  padding: var(--esp-5);
+  font-size: var(--texte-s);
+}
+
+.impression__entete {
+  margin-bottom: var(--esp-4);
+  padding-bottom: var(--esp-3);
+  border-bottom: 1px solid var(--encre);
+}
+
+.impression__entete h1 {
+  font-size: var(--titre-3);
+}
+
+.impression__patient {
+  margin-bottom: var(--esp-3);
+}
+
+.impression__feuille table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.impression__feuille th,
+.impression__feuille td {
+  padding: var(--esp-2);
+  border-bottom: 1px solid var(--doux);
+  text-align: left;
+  vertical-align: top;
+}
+
+.impression__feuille .chiffres {
+  font-family: var(--police-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+.impression__feuille td:last-child {
+  white-space: nowrap;
+}
+
+.impression__signature {
+  margin-top: var(--esp-5);
+  text-align: right;
+}
+
+/* Sur papier, plus de cadre d'aperçu : print.css règle marges et formats. */
+@media print {
+  .impression__apercu,
+  .impression__feuille {
+    padding-inline: 0;
+    border: 0;
+  }
+
+  .impression__feuille {
+    padding-block: 0;
+  }
+}

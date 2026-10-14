@@ -1,0 +1,15 @@
+.fenetres__fiche {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: var(--esp-2) var(--esp-4);
+}
+
+.fenetres__fiche dt {
+  font-weight: 700;
+  color: var(--encre-douce);
+}
+
+.fenetres__chiffres {
+  font-family: var(--police-mono);
+  font-variant-numeric: tabular-nums;
+}

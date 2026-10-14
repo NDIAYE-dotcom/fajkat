@@ -21,7 +21,7 @@ export default function Modal({
 }) {
   const idTitre = useId()
   const idDescription = useId()
-  const { ref, onClick, onKeyDown } = useDialogue({ ouvert, onFermer, fermerSurVoile })
+  const { ref, onClick } = useDialogue({ ouvert, onFermer, fermerSurVoile })
 
   return (
     <dialog
@@ -30,7 +30,6 @@ export default function Modal({
       aria-labelledby={idTitre}
       aria-describedby={description ? idDescription : undefined}
       onClick={onClick}
-      onKeyDown={onKeyDown}
     >
       <div className="modal__boite">
         <header className="modal__entete">

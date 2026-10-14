@@ -3,12 +3,17 @@
   display: inline-flex;
 }
 
+/* Masquée par display: none (et non visibility) : une bulle invisible qui dépasse
+   élargirait quand même la page et ferait apparaître un défilement horizontal à 360 px. */
 .tooltip__bulle {
+  --tooltip-decalage: 0px;
+
   position: absolute;
   left: 50%;
   z-index: 20;
+  display: none;
   width: max-content;
-  max-width: min(16rem, 80vw);
+  max-width: min(16rem, calc(100vw - 16px));
   padding: var(--esp-2) var(--esp-3);
   border-radius: var(--rayon-champ);
   background: var(--encre);
@@ -17,20 +22,19 @@
   font-weight: 400;
   line-height: 1.4;
   text-align: left;
-  pointer-events: none;
-  opacity: 0;
-  visibility: hidden;
-  translate: -50% 0;
-  transition:
-    opacity var(--duree) var(--courbe),
-    visibility var(--duree) var(--courbe);
+  translate: calc(-50% + var(--tooltip-decalage)) 0;
 }
 
-/* Petite pointe vers l'élément décrit */
+.tooltip__bulle--visible {
+  display: block;
+  animation: tooltip-entree var(--duree) var(--courbe);
+}
+
+/* Petite pointe, toujours face à l'élément décrit même quand la bulle est décalée */
 .tooltip__bulle::after {
   content: '';
   position: absolute;
-  left: 50%;
+  left: calc(50% - var(--tooltip-decalage));
   width: 10px;
   height: 10px;
   background: inherit;
@@ -46,32 +50,32 @@
   height: var(--esp-3);
 }
 
-.tooltip--haut .tooltip__bulle {
+.tooltip__bulle[data-placement='haut'] {
   bottom: calc(100% + var(--esp-2));
 }
 
-.tooltip--haut .tooltip__bulle::after {
+.tooltip__bulle[data-placement='haut']::after {
   bottom: -4px;
 }
 
-.tooltip--haut .tooltip__bulle::before {
+.tooltip__bulle[data-placement='haut']::before {
   top: 100%;
 }
 
-.tooltip--bas .tooltip__bulle {
+.tooltip__bulle[data-placement='bas'] {
   top: calc(100% + var(--esp-2));
 }
 
-.tooltip--bas .tooltip__bulle::after {
+.tooltip__bulle[data-placement='bas']::after {
   top: -4px;
 }
 
-.tooltip--bas .tooltip__bulle::before {
+.tooltip__bulle[data-placement='bas']::before {
   bottom: 100%;
 }
 
-.tooltip__bulle--visible {
-  pointer-events: auto;
-  opacity: 1;
-  visibility: visible;
+@keyframes tooltip-entree {
+  from {
+    opacity: 0;
+  }
 }

@@ -1,0 +1,54 @@
+.demo {
+  min-width: 0;
+}
+
+.demo__titre {
+  font-size: var(--titre-3);
+}
+
+.demo__note {
+  max-width: var(--largeur-texte);
+  margin-top: var(--esp-1);
+  font-size: var(--texte-s);
+  color: var(--encre-douce);
+}
+
+.demo__grille {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 15rem), 1fr));
+  gap: var(--esp-4);
+  margin: var(--esp-4) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.demo__case {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--esp-2);
+  min-width: 0;
+  padding: var(--esp-3);
+  border-left: 2px solid var(--doux);
+}
+
+/* Les champs occupent toute la largeur de leur case */
+.demo__case > :not(.demo__etat) {
+  align-self: stretch;
+}
+
+.demo__etat {
+  font-family: var(--police-mono);
+  font-size: var(--texte-xs);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--encre-douce);
+}
+
+.demo__libre {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--esp-3);
+  margin-top: var(--esp-4);
+}

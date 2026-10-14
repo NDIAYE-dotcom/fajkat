@@ -19,12 +19,12 @@
     box-shadow var(--duree) var(--courbe);
 }
 
-.input:hover {
+.input:is(:hover, [data-etat='survol']) {
   --input-bordure: var(--encre);
 }
 
 /* Le focus est porté par la boîte : il englobe préfixe et suffixe. */
-.input:focus-within {
+.input:is(:focus-within, [data-etat='focus']) {
   --input-bordure: var(--primaire);
 
   outline: 3px solid var(--primaire);
@@ -34,18 +34,21 @@
 
 /* Erreur : bordure doublée (sans décalage de mise en page) ; le message texte suit le champ. */
 .input--erreur,
-.input--erreur:hover {
+.input--erreur:is(:hover, [data-etat='survol']) {
   --input-bordure: var(--tampon);
 
   box-shadow: inset 0 0 0 1px var(--tampon);
 }
 
-.input--erreur:focus-within {
+.input--erreur:is(:focus-within, [data-etat='focus']) {
+  --input-bordure: var(--tampon);
+
   outline-color: var(--tampon);
+  box-shadow: inset 0 0 0 1px var(--tampon);
 }
 
 .input--desactive,
-.input--desactive:hover {
+.input--desactive:is(:hover, [data-etat='survol']) {
   --input-bordure: var(--doux);
 
   background: var(--surface);

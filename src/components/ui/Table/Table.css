@@ -86,13 +86,16 @@
   }
 
   .table__tableau,
+  .table__tableau caption,
   .table__tableau tbody,
   .table__ligne,
   .table__cellule {
     display: block;
   }
 
+  /* display: block, sinon overflow et clip restent sans effet sur un thead */
   .table__tableau thead {
+    display: block;
     position: absolute;
     width: 1px;
     height: 1px;
