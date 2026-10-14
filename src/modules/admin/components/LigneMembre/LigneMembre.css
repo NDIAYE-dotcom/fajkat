@@ -1,0 +1,15 @@
+.ligne-membre {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--esp-2);
+  padding: var(--esp-4) 0;
+  border-bottom: 1px solid var(--doux);
+}
+
+.ligne-membre__grille {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr));
+  gap: var(--esp-3) var(--esp-4);
+  width: 100%;
+}

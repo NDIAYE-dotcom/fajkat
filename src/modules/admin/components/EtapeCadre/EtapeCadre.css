@@ -1,0 +1,64 @@
+.etape-cadre {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-5);
+}
+
+.etape-cadre__entete {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-2);
+}
+
+.etape-cadre__titre {
+  font-size: var(--titre-3);
+  color: var(--primaire);
+}
+
+.etape-cadre__titre:focus {
+  outline: none;
+}
+
+.etape-cadre__titre:focus-visible {
+  outline: 2px solid var(--primaire);
+  outline-offset: 4px;
+}
+
+.etape-cadre__pourquoi {
+  max-width: var(--largeur-texte);
+  color: var(--encre-douce);
+}
+
+.etape-cadre__corps {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-5);
+}
+
+/* Sur téléphone, le bouton principal passe en premier, en pleine largeur. */
+.etape-cadre__actions {
+  display: flex;
+  flex-direction: column-reverse;
+  gap: var(--esp-3);
+  padding-top: var(--esp-4);
+  border-top: var(--trait);
+}
+
+.etape-cadre__droite {
+  display: flex;
+  flex-direction: column-reverse;
+  gap: var(--esp-3);
+}
+
+@media (min-width: 40rem) {
+  .etape-cadre__actions {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .etape-cadre__droite {
+    flex-direction: row;
+    margin-left: auto;
+  }
+}

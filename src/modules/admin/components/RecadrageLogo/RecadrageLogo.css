@@ -1,0 +1,39 @@
+.recadrage-logo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-4);
+}
+
+.recadrage-logo__cadre {
+  display: grid;
+  place-items: center;
+  width: min(100%, 18rem);
+  aspect-ratio: 1;
+  margin-inline: auto;
+  border: var(--trait);
+  border-radius: var(--rayon-champ);
+  background: var(--surface);
+}
+
+.recadrage-logo__apercu {
+  width: 100%;
+  height: 100%;
+  border-radius: var(--rayon-champ);
+  cursor: grab;
+  touch-action: none; /* le glisser déplace l'image, pas la page */
+}
+
+.recadrage-logo__apercu:active {
+  cursor: grabbing;
+}
+
+.recadrage-logo__apercu:focus-visible {
+  outline: 2px solid var(--primaire);
+  outline-offset: 3px;
+}
+
+.recadrage-logo__zoom {
+  width: 100%;
+  min-height: 44px;
+  accent-color: var(--primaire);
+}

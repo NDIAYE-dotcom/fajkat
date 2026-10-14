@@ -1,0 +1,45 @@
+.liste-tiers-payants {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--esp-3);
+}
+
+.liste-tiers-payants__titre {
+  font-family: var(--police-texte);
+  font-size: var(--texte-m);
+  font-weight: 700;
+  color: var(--primaire);
+}
+
+.liste-tiers-payants__liste {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  border-top: 1px solid var(--doux);
+  list-style: none;
+}
+
+.liste-tiers-payants__ligne {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--esp-3);
+  padding: var(--esp-3) 0;
+  border-bottom: 1px solid var(--doux);
+}
+
+.liste-tiers-payants__retirer {
+  justify-self: start;
+}
+
+@media (min-width: 40rem) {
+  .liste-tiers-payants__ligne {
+    grid-template-columns: 2fr 1fr auto;
+    align-items: start;
+  }
+
+  /* Aligné sur les champs, sous leur libellé. */
+  .liste-tiers-payants__retirer {
+    margin-top: var(--esp-5);
+  }
+}

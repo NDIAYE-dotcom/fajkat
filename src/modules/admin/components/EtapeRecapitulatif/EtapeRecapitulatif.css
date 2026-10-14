@@ -1,0 +1,74 @@
+/* Registre des réponses : une ligne par écran, marge colorée pour ceux terminés. */
+.etape-recapitulatif {
+  margin: 0;
+  padding: 0;
+  border-top: 1px solid var(--doux);
+  list-style: none;
+}
+
+.etape-recapitulatif__ligne {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: var(--esp-2) var(--esp-3);
+  align-items: start;
+  padding: var(--esp-4) var(--esp-2);
+  border-bottom: 1px solid var(--doux);
+  border-left: 4px solid transparent;
+}
+
+.etape-recapitulatif__ligne--faite {
+  border-left-color: var(--accent);
+}
+
+.etape-recapitulatif__icone {
+  margin-top: 2px;
+  color: var(--encre-douce);
+}
+
+.etape-recapitulatif__ligne--faite .etape-recapitulatif__icone {
+  color: var(--primaire);
+}
+
+.etape-recapitulatif__texte {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-1);
+  min-width: 0;
+}
+
+.etape-recapitulatif__titre {
+  font-family: var(--police-texte);
+  font-size: var(--texte-m);
+  font-weight: 700;
+  color: var(--encre);
+}
+
+.etape-recapitulatif__statut {
+  font-size: var(--texte-s);
+  font-weight: 700;
+  color: var(--encre-douce);
+}
+
+.etape-recapitulatif__ligne--faite .etape-recapitulatif__statut {
+  color: var(--primaire);
+}
+
+.etape-recapitulatif__resume {
+  font-size: var(--texte-s);
+  color: var(--encre);
+}
+
+.etape-recapitulatif__action {
+  grid-column: 2;
+  justify-self: start;
+}
+
+@media (min-width: 40rem) {
+  .etape-recapitulatif__ligne {
+    grid-template-columns: auto 1fr auto;
+  }
+
+  .etape-recapitulatif__action {
+    grid-column: auto;
+  }
+}

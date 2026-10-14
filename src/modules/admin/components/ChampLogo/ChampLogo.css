@@ -1,0 +1,60 @@
+.champ-logo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-2);
+}
+
+.champ-logo__titre {
+  font-family: var(--police-texte);
+  font-size: var(--texte-s);
+  font-weight: 700;
+  color: var(--encre);
+}
+
+.champ-logo__facultatif {
+  font-weight: 400;
+  color: var(--encre-douce);
+}
+
+.champ-logo__ligne {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--esp-4);
+}
+
+.champ-logo__vignette {
+  display: grid;
+  flex-shrink: 0;
+  place-items: center;
+  width: 6rem;
+  height: 6rem;
+  overflow: hidden;
+  border: 1px dashed var(--primaire);
+  border-radius: var(--rayon-champ);
+  background: var(--surface);
+  color: var(--primaire);
+}
+
+.champ-logo__vignette img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.champ-logo__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--esp-2);
+}
+
+.champ-logo__aide {
+  font-size: var(--texte-s);
+  color: var(--encre-douce);
+}
+
+.champ-logo__erreur {
+  font-size: var(--texte-s);
+  font-weight: 700;
+  color: var(--tampon);
+}

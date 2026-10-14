@@ -63,6 +63,10 @@ export const router = createBrowserRouter([
             index: true,
             lazy: composant(() => import('../modules/admin/pages/TableauDeBord/TableauDeBord.jsx')),
           },
+          {
+            path: 'demarrage',
+            lazy: composant(() => import('../modules/admin/pages/Demarrage/Demarrage.jsx')),
+          },
           { path: '*', element: <NonTrouve /> },
         ],
       },

@@ -1,0 +1,37 @@
+.etape-services__groupe {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-2);
+}
+
+.etape-services__categorie {
+  font-family: var(--police-texte);
+  font-size: var(--texte-m);
+  font-weight: 700;
+  color: var(--primaire);
+}
+
+.etape-services__liste {
+  margin: 0;
+  padding: 0;
+  border-top: 1px solid var(--doux);
+  list-style: none;
+}
+
+.etape-services__ajout {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--esp-3);
+  align-items: end;
+}
+
+.etape-services__bilan {
+  font-size: var(--texte-s);
+  color: var(--encre-douce);
+}
+
+@media (min-width: 36rem) {
+  .etape-services__ajout {
+    grid-template-columns: 1fr auto;
+  }
+}

@@ -1,0 +1,36 @@
+.carte-configuration {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--esp-3);
+}
+
+.carte-configuration__chiffres {
+  font-family: var(--police-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+.carte-configuration__barre {
+  width: 100%;
+  height: 0.5rem;
+  overflow: hidden;
+  border-radius: var(--rayon-champ);
+  background: var(--surface);
+}
+
+.carte-configuration__rempli {
+  display: block;
+  height: 100%;
+  background: var(--primaire);
+  transition: width var(--duree) var(--courbe);
+}
+
+.carte-configuration__texte {
+  color: var(--encre-douce);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .carte-configuration__rempli {
+    transition: none;
+  }
+}

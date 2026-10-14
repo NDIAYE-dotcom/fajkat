@@ -1,6 +1,6 @@
 import { LogOut } from 'lucide-react'
 import { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { Navigate, useNavigate } from 'react-router-dom'
 import Button from '../../../../components/ui/Button/Button.jsx'
 import Field from '../../../../components/ui/Field/Field.jsx'
 import Icone from '../../../../components/ui/Icone/Icone.jsx'
@@ -10,6 +10,8 @@ import { useAuth } from '../../../../hooks/useAuth.js'
 import { useOrganization } from '../../../../hooks/useOrganization.js'
 import { dayjs, formatDate } from '../../../../lib/format.js'
 import { getOffre } from '../../../../lib/offres.js'
+import CarteConfiguration from '../../components/CarteConfiguration/CarteConfiguration.jsx'
+import { doitOuvrirAssistant, peutConfigurer } from '../../utils.js'
 import './TableauDeBord.css'
 
 // Jours d'essai restants, arrondis au jour supérieur (il reste « 1 jour » jusqu'à la fin).
@@ -22,7 +24,7 @@ function joursRestants(finEssai) {
 // Page provisoire (étape 6) : la coquille de l'application arrive à l'étape 8.
 export default function TableauDeBord() {
   const { prenom, deconnecter } = useAuth()
-  const { structure, structures, changerStructure } = useOrganization()
+  const { structure, structures, role, changerStructure } = useOrganization()
   const navigate = useNavigate()
   const [sortie, setSortie] = useState(false)
   const offre = getOffre(structure.type)
@@ -31,6 +33,9 @@ export default function TableauDeBord() {
   useEffect(() => {
     document.title = `${structure.name} — Fajkat`
   }, [structure.name])
+
+  // Première connexion du propriétaire : l'assistant de démarrage s'ouvre, une seule fois.
+  if (doitOuvrirAssistant(structure)) return <Navigate to="/app/demarrage" replace />
 
   async function surDeconnexion() {
     setSortie(true)
@@ -57,6 +62,8 @@ export default function TableauDeBord() {
           Bonjour {prenom || 'et bienvenue'}
           <span className="tableau-de-bord__structure"> — {structure.name}</span>
         </h1>
+
+        {peutConfigurer(role) && <CarteConfiguration />}
 
         <Panel titre="Votre abonnement" marque>
           <dl className="tableau-de-bord__fiche">

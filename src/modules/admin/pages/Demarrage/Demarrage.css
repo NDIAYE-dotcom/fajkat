@@ -1,0 +1,46 @@
+.demarrage {
+  min-height: 100vh;
+  background: var(--fond);
+}
+
+.demarrage__entete {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--esp-4);
+  min-height: var(--hauteur-entete);
+  padding: var(--esp-2) var(--gouttiere);
+  border-bottom: var(--trait);
+}
+
+.demarrage__marque {
+  font-family: var(--police-titre);
+  font-size: var(--texte-l);
+  font-weight: 600;
+  color: var(--primaire);
+}
+
+.demarrage__contenu {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-6);
+  max-width: 48rem;
+  padding: var(--esp-6) var(--gouttiere) var(--esp-8);
+}
+
+.demarrage__titres {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-1);
+}
+
+.demarrage__surtitre {
+  font-size: var(--texte-s);
+  font-weight: 700;
+  color: var(--encre-douce);
+}
+
+.demarrage__titre {
+  font-size: var(--titre-2);
+  color: var(--primaire);
+}

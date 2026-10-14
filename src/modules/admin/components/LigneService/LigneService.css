@@ -1,0 +1,28 @@
+/* Ligne de registre : le service à gauche, le tarif aligné à droite. */
+.ligne-service {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--esp-2);
+  padding: var(--esp-3) 0;
+  border-bottom: 1px solid var(--doux);
+}
+
+.ligne-service__choix {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--esp-2);
+  min-width: 0;
+}
+
+.ligne-service--inactif .ligne-service__prix {
+  opacity: 0.7;
+}
+
+@media (min-width: 36rem) {
+  .ligne-service {
+    grid-template-columns: 1fr 11rem;
+    align-items: end;
+  }
+}

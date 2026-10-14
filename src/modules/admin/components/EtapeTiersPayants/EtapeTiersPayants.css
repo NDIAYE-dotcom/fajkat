@@ -1,0 +1,14 @@
+.etape-tiers-payants__sen-csu {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--esp-3);
+  padding-bottom: var(--esp-4);
+  border-bottom: 1px solid var(--doux);
+}
+
+@media (min-width: 40rem) {
+  .etape-tiers-payants__sen-csu {
+    grid-template-columns: 2fr 1fr;
+    align-items: start;
+  }
+}
