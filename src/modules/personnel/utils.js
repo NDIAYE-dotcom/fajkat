@@ -193,3 +193,28 @@ export function indexerAffectations(affectations, membres) {
 export function nomMembre(membre) {
   return membre?.profil?.full_name || 'Membre sans nom'
 }
+
+// --- Présences -------------------------------------------------------------------
+
+// Durée entre deux instants : « 8 h 05 » ; null si le départ manque.
+export function dureeEntre(debut, fin) {
+  if (!debut || !fin) return null
+  const minutes = Math.max(0, Math.round((new Date(fin) - new Date(debut)) / 60000))
+  return `${Math.floor(minutes / 60)} h ${String(minutes % 60).padStart(2, '0')}`
+}
+
+// Jour 'AAAA-MM-JJ' + heure 'HH:mm' saisis dans le fuseau de la structure -> ISO (UTC).
+export function versInstant(jour, heure) {
+  return dayjs.tz(`${jour}T${heure}:00`).toISOString()
+}
+
+// Instant ISO -> 'HH:mm' dans le fuseau de la structure (champ <input type="time">).
+export function heureDe(instant) {
+  return instant ? dayjs(instant).tz().format('HH:mm') : ''
+}
+
+export function statutPresence(presence) {
+  if (!presence) return { libelle: 'Absent', ton: 'neutre' }
+  if (!presence.check_out_at) return { libelle: 'Présent', ton: 'primaire' }
+  return { libelle: 'Parti', ton: 'encre' }
+}

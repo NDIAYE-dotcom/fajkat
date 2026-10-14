@@ -1,0 +1,44 @@
+.presences-du-jour {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-4);
+}
+
+.presences-du-jour__entete {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--esp-3);
+}
+
+.presences-du-jour__titre {
+  font-size: var(--titre-3);
+  color: var(--primaire);
+}
+
+.presences-du-jour__titre::first-letter {
+  text-transform: uppercase;
+}
+
+.presences-du-jour__navigation,
+.presences-du-jour__tampons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--esp-2);
+}
+
+.presences-du-jour__nom {
+  display: inline-flex;
+  flex-direction: column;
+}
+
+.presences-du-jour__detail {
+  font-size: var(--texte-xs);
+  color: var(--encre-douce);
+}
+
+.presences-du-jour__heure {
+  font-family: var(--police-mono);
+  font-variant-numeric: tabular-nums;
+}

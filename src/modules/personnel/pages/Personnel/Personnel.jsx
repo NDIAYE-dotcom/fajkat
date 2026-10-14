@@ -28,11 +28,12 @@ import ModaleInviter from '../../components/ModaleInviter/ModaleInviter.jsx'
 import ModaleMembre from '../../components/ModaleMembre/ModaleMembre.jsx'
 import OngletInvitations from '../../components/OngletInvitations/OngletInvitations.jsx'
 import PlanningSemaine from '../../components/PlanningSemaine/PlanningSemaine.jsx'
+import PresencesDuJour from '../../components/PresencesDuJour/PresencesDuJour.jsx'
 import { statutInvitation } from '../../utils.js'
 import './Personnel.css'
 
 const ENTREE = entreeDepuisChemin('/app/personnel')
-const ONGLETS = ['membres', 'planning', 'invitations', 'permissions']
+const ONGLETS = ['membres', 'planning', 'presences', 'invitations', 'permissions']
 
 export default function Personnel() {
   return (
@@ -137,6 +138,11 @@ function PagePersonnel() {
             id: 'planning',
             libelle: 'Planning',
             contenu: <PlanningSemaine structure={structure} modifiable moi={utilisateur?.id} />,
+          },
+          {
+            id: 'presences',
+            libelle: 'Présences',
+            contenu: <PresencesDuJour orgId={orgId} />,
           },
           {
             id: 'invitations',

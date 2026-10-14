@@ -1,0 +1,56 @@
+.carte-pointage {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-5);
+  max-width: 40rem;
+}
+
+.carte-pointage__corps {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--esp-4);
+}
+
+.carte-pointage__etat {
+  font-size: var(--texte-l);
+}
+
+.carte-pointage__bouton {
+  width: 100%;
+  justify-content: center;
+}
+
+.carte-pointage__note,
+.carte-pointage__duree {
+  font-size: var(--texte-s);
+  color: var(--encre-douce);
+}
+
+.carte-pointage__heure,
+.carte-pointage__jour {
+  font-family: var(--police-mono);
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+}
+
+.carte-pointage__historique {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.carte-pointage__ligne {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--esp-2) var(--esp-4);
+  padding: var(--esp-2) 0;
+  border-bottom: 1px solid var(--doux);
+}
+
+@media (min-width: 640px) {
+  .carte-pointage__bouton {
+    width: auto;
+  }
+}

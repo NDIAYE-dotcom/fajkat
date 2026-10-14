@@ -6,15 +6,16 @@ import { useOrganization } from '../../../../hooks/useOrganization.js'
 import FeatureRoute from '../../../../router/guards/FeatureRoute/FeatureRoute.jsx'
 import RoleRoute from '../../../../router/guards/RoleRoute/RoleRoute.jsx'
 import { entreeDepuisChemin, offresDeLEntree } from '../../../../router/navigation.js'
+import CartePointage from '../../components/CartePointage/CartePointage.jsx'
 import MaFiche from '../../components/MaFiche/MaFiche.jsx'
 import PlanningSemaine from '../../components/PlanningSemaine/PlanningSemaine.jsx'
 import './MonEspace.css'
 
 const ENTREE = entreeDepuisChemin('/app/mon-espace')
-const ONGLETS = ['fiche', 'planning']
+const ONGLETS = ['fiche', 'planning', 'pointage']
 
-// Espace de chaque membre dans la structure active : sa fiche et le planning de l'équipe
-// (puis son pointage et ses congés).
+// Espace de chaque membre dans la structure active : sa fiche, le planning de l'équipe,
+// son pointage (puis ses congés).
 export default function MonEspace() {
   return (
     <FeatureRoute
@@ -66,6 +67,11 @@ function PageMonEspace() {
             contenu: (
               <PlanningSemaine structure={structure} modifiable={false} moi={utilisateur.id} />
             ),
+          },
+          {
+            id: 'pointage',
+            libelle: 'Pointage',
+            contenu: <CartePointage orgId={structure.id} userId={utilisateur.id} />,
           },
         ]}
       />

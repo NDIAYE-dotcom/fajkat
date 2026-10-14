@@ -22,6 +22,10 @@ export const cles = {
   pieces: (ficheId) => ['personnel', 'pieces', ficheId],
   creneaux: (orgId) => ['personnel', 'creneaux', orgId],
   affectations: (orgId, du, au) => ['personnel', 'affectations', orgId, du, au],
+  aujourdhui: (orgId) => ['personnel', 'aujourdhui', orgId],
+  mesPresences: (orgId, userId) => ['personnel', 'mes-presences', orgId, userId],
+  presencesDuJour: (orgId, jour) => ['personnel', 'presences', orgId, jour],
+  corrections: (presenceId) => ['personnel', 'corrections', presenceId],
   invitationPublique: (jeton) => ['invitation', jeton],
 }
 
@@ -264,6 +268,88 @@ export async function retirerAffectation(affectationId) {
     .select('id')
   if (error) throw traduireErreur(error, 'Le retrait n’a pas pu être enregistré. Réessayez.')
   if (!data?.length) throw new Error('Vous n’avez pas les droits nécessaires pour ce retrait.')
+}
+
+// --- Présences -------------------------------------------------------------------
+// L'heure d'arrivée et de départ vient TOUJOURS du serveur (now() dans clock_in /
+// clock_out) : l'horloge du téléphone n'est jamais envoyée.
+
+const COLONNES_PRESENCE = 'id, membership_id, work_date, check_in_at, check_out_at, is_corrected'
+
+// Jour de travail selon l'horloge du serveur, dans le fuseau de la structure.
+export async function chargerAujourdhui(orgId) {
+  const { data, error } = await client().rpc('org_today', { p_org_id: orgId })
+  if (error) throw traduireErreur(error, 'Impossible de lire la date du jour.')
+  return data
+}
+
+export async function pointerArrivee(orgId) {
+  const { data, error } = await client().rpc('clock_in', { p_org_id: orgId })
+  if (error) throw traduireErreur(error, 'L’arrivée n’a pas pu être enregistrée. Réessayez.')
+  return premiereLigne(data)
+}
+
+export async function pointerDepart(orgId) {
+  const { data, error } = await client().rpc('clock_out', { p_org_id: orgId })
+  if (error) throw traduireErreur(error, 'Le départ n’a pas pu être enregistré. Réessayez.')
+  return premiereLigne(data)
+}
+
+// Derniers pointages de l'utilisateur connecté (le plus récent d'abord).
+export async function chargerMesPresences(orgId, userId, nombre = 10) {
+  const { data, error } = await client()
+    .from('attendance_records')
+    .select(`${COLONNES_PRESENCE}, memberships!inner (user_id)`)
+    .eq('org_id', orgId)
+    .eq('memberships.user_id', userId)
+    .is('deleted_at', null)
+    .order('check_in_at', { ascending: false })
+    .limit(nombre)
+  if (error) throw traduireErreur(error, 'Impossible de charger vos pointages.')
+  return data ?? []
+}
+
+// Pointages d'un jour (owner et admin), et ceux de la veille encore ouverts : une garde
+// de nuit commencée hier est toujours en cours.
+export async function chargerPresencesDuJour(orgId, jour, veille) {
+  const { data, error } = await client()
+    .from('attendance_records')
+    .select(COLONNES_PRESENCE)
+    .eq('org_id', orgId)
+    .is('deleted_at', null)
+    .in('work_date', [jour, veille])
+    .order('check_in_at')
+  if (error) throw traduireErreur(error, 'Impossible de charger les présences du jour.')
+  return (data ?? []).filter((p) => p.work_date === jour || !p.check_out_at)
+}
+
+export async function chargerCorrections(presenceId) {
+  const { data, error } = await client()
+    .from('attendance_corrections')
+    .select(
+      'id, old_check_in_at, old_check_out_at, new_check_in_at, new_check_out_at, reason, ' +
+        'created_at, created_by',
+    )
+    .eq('attendance_record_id', presenceId)
+    .order('created_at', { ascending: false })
+  if (error) throw traduireErreur(error, 'Impossible de charger l’historique des corrections.')
+  return data ?? []
+}
+
+// correction : { presenceId?, membreId?, jour?, arrivee, depart, motif } (dates ISO).
+// Sans presenceId : pointage oublié créé pour membreId, le jour donné.
+export async function corrigerPresence(orgId, correction) {
+  const { data, error } = await client().rpc('correct_attendance', {
+    p_org_id: orgId,
+    p_record_id: correction.presenceId ?? null,
+    p_check_in_at: correction.arrivee,
+    p_check_out_at: correction.depart ?? null,
+    p_reason: correction.motif.trim(),
+    p_membership_id: correction.membreId ?? null,
+    p_work_date: correction.jour ?? null,
+  })
+  if (error) throw traduireErreur(error, 'La correction n’a pas pu être enregistrée. Réessayez.')
+  return premiereLigne(data)
 }
 
 // --- Invitations -------------------------------------------------------------
