@@ -39,6 +39,24 @@
   gap: var(--esp-5);
 }
 
+/* Démo (principal) et inscription (secondaire), côte à côte puis empilés */
+.recu-tarif__action {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--esp-3);
+}
+
+@media (max-width: 30rem) {
+  .recu-tarif__action {
+    width: 100%;
+  }
+
+  .recu-tarif__action > * {
+    width: 100%;
+  }
+}
+
 /* Imprimante : une fente sombre ; le reçu glisse dessous, masqué tant qu'il n'est pas sorti */
 .recu-tarif__imprimante {
   position: relative;

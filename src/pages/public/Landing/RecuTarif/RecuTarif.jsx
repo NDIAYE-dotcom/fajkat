@@ -1,6 +1,7 @@
 import { useApparition } from '../../../../hooks/useApparition.js'
 import { famillesOffre, prixOffre } from '../../../../lib/offres.js'
 import BoutonDemo from '../BoutonDemo/BoutonDemo.jsx'
+import BoutonInscription from '../BoutonInscription/BoutonInscription.jsx'
 import './RecuTarif.css'
 
 const PAIEMENTS = 'Wave · Orange Money · Free Money · carte'
@@ -79,6 +80,7 @@ export default function RecuTarif({ offre, notes = [] }) {
           </div>
           <div className="recu-tarif__action apparition" style={{ '--rang': 3 }}>
             <BoutonDemo offre={offre} taille="grande" />
+            <BoutonInscription offre={offre} />
           </div>
         </div>
       </div>

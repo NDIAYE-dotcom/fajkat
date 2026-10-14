@@ -4,10 +4,11 @@ import { useApparition } from '../../../../hooks/useApparition.js'
 import { useOffre } from '../../../../hooks/useOffre.js'
 import { autreOffre } from '../../../../lib/offres.js'
 import BoutonDemo from '../BoutonDemo/BoutonDemo.jsx'
+import BoutonInscription from '../BoutonInscription/BoutonInscription.jsx'
 import './AppelFinal.css'
 
 // Dernière section d'une page d'offre, dans le style des cartes de l'écran de choix :
-// demande de démo, ou passage direct à l'autre offre.
+// démo (action principale), inscription (secondaire), ou passage à l'autre offre (lien discret).
 export default function AppelFinal({ titre, questionAutre, image }) {
   const { offre, choisirOffre } = useOffre()
   const autre = autreOffre(offre.type)
@@ -48,17 +49,17 @@ export default function AppelFinal({ titre, questionAutre, image }) {
           </h2>
           <div className="appel-final__actions apparition" style={{ '--rang': 3 }}>
             <BoutonDemo offre={offre} taille="grande" />
+            <BoutonInscription offre={offre} />
+          </div>
+          <p className="appel-final__question apparition" style={{ '--rang': 4 }}>
+            {questionAutre}{' '}
             <Button
-              variante="secondaire"
-              taille="grande"
+              variante="discret"
               onClick={() => choisirOffre(autre.type, { transition: true })}
-              iconeFin={<ArrowLeftRight size={18} />}
+              iconeFin={<ArrowLeftRight size={16} />}
             >
               Voir l’offre {autre.nom}
             </Button>
-          </div>
-          <p className="appel-final__question apparition" style={{ '--rang': 4 }}>
-            {questionAutre}
           </p>
         </div>
       </div>
