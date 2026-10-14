@@ -4,9 +4,9 @@
 // ne lisent pas le JavaScript pour construire leurs aperçus de lien.
 // Ce fichier ne doit rien importer : il est aussi lu directement par Node.
 
-// Domaine provisoire, à remplacer une fois le nom de domaine choisi.
+// Adresse Vercel provisoire, à remplacer une fois le nom de domaine choisi.
 export const SITE = {
-  url: 'https://fajkat.sn',
+  url: 'https://fajkat.vercel.app',
   nom: 'Fajkat',
   couleurTheme: '#2f5d57',
 }
