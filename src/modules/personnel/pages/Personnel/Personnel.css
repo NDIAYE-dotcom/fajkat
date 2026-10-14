@@ -1,0 +1,24 @@
+.personnel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-5);
+}
+
+.personnel__entete {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--esp-4);
+}
+
+.personnel__surtitre {
+  font-size: var(--texte-s);
+  color: var(--encre-douce);
+}
+
+.personnel__titre {
+  margin-bottom: var(--esp-1);
+  font-size: var(--titre-2);
+  color: var(--primaire);
+}

@@ -1,0 +1,15 @@
+.modale-inviter {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-4);
+}
+
+.modale-inviter__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--esp-3);
+}
+
+.modale-inviter__note {
+  margin-bottom: var(--esp-4);
+}

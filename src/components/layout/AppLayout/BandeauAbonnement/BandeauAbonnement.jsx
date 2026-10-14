@@ -10,11 +10,12 @@ import './BandeauAbonnement.css'
 const ICONES = { info: Info, attention: TriangleAlert, erreur: CircleAlert }
 
 // Bandeau selon organizations.status : essai, période de grâce, lecture seule, suspension.
-// Rien quand l'abonnement est actif. La logique réelle arrive à l'étape 10.
+// Rien quand l'abonnement est actif. Owner et admin seulement ; les autres rôles ne voient
+// que « Saisie suspendue » en lecture seule. La logique réelle arrive à l'étape 10.
 export default function BandeauAbonnement() {
   const { structure, role } = useOrganization()
   const { pathname } = useLocation()
-  const bandeau = bandeauAbonnement(structure)
+  const bandeau = bandeauAbonnement(structure, role)
   if (!bandeau) return null
 
   const action = ROLES_ABONNEMENT.includes(role) && pathname !== '/app/abonnement'

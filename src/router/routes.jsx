@@ -52,6 +52,11 @@ export const router = createBrowserRouter([
             path: '/reinitialiser',
             lazy: composant(() => import('../pages/public/Reinitialiser/Reinitialiser.jsx')),
           },
+          // Lien d'invitation reçu sur WhatsApp ou par e-mail.
+          {
+            path: '/invitation/:jeton',
+            lazy: composant(() => import('../pages/public/Invitation/Invitation.jsx')),
+          },
         ],
       },
       // /app/* : session ET structure active exigées (RequireAuth).
@@ -82,6 +87,10 @@ export const router = createBrowserRouter([
                 lazy: composant(() => import('../modules/admin/pages/Abonnement/Abonnement.jsx')),
               },
               { path: 'profil', lazy: composant(() => import('../pages/Profil/Profil.jsx')) },
+              {
+                path: 'personnel',
+                lazy: composant(() => import('../modules/personnel/pages/Personnel/Personnel.jsx')),
+              },
               // Modules sans page dédiée : gardes d'offre et de rôle, puis « en préparation »
               // (navigation.js). Les modules construits ensuite ajoutent leur route ici.
               { path: '*', lazy: composant(() => import('./RouteModule.jsx')) },

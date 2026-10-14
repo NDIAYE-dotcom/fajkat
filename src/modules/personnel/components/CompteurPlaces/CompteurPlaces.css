@@ -1,0 +1,15 @@
+.compteur-places {
+  font-size: var(--texte-s);
+  color: var(--encre-douce);
+}
+
+.compteur-places__chiffre {
+  font-family: var(--police-mono);
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  color: var(--encre);
+}
+
+.compteur-places--plein {
+  color: var(--tampon);
+}

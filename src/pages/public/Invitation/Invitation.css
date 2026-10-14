@@ -1,0 +1,15 @@
+.invitation__validite {
+  font-size: var(--texte-s);
+  color: var(--encre-douce);
+}
+
+.invitation__date {
+  font-family: var(--police-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+.invitation__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--esp-3);
+}

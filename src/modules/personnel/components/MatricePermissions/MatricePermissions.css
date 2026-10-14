@@ -1,0 +1,121 @@
+.matrice-permissions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-4);
+}
+
+.matrice-permissions__intro {
+  max-width: var(--largeur-texte);
+  color: var(--encre-douce);
+}
+
+/* Le tableau défile seul : la page ne déborde jamais à 360 px. */
+.matrice-permissions__defilement {
+  max-width: 100%;
+  overflow-x: auto;
+  border-top: 2px solid var(--primaire);
+}
+
+.matrice-permissions__tableau {
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: var(--texte-s);
+}
+
+.matrice-permissions__legende {
+  padding: var(--esp-3) 0;
+  font-family: var(--police-titre);
+  font-size: var(--texte-l);
+  font-weight: 600;
+  text-align: left;
+  color: var(--primaire);
+}
+
+.matrice-permissions__role {
+  min-width: 5.5rem;
+  padding: var(--esp-2);
+  border-bottom: 1px solid var(--encre-douce);
+  font-size: var(--texte-xs);
+  font-weight: 700;
+  text-align: center;
+  vertical-align: bottom;
+}
+
+.matrice-permissions__module {
+  position: sticky;
+  left: 0;
+  z-index: 1;
+  min-width: 10rem;
+  padding: var(--esp-2) var(--esp-3);
+  border-right: 1px solid var(--doux);
+  border-bottom: 1px solid var(--doux);
+  background: var(--fond);
+  font-weight: 400;
+  text-align: left;
+}
+
+thead .matrice-permissions__module {
+  border-bottom-color: var(--encre-douce);
+  font-size: var(--texte-xs);
+  font-weight: 700;
+}
+
+.matrice-permissions__famille {
+  padding: var(--esp-4) var(--esp-3) var(--esp-2);
+  border-bottom: 1px solid var(--doux);
+  font-family: var(--police-titre);
+  font-weight: 600;
+  text-align: left;
+  color: var(--primaire);
+}
+
+.matrice-permissions__case {
+  padding: var(--esp-2);
+  border-bottom: 1px solid var(--doux);
+  text-align: center;
+  color: var(--primaire);
+}
+
+.matrice-permissions__ligne:hover .matrice-permissions__case,
+.matrice-permissions__ligne:hover .matrice-permissions__module {
+  background: var(--surface);
+}
+
+.matrice-permissions__non {
+  color: var(--encre-douce);
+}
+
+.matrice-permissions__listes {
+  display: grid;
+  gap: var(--esp-5);
+}
+
+@media (min-width: 640px) {
+  .matrice-permissions__listes {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.matrice-permissions__titre {
+  margin-bottom: var(--esp-2);
+  font-size: var(--texte-l);
+  color: var(--primaire);
+}
+
+.matrice-permissions__liste {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.matrice-permissions__element {
+  display: flex;
+  align-items: center;
+  gap: var(--esp-2);
+  min-height: 2.75rem;
+  border-bottom: 1px solid var(--doux);
+}
+
+.matrice-permissions__liste--fermee .matrice-permissions__element {
+  color: var(--encre-douce);
+}

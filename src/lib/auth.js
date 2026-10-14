@@ -127,6 +127,27 @@ export function changerMotDePasse(motDePasse) {
   )
 }
 
+// Lien d'invitation reçu par e-mail (envoyé par le serveur, hors flux PKCE) : Supabase
+// revient avec la session dans l'ancre (#access_token=…&refresh_token=…).
+export function ouvrirSessionDepuisLien(accessToken, refreshToken) {
+  return executer(
+    client().auth.setSession({ access_token: accessToken, refresh_token: refreshToken }),
+    'Ce lien n’a pas pu être vérifié. Réessayez.',
+  )
+}
+
+// Compte créé par une invitation e-mail : la personne choisit son mot de passe en
+// rejoignant la structure (l'indicateur de métadonnée est alors retiré).
+export function definirMotDePasseInvite(motDePasse) {
+  return executer(
+    client().auth.updateUser({
+      password: motDePasse,
+      data: { invitation_sans_mot_de_passe: null },
+    }),
+    'Le mot de passe n’a pas pu être enregistré. Réessayez.',
+  )
+}
+
 // Relit la session après une modification des métadonnées côté serveur.
 export function rafraichirSession() {
   return executer(client().auth.refreshSession(), 'Session non rafraîchie.')

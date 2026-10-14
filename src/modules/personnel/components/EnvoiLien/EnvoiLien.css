@@ -1,0 +1,38 @@
+.envoi-lien {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-4);
+}
+
+.envoi-lien__intro {
+  color: var(--encre);
+}
+
+.envoi-lien__date {
+  font-family: var(--police-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+.envoi-lien__adresse {
+  font-family: var(--police-mono);
+  font-size: var(--texte-xs);
+}
+
+.envoi-lien__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--esp-3);
+}
+
+.envoi-lien__aide {
+  font-size: var(--texte-s);
+  color: var(--encre-douce);
+}
+
+.envoi-lien__email {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-2);
+  padding-top: var(--esp-4);
+  border-top: 1px solid var(--doux);
+}

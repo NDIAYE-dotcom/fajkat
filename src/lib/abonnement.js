@@ -19,8 +19,22 @@ export const LIBELLES_STATUT = {
   suspended: 'Accès suspendu',
 }
 
-// { ton: 'info' | 'attention' | 'erreur', titre, texte } ou null (abonnement actif).
-export function bandeauAbonnement(structure) {
+// Rôles qui voient l'état de l'abonnement (même règle que la page /app/abonnement).
+const ROLES_BANDEAU = ['owner', 'admin']
+
+// { ton: 'info' | 'attention' | 'erreur', titre, texte } ou null (rien à afficher).
+// L'abonnement ne regarde que owner et admin ; en lecture seule, les autres rôles sont
+// seulement prévenus que la saisie est suspendue.
+export function bandeauAbonnement(structure, role) {
+  if (!ROLES_BANDEAU.includes(role)) {
+    return structure?.status === 'read_only'
+      ? {
+          ton: 'erreur',
+          titre: 'Saisie suspendue',
+          texte: 'Contactez le responsable de la structure.',
+        }
+      : null
+  }
   switch (structure?.status) {
     case 'trial': {
       const jours = joursRestants(structure.trial_ends_at)

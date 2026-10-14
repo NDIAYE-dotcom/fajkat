@@ -1,0 +1,24 @@
+.liste-membres__nom {
+  display: inline-flex;
+  flex-direction: column;
+}
+
+.liste-membres__vous {
+  color: var(--encre-douce);
+}
+
+.liste-membres__titre,
+.liste-membres__inviteur {
+  font-size: var(--texte-xs);
+  color: var(--encre-douce);
+}
+
+.liste-membres__arrivee {
+  display: inline-flex;
+  flex-direction: column;
+}
+
+.liste-membres__chiffres {
+  font-family: var(--police-mono);
+  font-variant-numeric: tabular-nums;
+}
