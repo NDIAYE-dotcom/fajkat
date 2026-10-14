@@ -145,6 +145,7 @@ INTERDITS ABSOLUS (signes d'un design généré automatiquement) :
 - Avant de coder : lis ce fichier, examine le code existant, puis propose un plan court (fichiers, tables, dépendances). J'approuve, ensuite tu codes.
 - S'il manque une information, pose la question au lieu de supposer.
 - RÈGLE DE FIN D'ÉTAPE : quand tu as fini, (1) liste les fichiers créés ou modifiés, (2) donne les commandes à lancer (npm, supabase), (3) donne une liste de tests manuels, (4) propose un message de commit, (5) ajoute une ligne au Journal ci-dessous. Puis ARRÊTE-TOI et attends ma validation.
+- GIT : commiter seulement après ma validation, puis pousser aussitôt sur GitHub (dépôt github.com/NDIAYE-dotcom/fajkat, branche main). Ne jamais pousser un commit que je n'ai pas validé.
 
 ## 11. Journal des étapes
 
