@@ -1,0 +1,158 @@
+/* Conteneur défilant : les en-têtes collent en haut pendant le défilement vertical. */
+.table {
+  max-height: var(--table-hauteur, 70vh);
+  overflow: auto;
+  border-top: 2px solid var(--primaire);
+  overscroll-behavior: contain;
+}
+
+.table:focus-visible {
+  outline-offset: 2px;
+}
+
+.table__tableau {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: var(--texte-s);
+}
+
+.table__legende {
+  padding: var(--esp-3) 0;
+  font-family: var(--police-titre);
+  font-size: var(--texte-l);
+  font-weight: 600;
+  text-align: left;
+  color: var(--primaire);
+}
+
+.table__entete {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  padding: var(--esp-3);
+  border-bottom: 1px solid var(--encre-douce);
+  background: var(--fond);
+  font-size: var(--texte-xs);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-align: left;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--encre-douce);
+}
+
+.table__cellule {
+  padding: var(--esp-3);
+  border-bottom: 1px solid var(--doux);
+  font-weight: 400;
+  text-align: left;
+  vertical-align: middle;
+}
+
+.table__ligne {
+  transition: background-color var(--duree) var(--courbe);
+}
+
+.table__ligne:hover {
+  background: var(--surface);
+}
+
+.table__cellule--principale {
+  font-weight: 700;
+}
+
+.table__cellule--chiffres {
+  font-family: var(--police-mono);
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.table__entete.table__cellule--chiffres {
+  font-family: var(--police-texte);
+}
+
+.table__vide {
+  padding: var(--esp-4) 0;
+}
+
+/* Sous 640 px : une carte par ligne, plus lisible qu'un tableau qui défile de côté. */
+@media (max-width: 40rem) {
+  .table {
+    max-height: none;
+    overflow: visible;
+    border-top: 0;
+  }
+
+  .table__tableau,
+  .table__tableau tbody,
+  .table__ligne,
+  .table__cellule {
+    display: block;
+  }
+
+  .table__tableau thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+  }
+
+  .table__ligne {
+    margin-bottom: var(--esp-3);
+    padding: var(--esp-2) var(--esp-3);
+    border: var(--trait);
+    border-left: 4px solid var(--accent);
+    border-radius: var(--rayon-panneau);
+    background: var(--fond);
+  }
+
+  .table__ligne:hover {
+    background: var(--fond);
+  }
+
+  .table__cellule {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--esp-3);
+    padding: var(--esp-1) 0;
+    border-bottom: 0;
+    text-align: right;
+  }
+
+  .table__cellule::before {
+    content: attr(data-label);
+    flex-shrink: 0;
+    font-family: var(--police-texte);
+    font-size: var(--texte-xs);
+    font-weight: 700;
+    text-align: left;
+    text-transform: uppercase;
+    color: var(--encre-douce);
+  }
+
+  .table__cellule--principale {
+    justify-content: flex-start;
+    padding-bottom: var(--esp-2);
+    border-bottom: var(--trait);
+    margin-bottom: var(--esp-1);
+    font-size: var(--texte-m);
+    text-align: left;
+  }
+
+  .table__cellule--principale::before,
+  .table__vide::before {
+    content: none;
+  }
+
+  .table__cellule--masquee-mobile {
+    display: none;
+  }
+
+  .table__vide {
+    display: block;
+  }
+}

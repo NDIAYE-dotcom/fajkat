@@ -1,0 +1,99 @@
+/* Boîte de saisie commune à tous les champs.
+   Bordure --encre-douce (5,6:1 sur --fond) : un champ doit se voir à 3:1 minimum (WCAG 1.4.11),
+   --doux (1,4:1) ne suffit pas. */
+.input {
+  --input-bordure: var(--encre-douce);
+
+  display: flex;
+  align-items: center;
+  gap: var(--esp-2);
+  min-height: 48px;
+  padding-inline: var(--esp-3);
+  border: 1px solid var(--input-bordure);
+  border-radius: var(--rayon-champ);
+  background: var(--fond);
+  color: var(--encre);
+  box-shadow: inset 0 0 0 1px transparent;
+  transition:
+    border-color var(--duree) var(--courbe),
+    box-shadow var(--duree) var(--courbe);
+}
+
+.input:hover {
+  --input-bordure: var(--encre);
+}
+
+/* Le focus est porté par la boîte : il englobe préfixe et suffixe. */
+.input:focus-within {
+  --input-bordure: var(--primaire);
+
+  outline: 3px solid var(--primaire);
+  outline-offset: 2px;
+  box-shadow: inset 0 0 0 1px var(--primaire);
+}
+
+/* Erreur : bordure doublée (sans décalage de mise en page) ; le message texte suit le champ. */
+.input--erreur,
+.input--erreur:hover {
+  --input-bordure: var(--tampon);
+
+  box-shadow: inset 0 0 0 1px var(--tampon);
+}
+
+.input--erreur:focus-within {
+  outline-color: var(--tampon);
+}
+
+.input--desactive,
+.input--desactive:hover {
+  --input-bordure: var(--doux);
+
+  background: var(--surface);
+  color: var(--encre-douce);
+  cursor: not-allowed;
+}
+
+.input--lecture {
+  background: var(--surface);
+}
+
+.input__champ {
+  flex: 1;
+  min-width: 0;
+  min-height: 46px;
+  padding: var(--esp-2) 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  /* 16 px minimum : évite le zoom automatique de Safari iOS au focus */
+  font-size: max(16px, var(--texte-m));
+}
+
+.input__champ:focus,
+.input__champ:focus-visible {
+  outline: none;
+}
+
+.input__champ::placeholder {
+  color: var(--encre-douce);
+  opacity: 1;
+}
+
+.input__champ:disabled {
+  cursor: not-allowed;
+}
+
+.input__champ--mono {
+  font-family: var(--police-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+.input__affixe {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  font-family: var(--police-mono);
+  font-size: var(--texte-s);
+  color: var(--encre-douce);
+}

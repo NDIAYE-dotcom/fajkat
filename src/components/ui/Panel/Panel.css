@@ -1,0 +1,69 @@
+.panel {
+  min-width: 0;
+  border: var(--trait);
+  border-radius: var(--rayon-panneau);
+  background: var(--fond);
+}
+
+.panel--surface {
+  border-color: transparent;
+  background: var(--surface);
+}
+
+/* Marge colorée du registre : un filet épais côté reliure */
+.panel--marque {
+  border-left: 4px solid var(--accent);
+}
+
+.panel__entete {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--esp-3);
+  padding: var(--esp-4) var(--esp-4) 0;
+}
+
+.panel__titres {
+  min-width: 0;
+}
+
+.panel__titre {
+  font-size: var(--titre-3);
+  color: var(--primaire);
+}
+
+.panel__sous-titre {
+  margin-top: var(--esp-1);
+  font-size: var(--texte-s);
+  color: var(--encre-douce);
+}
+
+.panel__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--esp-2);
+}
+
+.panel__corps {
+  padding: var(--esp-4);
+}
+
+.panel__pied {
+  padding: var(--esp-3) var(--esp-4);
+  border-top: var(--trait);
+}
+
+@media (min-width: 40rem) {
+  .panel__entete {
+    padding: var(--esp-5) var(--esp-5) 0;
+  }
+
+  .panel__corps {
+    padding: var(--esp-5);
+  }
+
+  .panel__pied {
+    padding-inline: var(--esp-5);
+  }
+}

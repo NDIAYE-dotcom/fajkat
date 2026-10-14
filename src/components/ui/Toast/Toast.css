@@ -1,0 +1,119 @@
+.toast-zone {
+  position: fixed;
+  inset: auto var(--esp-4) var(--esp-4);
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-2);
+  pointer-events: none;
+}
+
+.toast-zone__liste {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* Jamais de display: none sur une zone aria-live : elle ne serait plus annoncée. */
+
+@media print {
+  .toast-zone {
+    display: none;
+  }
+}
+
+@media (min-width: 40rem) {
+  .toast-zone {
+    left: auto;
+    width: 24rem;
+  }
+}
+
+.toast {
+  --toast-statut: var(--primaire);
+
+  display: flex;
+  align-items: flex-start;
+  gap: var(--esp-3);
+  padding: var(--esp-3) var(--esp-1) var(--esp-3) var(--esp-3);
+  border: var(--trait);
+  border-left: 4px solid var(--toast-statut);
+  border-radius: var(--rayon-panneau);
+  background: var(--fond);
+  box-shadow: var(--ombre-flottante);
+  pointer-events: auto;
+  animation: toast-entree var(--duree) var(--courbe);
+}
+
+.toast--erreur {
+  --toast-statut: var(--tampon);
+}
+
+/* --attention : icône et bordure seulement, jamais en texte sur fond clair */
+.toast--attention {
+  --toast-statut: var(--attention);
+}
+
+.toast__icone {
+  flex-shrink: 0;
+  margin-top: 2px;
+  color: var(--toast-statut);
+}
+
+.toast__texte {
+  flex: 1;
+  min-width: 0;
+}
+
+.toast__titre {
+  font-weight: 700;
+}
+
+.toast__message {
+  font-size: var(--texte-s);
+  color: var(--encre-douce);
+}
+
+.toast__action {
+  min-height: 44px;
+  margin-top: var(--esp-1);
+  padding: 0;
+  border: 0;
+  background: transparent;
+  font-weight: 700;
+  color: var(--primaire);
+  text-decoration: underline;
+  text-underline-offset: 0.25em;
+  cursor: pointer;
+}
+
+.toast__fermer {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  margin-top: calc(var(--esp-2) * -1);
+  padding: 0;
+  border: 0;
+  border-radius: var(--rayon-champ);
+  background: transparent;
+  color: var(--encre-douce);
+  cursor: pointer;
+}
+
+.toast__fermer:hover {
+  background: var(--surface);
+  color: var(--encre);
+}
+
+@keyframes toast-entree {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}

@@ -1,0 +1,9 @@
+/* Montants alignés à droite, comme dans un registre de caisse */
+.money-input .input__champ {
+  text-align: right;
+}
+
+.money-input__devise {
+  font-weight: 500;
+  color: var(--encre-douce);
+}

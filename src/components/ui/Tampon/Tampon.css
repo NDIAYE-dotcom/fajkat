@@ -24,3 +24,20 @@
 .tampon--neutre {
   color: var(--encre-douce);
 }
+
+.tampon--encre {
+  color: var(--encre);
+}
+
+/* Référé : double trait, comme le tampon de transfert vers le centre de santé */
+.tampon--refere {
+  border-style: double;
+  border-width: 4px;
+}
+
+/* Annulé : barré, pour rester lisible sans la couleur */
+.tampon--annule {
+  border-style: dashed;
+  text-decoration: line-through;
+  text-decoration-thickness: 2px;
+}

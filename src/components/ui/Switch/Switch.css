@@ -1,0 +1,94 @@
+.switch {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--esp-4);
+  min-height: 44px;
+  padding-block: var(--esp-2);
+  cursor: pointer;
+}
+
+.switch__texte {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.35;
+}
+
+.switch__description {
+  font-size: var(--texte-s);
+  color: var(--encre-douce);
+}
+
+/* La case native couvre la piste dessinée */
+.switch__champ {
+  position: absolute;
+  top: 50%;
+  right: 0;
+  translate: 0 -50%;
+  width: 48px;
+  height: 28px;
+  margin: 0;
+  opacity: 0;
+  cursor: inherit;
+}
+
+.switch__piste {
+  position: relative;
+  flex-shrink: 0;
+  width: 48px;
+  height: 28px;
+  border: 2px solid var(--encre-douce);
+  border-radius: 999px;
+  background: var(--fond);
+  transition:
+    background-color var(--duree) var(--courbe),
+    border-color var(--duree) var(--courbe);
+}
+
+.switch__curseur {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--encre-douce);
+  transition:
+    transform var(--duree) var(--courbe),
+    background-color var(--duree) var(--courbe);
+}
+
+.switch:hover .switch__piste {
+  border-color: var(--encre);
+}
+
+.switch__champ:checked + .switch__piste {
+  border-color: var(--primaire);
+  background: var(--primaire);
+}
+
+.switch__champ:checked + .switch__piste .switch__curseur {
+  background: var(--fond);
+  transform: translateX(20px);
+}
+
+.switch__champ:focus-visible + .switch__piste {
+  outline: 3px solid var(--primaire);
+  outline-offset: 2px;
+}
+
+.switch--desactive {
+  color: var(--encre-douce);
+  cursor: not-allowed;
+}
+
+.switch--desactive .switch__piste,
+.switch--desactive:hover .switch__piste {
+  border-color: var(--doux);
+  background: var(--surface);
+}
+
+.switch--desactive .switch__curseur {
+  background: var(--doux);
+}

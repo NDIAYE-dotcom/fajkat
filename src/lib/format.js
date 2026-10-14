@@ -2,6 +2,7 @@ import dayjs from 'dayjs'
 import 'dayjs/locale/fr'
 import timezone from 'dayjs/plugin/timezone'
 import utc from 'dayjs/plugin/utc'
+import { decouperE164, grouperChiffres, longueurNationale } from './pays.js'
 
 dayjs.extend(utc)
 dayjs.extend(timezone)
@@ -31,6 +32,13 @@ function versFuseau(date) {
 
 const nombreFr = new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 0 })
 
+// « 12500 » -> « 12 500 » (espace insécable fine), sans unité : champs de saisie, tableaux.
+export function formatNombre(nombre) {
+  if (nombre === null || nombre === undefined || nombre === '') return ''
+  const valeur = Number(nombre)
+  return Number.isFinite(valeur) ? nombreFr.format(Math.round(valeur)) : ''
+}
+
 // Montants en FCFA entiers : 12500 -> « 12 500 FCFA » (espace insécable).
 export function formatFCFA(montant) {
   if (montant === null || montant === undefined || montant === '') return ''
@@ -51,36 +59,32 @@ export function formatDateHeure(date) {
   return d ? d.format('DD/MM/YYYY HH:mm') : ''
 }
 
-// Groupement par pays (indicatif -> tailles des blocs du numéro national).
-const GROUPES_PAR_INDICATIF = {
-  221: [2, 3, 2, 2], // Sénégal : 77 123 45 67
-  223: [2, 2, 2, 2], // Mali
-  225: [2, 2, 2, 2, 2], // Côte d'Ivoire
-  226: [2, 2, 2, 2], // Burkina Faso
-  227: [2, 2, 2, 2], // Niger
-  228: [2, 2, 2, 2], // Togo
-  229: [2, 2, 2, 2, 2], // Bénin
-  245: [3, 3, 3], // Guinée-Bissau
-}
-
 // « +221771234567 » -> « +221 77 123 45 67 ». Numéro non reconnu : renvoyé tel quel.
 export function formatTelephone(e164) {
   if (!e164) return ''
   const brut = String(e164).replace(/[^\d+]/g, '')
-  const match = brut.match(/^\+(\d{3})(\d+)$/)
-  if (!match) return String(e164)
-  const [, indicatif, national] = match
-  const groupes = GROUPES_PAR_INDICATIF[indicatif]
-  if (!groupes || groupes.reduce((a, b) => a + b, 0) !== national.length) {
-    return `+${indicatif} ${national}`
-  }
-  const blocs = []
-  let position = 0
-  for (const taille of groupes) {
-    blocs.push(national.slice(position, position + taille))
-    position += taille
-  }
-  return `+${indicatif} ${blocs.join(' ')}`
+  const parties = decouperE164(brut)
+  if (!parties) return String(e164)
+  const { pays, national } = parties
+  if (national.length !== longueurNationale(pays)) return `+${pays.indicatif} ${national}`
+  return `+${pays.indicatif} ${grouperChiffres(national, pays.groupes)}`
+}
+
+// Saisie « 12051990 » -> « 12/05/1990 » : les barres s'ajoutent pendant la frappe.
+export function masquerDate(chiffres) {
+  const c = String(chiffres).replace(/\D/g, '').slice(0, 8)
+  return [c.slice(0, 2), c.slice(2, 4), c.slice(4)].filter(Boolean).join('/')
+}
+
+// « 12/05/1990 » -> « 1990-05-12 » ; null si la date est incomplète ou n'existe pas (31/02).
+export function lireDateFr(texte) {
+  const match = String(texte || '').match(/^(\d{2})\/(\d{2})\/(\d{4})$/)
+  if (!match) return null
+  const [, jour, mois, annee] = match.map(Number)
+  const date = new Date(Date.UTC(annee, mois - 1, jour))
+  const existe =
+    date.getUTCFullYear() === annee && date.getUTCMonth() === mois - 1 && date.getUTCDate() === jour
+  return existe && annee >= 1900 ? `${match[3]}-${match[2]}-${match[1]}` : null
 }
 
 // Âge à partir de la date de naissance : « 3 ans », « 8 mois », « 12 jours ».

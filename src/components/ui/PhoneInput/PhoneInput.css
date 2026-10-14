@@ -1,0 +1,37 @@
+.phone-input {
+  padding-left: 0;
+}
+
+/* Indicatif affiché court (« +221 ») ; la liste native transparente le recouvre
+   et s'ouvre au toucher avec les noms des pays. */
+.phone-input__pays {
+  position: relative;
+  align-self: stretch;
+  display: flex;
+  align-items: center;
+  border-right: 1px solid var(--doux);
+}
+
+.phone-input__indicatif {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding-inline: var(--esp-3) var(--esp-2);
+  font-family: var(--police-mono);
+  font-size: max(16px, var(--texte-m));
+  color: var(--encre);
+}
+
+.phone-input__liste {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  min-height: 44px;
+  opacity: 0;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.phone-input__liste:disabled {
+  cursor: not-allowed;
+}

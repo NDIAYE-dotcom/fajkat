@@ -70,6 +70,7 @@
   --rayon-carte: 20px; /* page publique uniquement */
   --trait: 1px solid var(--doux);
   --ombre-modale: 0 12px 32px rgb(23 48 44 / 18%);
+  --voile: rgb(23 48 44 / 45%); /* derrière les modales et tiroirs */
   --ombre-flottante: 0 6px 16px rgb(23 48 44 / 12%);
   /* Page publique uniquement : ombres douces des cartes */
   --ombre-carte: 0 1px 2px rgb(23 48 44 / 6%), 0 12px 32px rgb(23 48 44 / 8%);

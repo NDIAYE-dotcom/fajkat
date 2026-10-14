@@ -1,0 +1,98 @@
+.step-indicator__resume {
+  margin-bottom: var(--esp-2);
+  font-size: var(--texte-s);
+  color: var(--encre-douce);
+}
+
+.step-indicator__resume strong {
+  color: var(--encre);
+}
+
+.step-indicator__liste {
+  display: flex;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.step-indicator__etape {
+  position: relative;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--esp-1);
+  min-width: 0;
+}
+
+/* Trait qui relie chaque étape à la suivante */
+.step-indicator__etape:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  top: 15px;
+  left: 36px;
+  right: 4px;
+  height: 2px;
+  background: var(--doux);
+}
+
+.step-indicator__etape--fait:not(:last-child)::after {
+  background: var(--primaire);
+}
+
+.step-indicator__marque {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: 2px solid var(--encre-douce);
+  border-radius: 50%;
+  background: var(--fond);
+  font-family: var(--police-mono);
+  font-size: var(--texte-s);
+  font-variant-numeric: tabular-nums;
+  color: var(--encre-douce);
+}
+
+.step-indicator__etape--fait .step-indicator__marque {
+  border-color: var(--primaire);
+  background: var(--primaire);
+  color: var(--fond);
+}
+
+.step-indicator__etape--courant .step-indicator__marque {
+  border-color: var(--primaire);
+  box-shadow: 0 0 0 3px var(--doux);
+  font-weight: 500;
+  color: var(--primaire);
+}
+
+.step-indicator__libelle {
+  padding-right: var(--esp-2);
+  font-size: var(--texte-s);
+  color: var(--encre-douce);
+}
+
+.step-indicator__etape--courant .step-indicator__libelle {
+  font-weight: 700;
+  color: var(--encre);
+}
+
+/* Téléphone : libellés masqués visuellement (lus par les lecteurs d'écran), résumé au-dessus. */
+@media (max-width: 40rem) {
+  .step-indicator__libelle {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+  }
+}
+
+@media (min-width: 40.0625rem) {
+  .step-indicator__resume {
+    display: none;
+  }
+}

@@ -79,3 +79,32 @@
     padding-inline: var(--esp-4);
   }
 }
+
+.button__icone-debut {
+  display: inline-flex;
+}
+
+/* Désactivé : contraste réduit mais texte encore lisible (exempté AA, reste ≥ 3:1). */
+.button:disabled,
+.button:disabled:hover {
+  border-color: var(--doux);
+  background: var(--surface);
+  color: var(--encre-douce);
+  cursor: not-allowed;
+  transform: none;
+}
+
+.button--discret:disabled {
+  background: transparent;
+  border-color: transparent;
+  text-decoration: none;
+}
+
+/* En cours : le bouton garde sa couleur (l'action est lancée, pas refusée). */
+.button--chargement {
+  cursor: progress;
+}
+
+.button--chargement:active {
+  transform: none;
+}

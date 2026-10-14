@@ -1,0 +1,97 @@
+/* Mise en page commune aux cases à cocher et aux boutons radio (Radio réutilise ces classes). */
+.checkbox {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: var(--esp-3);
+  min-height: 44px;
+  padding-block: 10px;
+  cursor: pointer;
+}
+
+/* La case native couvre la case dessinée : elle reçoit clics et focus. */
+.checkbox__champ {
+  position: absolute;
+  top: 10px;
+  left: 0;
+  width: 24px;
+  height: 24px;
+  margin: 0;
+  opacity: 0;
+  cursor: inherit;
+}
+
+.checkbox__case {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border: 2px solid var(--encre-douce);
+  border-radius: 4px;
+  background: var(--fond);
+  color: var(--fond);
+  transition:
+    background-color var(--duree) var(--courbe),
+    border-color var(--duree) var(--courbe);
+}
+
+.checkbox__coche {
+  opacity: 0;
+  transform: scale(0.6);
+  transition:
+    opacity var(--duree) var(--courbe),
+    transform var(--duree) var(--courbe);
+}
+
+.checkbox:hover .checkbox__case {
+  border-color: var(--encre);
+}
+
+.checkbox__champ:checked + .checkbox__case {
+  border-color: var(--primaire);
+  background: var(--primaire);
+}
+
+.checkbox__champ:checked + .checkbox__case .checkbox__coche {
+  opacity: 1;
+  transform: none;
+}
+
+.checkbox__champ:focus-visible + .checkbox__case {
+  outline: 3px solid var(--primaire);
+  outline-offset: 2px;
+}
+
+.checkbox__texte {
+  display: flex;
+  flex-direction: column;
+  padding-top: 1px;
+  line-height: 1.35;
+}
+
+.checkbox__description {
+  font-size: var(--texte-s);
+  color: var(--encre-douce);
+}
+
+.checkbox--erreur .checkbox__case {
+  border-color: var(--tampon);
+}
+
+.checkbox--desactive {
+  color: var(--encre-douce);
+  cursor: not-allowed;
+}
+
+.checkbox--desactive .checkbox__case,
+.checkbox--desactive:hover .checkbox__case {
+  border-color: var(--doux);
+  background: var(--surface);
+}
+
+.checkbox--desactive .checkbox__champ:checked + .checkbox__case {
+  border-color: var(--encre-douce);
+  background: var(--encre-douce);
+}

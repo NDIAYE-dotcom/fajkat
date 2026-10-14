@@ -1,0 +1,16 @@
+.radio__case {
+  border-radius: 50%;
+}
+
+.radio__point {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--fond);
+  transform: scale(0);
+  transition: transform var(--duree) var(--courbe);
+}
+
+.radio .checkbox__champ:checked + .radio__case .radio__point {
+  transform: scale(1);
+}

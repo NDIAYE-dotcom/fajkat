@@ -1,0 +1,18 @@
+.select {
+  position: relative;
+  padding-inline: 0;
+}
+
+.select__champ {
+  appearance: none;
+  width: 100%;
+  padding-inline: var(--esp-3) calc(var(--esp-3) + 28px);
+  cursor: pointer;
+}
+
+.select__chevron {
+  position: absolute;
+  right: var(--esp-3);
+  pointer-events: none;
+  color: var(--encre-douce);
+}

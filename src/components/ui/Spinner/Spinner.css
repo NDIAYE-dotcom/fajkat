@@ -1,0 +1,16 @@
+.spinner {
+  display: inline-block;
+  flex-shrink: 0;
+  width: var(--spinner-taille, 20px);
+  height: var(--spinner-taille, 20px);
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  animation: spinner-tour 700ms linear infinite;
+}
+
+@keyframes spinner-tour {
+  to {
+    transform: rotate(1turn);
+  }
+}

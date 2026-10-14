@@ -1,0 +1,82 @@
+.tabs__liste {
+  display: flex;
+  gap: var(--esp-1);
+  overflow-x: auto;
+  border-bottom: 1px solid var(--doux);
+  scrollbar-width: thin;
+}
+
+.tabs__onglet {
+  position: relative;
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: var(--esp-2);
+  min-height: 48px;
+  padding: 0 var(--esp-4);
+  border: 0;
+  border-radius: var(--rayon-champ) var(--rayon-champ) 0 0;
+  background: transparent;
+  font-size: var(--texte-s);
+  font-weight: 700;
+  color: var(--encre-douce);
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    background-color var(--duree) var(--courbe),
+    color var(--duree) var(--courbe);
+}
+
+/* Trait sous l'onglet actif : comme un onglet d'intercalaire tiré vers soi */
+.tabs__onglet::after {
+  content: '';
+  position: absolute;
+  inset: auto var(--esp-2) 0;
+  height: 3px;
+  border-radius: 3px 3px 0 0;
+  background: var(--primaire);
+  transform: scaleX(0);
+  transition: transform var(--duree) var(--courbe);
+}
+
+.tabs__onglet:hover {
+  background: var(--surface);
+  color: var(--encre);
+}
+
+.tabs__onglet:focus-visible {
+  outline-offset: -3px;
+}
+
+.tabs__onglet--actif {
+  color: var(--primaire);
+}
+
+.tabs__onglet--actif::after {
+  transform: scaleX(1);
+}
+
+.tabs__compteur {
+  min-width: 1.5rem;
+  padding: 0 var(--esp-1);
+  border-radius: 999px;
+  background: var(--surface);
+  font-family: var(--police-mono);
+  font-size: var(--texte-xs);
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+  color: var(--encre);
+}
+
+.tabs__onglet--actif .tabs__compteur {
+  background: var(--primaire);
+  color: var(--fond);
+}
+
+.tabs__panneau {
+  padding-top: var(--esp-4);
+}
+
+.tabs__panneau:focus-visible {
+  outline-offset: 2px;
+}

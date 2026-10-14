@@ -1,0 +1,54 @@
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-1);
+  min-width: 0;
+}
+
+.field--groupe {
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.field__label {
+  padding: 0;
+  font-size: var(--texte-s);
+  font-weight: 700;
+  color: var(--encre);
+}
+
+.field__requis {
+  color: var(--tampon);
+}
+
+.field__facultatif {
+  font-weight: 400;
+  color: var(--encre-douce);
+}
+
+.field__aide {
+  font-size: var(--texte-s);
+  color: var(--encre-douce);
+}
+
+.field__controle {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-1);
+  margin-top: var(--esp-1);
+}
+
+.field__erreur {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--esp-2);
+  font-size: var(--texte-s);
+  font-weight: 700;
+  color: var(--tampon);
+}
+
+.field__erreur-icone {
+  flex-shrink: 0;
+  margin-top: 0.15em;
+}

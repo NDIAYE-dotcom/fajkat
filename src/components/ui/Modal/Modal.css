@@ -1,0 +1,86 @@
+.modal {
+  width: min(100% - 2rem, 34rem);
+  max-height: min(100dvh - 2rem, 48rem);
+  padding: 0;
+  border: 0;
+  border-radius: var(--rayon-panneau);
+  background: var(--fond);
+  color: var(--encre);
+  box-shadow: var(--ombre-modale);
+}
+
+.modal--large {
+  width: min(100% - 2rem, 52rem);
+}
+
+.modal[open] {
+  display: flex;
+  animation: modal-entree var(--duree) var(--courbe);
+}
+
+.modal::backdrop {
+  background: var(--voile);
+}
+
+.modal__boite {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-height: 0;
+}
+
+.modal__entete {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--esp-3);
+  padding: var(--esp-4) var(--esp-4) var(--esp-3);
+  border-bottom: var(--trait);
+}
+
+.modal__titre {
+  font-size: var(--titre-3);
+  color: var(--primaire);
+}
+
+.modal__description {
+  margin-top: var(--esp-1);
+  color: var(--encre-douce);
+}
+
+/* Bouton secondaire resserré : la place manque à côté du titre sur téléphone. */
+.modal .modal__fermer {
+  flex-shrink: 0;
+  padding-inline: var(--esp-3);
+}
+
+.modal__corps {
+  flex: 1;
+  min-height: 0;
+  padding: var(--esp-4);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.modal__actions {
+  display: flex;
+  flex-wrap: wrap-reverse;
+  justify-content: flex-end;
+  gap: var(--esp-2);
+  padding: var(--esp-3) var(--esp-4);
+  border-top: var(--trait);
+}
+
+/* Sur téléphone, boutons pleine largeur : le pouce les atteint facilement. */
+@media (max-width: 30rem) {
+  .modal__actions > * {
+    flex: 1 1 100%;
+  }
+}
+
+@keyframes modal-entree {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}

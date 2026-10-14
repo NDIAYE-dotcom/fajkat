@@ -1,0 +1,36 @@
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--esp-2);
+  padding: var(--esp-5) var(--esp-4);
+  border: 1px dashed var(--doux);
+  border-radius: var(--rayon-panneau);
+}
+
+/* Pastille au trait, comme un rond tracé au stylo dans la marge */
+.empty-state__icone {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  margin-bottom: var(--esp-1);
+  border: 1.75px solid var(--accent);
+  border-radius: 50%;
+  color: var(--primaire);
+}
+
+.empty-state__titre {
+  font-size: var(--texte-l);
+  color: var(--encre);
+}
+
+.empty-state__texte {
+  max-width: var(--largeur-texte);
+  color: var(--encre-douce);
+}
+
+.empty-state__action {
+  margin-top: var(--esp-2);
+}
