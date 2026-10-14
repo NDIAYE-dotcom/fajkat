@@ -1,0 +1,12 @@
+.etape-compte {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-4);
+}
+
+.etape-compte__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--esp-3);
+  padding-top: var(--esp-2);
+}

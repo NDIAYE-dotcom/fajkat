@@ -1,0 +1,21 @@
+.regles-mot-de-passe {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--esp-1) var(--esp-4);
+  margin-top: var(--esp-2);
+  padding: 0;
+  list-style: none;
+  font-size: var(--texte-s);
+}
+
+.regles-mot-de-passe__regle {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--esp-1);
+  color: var(--encre-douce);
+}
+
+.regles-mot-de-passe__regle--ok {
+  font-weight: 700;
+  color: var(--primaire);
+}

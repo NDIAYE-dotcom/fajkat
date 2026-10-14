@@ -1,0 +1,49 @@
+.ecran-attente {
+  display: flex;
+  align-items: flex-start;
+  min-height: 100vh;
+  padding: var(--esp-8) var(--gouttiere);
+  background: var(--fond);
+}
+
+.ecran-attente--integre {
+  min-height: 0;
+  padding: var(--esp-4) 0;
+  background: transparent;
+}
+
+.ecran-attente__chargement {
+  display: flex;
+  align-items: center;
+  gap: var(--esp-3);
+  color: var(--encre-douce);
+}
+
+.ecran-attente__erreur {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-3);
+  max-width: var(--largeur-texte);
+  padding: var(--esp-4) var(--esp-5);
+  border: var(--trait);
+  border-left: 4px solid var(--tampon);
+  border-radius: var(--rayon-panneau);
+}
+
+.ecran-attente__titre {
+  display: flex;
+  align-items: center;
+  gap: var(--esp-2);
+  font-weight: 700;
+  color: var(--tampon);
+}
+
+.ecran-attente__icone {
+  flex-shrink: 0;
+}
+
+.ecran-attente__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--esp-3);
+}

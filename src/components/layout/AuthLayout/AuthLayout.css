@@ -1,0 +1,91 @@
+.auth-layout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: var(--fond);
+}
+
+.auth-layout__entete {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--esp-4);
+  min-height: var(--hauteur-entete);
+  padding-inline: var(--gouttiere);
+  border-bottom: var(--trait);
+}
+
+.auth-layout__marque {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  font-family: var(--police-titre);
+  font-size: var(--texte-l);
+  font-weight: 600;
+  color: var(--primaire);
+  text-decoration: none;
+}
+
+.auth-layout__retour {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  font-size: var(--texte-s);
+  color: var(--primaire);
+}
+
+.auth-layout__corps {
+  flex: 1;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.auth-layout__registre {
+  display: none;
+}
+
+.auth-layout__contenu {
+  width: 100%;
+  max-width: 34rem;
+  padding: var(--esp-6) var(--gouttiere) var(--esp-8);
+}
+
+@media (min-width: 900px) {
+  .auth-layout__corps {
+    grid-template-columns: minmax(18rem, 2fr) minmax(0, 3fr);
+  }
+
+  /* Page de registre : filets horizontaux et marge colorée côté reliure. */
+  .auth-layout__registre {
+    display: block;
+    padding: var(--esp-8) var(--esp-6);
+    border-right: 4px solid var(--accent);
+    background: var(--surface);
+  }
+
+  .auth-layout__registre-titre {
+    max-width: 20rem;
+    font-family: var(--police-titre);
+    font-size: var(--titre-3);
+    font-weight: 600;
+    color: var(--primaire);
+  }
+
+  .auth-layout__lignes {
+    max-width: 22rem;
+    margin-top: var(--esp-5);
+    padding: 0;
+    list-style: none;
+  }
+
+  .auth-layout__ligne {
+    padding: var(--esp-3) 0;
+    border-bottom: 1px solid var(--doux);
+    color: var(--encre);
+  }
+
+  .auth-layout__contenu {
+    max-width: 38rem;
+    padding-top: var(--esp-8);
+  }
+}

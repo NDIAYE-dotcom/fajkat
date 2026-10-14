@@ -1,0 +1,25 @@
+.etape-structure {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-4);
+}
+
+.etape-structure__types {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-2);
+}
+
+.etape-structure__grille {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr));
+  gap: var(--esp-4);
+}
+
+.etape-structure__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--esp-3);
+  padding-top: var(--esp-2);
+}

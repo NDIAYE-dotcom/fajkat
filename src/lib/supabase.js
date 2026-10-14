@@ -12,5 +12,13 @@ if (!supabaseConfigured) {
   )
 }
 
-// Client unique, à n'utiliser que depuis les fichiers api.js des modules.
-export const supabase = supabaseConfigured ? createClient(supabaseUrl, supabaseAnonKey) : null
+// Client unique, à n'utiliser que depuis les fichiers api.js des modules (et src/lib).
+// Flux PKCE. Les liens des e-mails arrivent sur /auth/confirmer, qui les traite lui-même
+// (detectSessionInUrl: false) :
+// - liens par défaut de Supabase (?code=…) -> exchangeCodeForSession ;
+// - modèles Fajkat, actifs avec un SMTP personnalisé (?token_hash=…&type=…) -> verifyOtp.
+export const supabase = supabaseConfigured
+  ? createClient(supabaseUrl, supabaseAnonKey, {
+      auth: { flowType: 'pkce', detectSessionInUrl: false },
+    })
+  : null

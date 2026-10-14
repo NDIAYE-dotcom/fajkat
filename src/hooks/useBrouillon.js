@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
+import { PREFIXE_BROUILLON as PREFIXE } from '../lib/brouillons.js'
 
-const PREFIXE = 'fajkat.brouillon.'
 // Délai après la dernière frappe (500 ms maximum) ; enregistrement immédiat si l'onglet
 // est masqué ou fermé (coupure de courant, rechargement, passage à une autre application).
 const DELAI_SAUVEGARDE = 400

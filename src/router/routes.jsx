@@ -25,14 +25,48 @@ export const router = createBrowserRouter([
       { path: '/cgu', lazy: pageLegale('cgu') },
     ],
   },
-  { path: '/connexion', lazy: composant(() => import('../pages/public/Connexion/Connexion.jsx')) },
+  // Pages qui ont besoin de la session : fournisseurs Auth / Org / Toast chargés à la demande.
   {
-    path: '/inscription',
-    lazy: composant(() => import('../pages/public/Inscription/Inscription.jsx')),
-  },
-  {
-    path: '/app',
-    lazy: composant(() => import('../modules/admin/pages/TableauDeBord/TableauDeBord.jsx')),
+    lazy: composant(() => import('./RacineSession.jsx')),
+    children: [
+      {
+        lazy: composant(() => import('../components/layout/AuthLayout/AuthLayout.jsx')),
+        children: [
+          {
+            path: '/connexion',
+            lazy: composant(() => import('../pages/public/Connexion/Connexion.jsx')),
+          },
+          {
+            path: '/inscription',
+            lazy: composant(() => import('../pages/public/Inscription/Inscription.jsx')),
+          },
+          {
+            path: '/mot-de-passe-oublie',
+            lazy: composant(() => import('../pages/public/MotDePasseOublie/MotDePasseOublie.jsx')),
+          },
+          {
+            path: '/auth/confirmer',
+            lazy: composant(() => import('../pages/public/ConfirmerLien/ConfirmerLien.jsx')),
+          },
+          {
+            path: '/reinitialiser',
+            lazy: composant(() => import('../pages/public/Reinitialiser/Reinitialiser.jsx')),
+          },
+        ],
+      },
+      // /app/* : session ET structure active exigées (RequireAuth).
+      {
+        path: '/app',
+        lazy: composant(() => import('./guards/RequireAuth/RequireAuth.jsx')),
+        children: [
+          {
+            index: true,
+            lazy: composant(() => import('../modules/admin/pages/TableauDeBord/TableauDeBord.jsx')),
+          },
+          { path: '*', element: <NonTrouve /> },
+        ],
+      },
+    ],
   },
   // Vitrine du design system de l'application : accessible, non indexée (noindex, hors sitemap).
   { path: '/atelier', lazy: composant(() => import('../pages/Atelier/Atelier.jsx')) },

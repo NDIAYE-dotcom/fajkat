@@ -1,0 +1,14 @@
+.inscription__etape {
+  padding-bottom: var(--esp-2);
+  border-bottom: var(--trait);
+  font-size: var(--titre-3);
+  color: var(--primaire);
+}
+
+.inscription__etape:focus {
+  outline: none;
+}
+
+.inscription__etape:focus-visible {
+  outline: 3px solid var(--primaire);
+}

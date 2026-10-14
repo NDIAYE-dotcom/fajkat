@@ -1,0 +1,30 @@
+.confirmation-envoyee {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-4);
+  padding: var(--esp-5);
+  border: var(--trait);
+  border-left: 4px solid var(--accent);
+  border-radius: var(--rayon-panneau);
+}
+
+.confirmation-envoyee__icone {
+  color: var(--primaire);
+}
+
+.confirmation-envoyee__email {
+  font-family: var(--police-mono);
+  font-weight: 500;
+  overflow-wrap: anywhere;
+}
+
+.confirmation-envoyee__aide {
+  font-size: var(--texte-s);
+  color: var(--encre-douce);
+}
+
+.confirmation-envoyee__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--esp-3);
+}
