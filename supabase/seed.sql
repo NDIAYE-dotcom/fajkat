@@ -1,1 +1,3 @@
 -- Données de démonstration locales (supabase db reset). Rempli aux étapes suivantes.
+-- Les données de référence (pays, plans, fonctionnalités) sont dans la migration
+-- 20261014120000_etape03_socle.sql, car elles sont indispensables en production.
