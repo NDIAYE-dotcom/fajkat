@@ -1,0 +1,295 @@
+/* Impression : documents A4 et A5 (ordonnances, certificats, factures, rapports)
+   et ticket thermique 80 mm (reçus de caisse, tickets de file d'attente).
+   Tout s'imprime en noir sur blanc : aucune information ne repose sur la couleur.
+
+   Usage :
+   - document A4 (par défaut) : <article class="impression-a4">…</article>
+   - document A5             : <article class="impression-a5">…</article>
+   - ticket 80 mm            : <div class="ticket-80">…</div>
+   - imprimer un seul élément de l'écran : imprimer(element) dans src/lib/impression.js
+   - masquer à l'impression : .impression-masquee ; visible seulement imprimé : .impression-seule */
+
+/* ---------- Aperçu à l'écran (Atelier, aperçu avant impression) ---------- */
+
+.impression-seule {
+  display: none;
+}
+
+.impression-a4,
+.impression-a5,
+.ticket-80 {
+  background: var(--impression-fond);
+  color: var(--impression-encre);
+}
+
+.ticket-80 {
+  width: var(--ticket-largeur);
+  max-width: 100%;
+  padding: 4mm 3mm;
+  font-family: var(--police-mono);
+  font-size: var(--texte-xs);
+  font-variant-numeric: tabular-nums;
+  line-height: 1.35;
+}
+
+.ticket-80__entete {
+  text-align: center;
+}
+
+.ticket-80__structure {
+  font-family: var(--police-texte);
+  font-size: var(--texte-s);
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+/* Numéro de passage d'un ticket de file : lisible à bout de bras */
+.ticket-80__numero {
+  margin-block: 2mm;
+  font-size: 2.5rem;
+  font-weight: 500;
+  line-height: 1;
+  text-align: center;
+}
+
+.ticket-80__ligne {
+  display: flex;
+  justify-content: space-between;
+  gap: 2mm;
+}
+
+.ticket-80__ligne > :last-child {
+  flex-shrink: 0;
+  text-align: right;
+}
+
+.ticket-80__separateur {
+  margin: 2mm 0;
+  border: 0;
+  border-top: var(--impression-pointilles);
+}
+
+.ticket-80__total {
+  font-size: var(--texte-s);
+  font-weight: 500;
+}
+
+.ticket-80__pied {
+  margin-top: 2mm;
+  text-align: center;
+}
+
+/* ---------- Impression ---------- */
+
+@media print {
+  /* Formats de page. A4 par défaut ; A5 et ticket par pages nommées. */
+  @page {
+    size: A4 portrait;
+    margin: 15mm 14mm 16mm;
+  }
+
+  @page a5 {
+    size: A5 portrait;
+    margin: 10mm 9mm 11mm;
+  }
+
+  /* Ticket : la largeur du papier (rouleau 80 mm) est fixée par le pilote de l'imprimante
+     thermique ; on supprime seulement les marges pour ne pas perdre de papier. */
+  @page ticket {
+    margin: 0;
+  }
+
+  /* Noir et blanc partout : les sections sombres (Clinique), surfaces et ombres disparaissent. */
+  *,
+  *::before,
+  *::after {
+    background: transparent !important;
+    color: var(--impression-encre) !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+    filter: none !important;
+    animation: none !important;
+    transition: none !important;
+  }
+
+  html,
+  body {
+    background: var(--impression-fond) !important;
+    min-height: 0;
+  }
+
+  body {
+    font-size: 10.5pt;
+    line-height: 1.4;
+  }
+
+  h1 {
+    font-size: 18pt;
+  }
+
+  h2 {
+    font-size: 14pt;
+  }
+
+  h3 {
+    font-size: 12pt;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    break-after: avoid;
+  }
+
+  p,
+  li {
+    orphans: 3;
+    widows: 3;
+  }
+
+  /* Éléments d'interface inutiles sur papier */
+  nav,
+  [role='navigation'],
+  [role='status'],
+  [role='alert'],
+  button,
+  dialog::backdrop,
+  .impression-masquee {
+    display: none !important;
+  }
+
+  .impression-seule {
+    display: block;
+  }
+
+  /* Les liens restent du texte, sans adresse ajoutée (documents médicaux, pas des pages web). */
+  a {
+    text-decoration: none;
+  }
+
+  /* Tableaux façon registre : filets noirs fins, en-têtes répétés sur chaque page. */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  thead {
+    display: table-header-group;
+  }
+
+  th,
+  td {
+    padding: 1.5mm 2mm;
+    border-bottom: var(--impression-filet);
+    text-align: left;
+    vertical-align: top;
+  }
+
+  th {
+    position: static !important; /* en-têtes collants à l'écran */
+    font-weight: 700;
+    border-bottom-width: 1pt;
+  }
+
+  tr,
+  img,
+  svg,
+  figure {
+    break-inside: avoid;
+  }
+
+  /* Montants, numéros de dossier, doses : chiffres tabulaires */
+  .chiffres {
+    font-family: var(--police-mono);
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Tampons (PAYÉ, URGENT…) : bordure noire, sans rotation pour rester net sur thermique. */
+  .tampon {
+    border-color: var(--impression-encre) !important;
+  }
+
+  .saut-page {
+    break-before: page;
+  }
+
+  .sans-coupure {
+    break-inside: avoid;
+  }
+
+  /* Documents */
+  .impression-a4,
+  .impression-a5 {
+    width: auto;
+    max-width: none;
+    margin: 0;
+    padding: 0;
+    border: 0;
+  }
+
+  .impression-a5 {
+    page: a5;
+    font-size: 9.5pt;
+  }
+
+  .impression-a5 h1 {
+    font-size: 14pt;
+  }
+
+  .impression-a5 h2 {
+    font-size: 12pt;
+  }
+
+  /* Zone de signature et cachet : jamais coupée en bas de page */
+  .impression-signature {
+    break-inside: avoid;
+    min-height: 30mm;
+    margin-top: 8mm;
+  }
+
+  /* Ticket thermique : police mono, gras plutôt que gris, aucune marge perdue. */
+  .ticket-80 {
+    page: ticket;
+    width: var(--ticket-largeur);
+    margin: 0 auto;
+    padding: 3mm 0 6mm; /* marge basse : place pour la coupe du papier */
+    font-size: 9pt;
+  }
+
+  .ticket-80__structure {
+    font-size: 10pt;
+  }
+
+  .ticket-80__numero {
+    font-size: 32pt;
+  }
+
+  .ticket-80__total {
+    font-size: 11pt;
+    font-weight: 700;
+  }
+
+  .ticket-80 .tampon {
+    transform: none;
+  }
+
+  /* Impression d'un seul élément (src/lib/impression.js) : tout le reste est masqué. */
+  html[data-impression] body * {
+    visibility: hidden;
+  }
+
+  html[data-impression] [data-imprime],
+  html[data-impression] [data-imprime] * {
+    visibility: visible;
+  }
+
+  html[data-impression] [data-imprime] {
+    position: absolute;
+    inset: 0 auto auto 0;
+  }
+
+  html[data-impression='ticket'] [data-imprime] {
+    inset-inline: 0;
+  }
+}
