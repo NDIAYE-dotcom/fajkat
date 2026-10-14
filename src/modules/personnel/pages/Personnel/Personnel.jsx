@@ -22,6 +22,7 @@ import {
 } from '../../api.js'
 import CompteurPlaces from '../../components/CompteurPlaces/CompteurPlaces.jsx'
 import FicheMembre from '../../components/FicheMembre/FicheMembre.jsx'
+import ListeConges from '../../components/ListeConges/ListeConges.jsx'
 import ListeMembres from '../../components/ListeMembres/ListeMembres.jsx'
 import MatricePermissions from '../../components/MatricePermissions/MatricePermissions.jsx'
 import ModaleInviter from '../../components/ModaleInviter/ModaleInviter.jsx'
@@ -33,7 +34,7 @@ import { statutInvitation } from '../../utils.js'
 import './Personnel.css'
 
 const ENTREE = entreeDepuisChemin('/app/personnel')
-const ONGLETS = ['membres', 'planning', 'presences', 'invitations', 'permissions']
+const ONGLETS = ['membres', 'planning', 'presences', 'conges', 'invitations', 'permissions']
 
 export default function Personnel() {
   return (
@@ -143,6 +144,11 @@ function PagePersonnel() {
             id: 'presences',
             libelle: 'Présences',
             contenu: <PresencesDuJour orgId={orgId} />,
+          },
+          {
+            id: 'conges',
+            libelle: 'Congés',
+            contenu: <ListeConges orgId={orgId} />,
           },
           {
             id: 'invitations',

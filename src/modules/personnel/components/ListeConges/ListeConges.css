@@ -1,0 +1,71 @@
+.liste-conges {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-5);
+}
+
+.liste-conges__titre {
+  margin-bottom: var(--esp-2);
+  font-size: var(--titre-3);
+  color: var(--primaire);
+}
+
+.liste-conges__nombre {
+  font-family: var(--police-mono);
+  font-size: var(--texte-m);
+  color: var(--encre-douce);
+}
+
+.liste-conges__liste {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-left: 3px solid var(--accent);
+}
+
+.liste-conges__demande {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--esp-2);
+  align-items: center;
+  padding: var(--esp-3);
+  border-bottom: 1px solid var(--doux);
+}
+
+.liste-conges__nom,
+.liste-conges__demande > span:nth-child(2) {
+  display: flex;
+  flex-direction: column;
+}
+
+.liste-conges__nom {
+  font-weight: 700;
+}
+
+.liste-conges__detail {
+  font-size: var(--texte-xs);
+  font-weight: 400;
+  color: var(--encre-douce);
+}
+
+.liste-conges__periode {
+  font-family: var(--police-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: var(--texte-s);
+}
+
+.liste-conges__tampons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--esp-2);
+}
+
+.liste-conges__demande > :last-child {
+  justify-self: start;
+}
+
+@media (min-width: 800px) {
+  .liste-conges__demande {
+    grid-template-columns: 1.2fr 1.5fr 1.3fr auto;
+  }
+}

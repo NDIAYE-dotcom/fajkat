@@ -1,10 +1,24 @@
 import { formatDateHeure } from '../../../../lib/format.js'
-import { formatJour, horairesCreneau, libelleJour, nomMembre } from '../../utils.js'
+import { absentsDuJour, formatJour, horairesCreneau, libelleJour, nomMembre } from '../../utils.js'
 import './PlanningImpression.css'
 
 // Version papier du planning, A4 paysage, à afficher au mur. Invisible à l'écran ;
 // imprimée seule par imprimer() (src/lib/impression.js).
-export default function PlanningImpression({ structure, jours, creneaux, cases, ref }) {
+export default function PlanningImpression({
+  structure,
+  jours,
+  creneaux,
+  cases,
+  membres,
+  calendrier,
+  ref,
+}) {
+  const enConge = (jour) => {
+    const absents = absentsDuJour(calendrier, jour)
+    return (membres ?? []).filter((m) => absents.has(m.id)).map((m) => nomMembre(m))
+  }
+  const unAbsent = jours.some((jour) => enConge(jour).length > 0)
+
   return (
     <article ref={ref} className="planning-impression impression-seule impression-a4-paysage">
       <header className="planning-impression__entete">
@@ -43,6 +57,14 @@ export default function PlanningImpression({ structure, jours, creneaux, cases, 
               ))}
             </tr>
           ))}
+          {unAbsent && (
+            <tr>
+              <th scope="row">En congé</th>
+              {jours.map((jour) => (
+                <td key={jour}>{enConge(jour).join(', ')}</td>
+              ))}
+            </tr>
+          )}
         </tbody>
       </table>
       <p className="planning-impression__pied chiffres">Imprimé le {formatDateHeure(new Date())}</p>

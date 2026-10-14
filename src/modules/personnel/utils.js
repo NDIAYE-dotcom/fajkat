@@ -218,3 +218,46 @@ export function statutPresence(presence) {
   if (!presence.check_out_at) return { libelle: 'Présent', ton: 'primaire' }
   return { libelle: 'Parti', ton: 'encre' }
 }
+
+// --- Congés et absences --------------------------------------------------------------
+
+export const TYPES_CONGE = [
+  { valeur: 'conge_annuel', libelle: 'Congé annuel' },
+  { valeur: 'maladie', libelle: 'Congé maladie' },
+  { valeur: 'maternite', libelle: 'Congé de maternité' },
+  { valeur: 'paternite', libelle: 'Congé de paternité' },
+  { valeur: 'formation', libelle: 'Formation' },
+  { valeur: 'evenement_familial', libelle: 'Événement familial (mariage, baptême, deuil)' },
+  { valeur: 'autre', libelle: 'Autre absence' },
+]
+
+export function libelleTypeConge(valeur) {
+  return TYPES_CONGE.find((t) => t.valeur === valeur)?.libelle ?? valeur
+}
+
+export const STATUTS_CONGE = {
+  pending: { libelle: 'En attente', ton: 'encre' },
+  approved: { libelle: 'Validé', ton: 'primaire' },
+  rejected: { libelle: 'Refusé', ton: 'alerte' },
+  cancelled: { libelle: 'Annulé', ton: 'neutre' },
+}
+
+// Nombre de jours calendaires, bornes comprises.
+export function nombreJours(debut, fin) {
+  return dayjs(fin).diff(dayjs(debut), 'day') + 1
+}
+
+// « du 03/11/2026 au 05/11/2026 (3 jours) » ou « le 03/11/2026 ».
+export function periodeConge(debut, fin) {
+  if (debut === fin) return `le ${formatJour(debut)}`
+  return `du ${formatJour(debut)} au ${formatJour(fin)} (${nombreJours(debut, fin)} jours)`
+}
+
+// Membres en congé validé ce jour-là : Set des membership_id.
+export function absentsDuJour(calendrier, jour) {
+  return new Set(
+    (calendrier ?? [])
+      .filter((c) => c.start_date <= jour && c.end_date >= jour)
+      .map((c) => c.membership_id),
+  )
+}

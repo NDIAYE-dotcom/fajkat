@@ -5,7 +5,13 @@ import Button from '../../../../components/ui/Button/Button.jsx'
 import Icone from '../../../../components/ui/Icone/Icone.jsx'
 import Message from '../../../../components/ui/Message/Message.jsx'
 import { imprimer } from '../../../../lib/impression.js'
-import { chargerAffectations, chargerCreneaux, chargerMembres, cles } from '../../api.js'
+import {
+  chargerAffectations,
+  chargerCalendrierConges,
+  chargerCreneaux,
+  chargerMembres,
+  cles,
+} from '../../api.js'
 import {
   aujourdhui,
   decalerJours,
@@ -42,13 +48,20 @@ export default function PlanningSemaine({ structure, modifiable, moi }) {
     queryFn: () => chargerAffectations(orgId, lundi, dimanche),
   })
 
+  // Congés validés de l'équipe (sans type ni motif) : absents et conflits dans la grille.
+  const calendrier = useQuery({
+    queryKey: cles.calendrierConges(orgId, lundi, dimanche),
+    queryFn: () => chargerCalendrierConges(orgId, lundi, dimanche),
+  })
+
   const actifs = (creneaux.data ?? []).filter((c) => c.is_active)
   const cases = indexerAffectations(affectations.data, membres.data)
-  const erreur = creneaux.error ?? membres.error ?? affectations.error
+  const erreur = creneaux.error ?? membres.error ?? affectations.error ?? calendrier.error
   const chargement = creneaux.isPending || membres.isPending || affectations.isPending
 
   function rafraichir() {
     queryClient.invalidateQueries({ queryKey: ['personnel', 'affectations', orgId] })
+    queryClient.invalidateQueries({ queryKey: ['personnel', 'conflits', orgId] })
   }
 
   return (
@@ -107,6 +120,7 @@ export default function PlanningSemaine({ structure, modifiable, moi }) {
               creneaux.refetch()
               membres.refetch()
               affectations.refetch()
+              calendrier.refetch()
             }}
           >
             Réessayer
@@ -119,6 +133,8 @@ export default function PlanningSemaine({ structure, modifiable, moi }) {
           jours={jours}
           creneaux={actifs}
           cases={cases}
+          membres={membres.data}
+          calendrier={calendrier.data}
           chargement={chargement}
           aujourdhui={aujourdhui()}
           moi={moi}
@@ -135,6 +151,7 @@ export default function PlanningSemaine({ structure, modifiable, moi }) {
           creneaux={actifs}
           cases={cases}
           membres={membres.data}
+          calendrier={calendrier.data}
           onFermer={() => setCaseOuverte(null)}
           onChange={rafraichir}
         />
@@ -155,6 +172,8 @@ export default function PlanningSemaine({ structure, modifiable, moi }) {
         jours={jours}
         creneaux={actifs}
         cases={cases}
+        membres={membres.data}
+        calendrier={calendrier.data}
       />
     </section>
   )

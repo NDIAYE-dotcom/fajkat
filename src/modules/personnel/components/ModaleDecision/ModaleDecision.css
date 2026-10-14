@@ -1,0 +1,41 @@
+.modale-decision {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-4);
+}
+
+.modale-decision__details {
+  margin: 0;
+}
+
+.modale-decision__details > div {
+  display: grid;
+  grid-template-columns: minmax(7rem, 1fr) 2fr;
+  gap: var(--esp-3);
+  padding: var(--esp-2) 0;
+  border-bottom: 1px solid var(--doux);
+}
+
+.modale-decision__details dt {
+  color: var(--encre-douce);
+}
+
+.modale-decision__details dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.modale-decision__chiffres {
+  font-family: var(--police-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+.modale-decision__texte {
+  font-size: var(--texte-s);
+  color: var(--encre-douce);
+}
+
+.modale-decision__refuser {
+  color: var(--tampon);
+  border-color: var(--tampon);
+}

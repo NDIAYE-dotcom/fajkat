@@ -2,7 +2,7 @@ import { CalendarDays } from 'lucide-react'
 import Button from '../../../../components/ui/Button/Button.jsx'
 import EmptyState from '../../../../components/ui/EmptyState/EmptyState.jsx'
 import Skeleton from '../../../../components/ui/Skeleton/Skeleton.jsx'
-import { horairesCreneau, libelleJour, nomMembre } from '../../utils.js'
+import { absentsDuJour, horairesCreneau, libelleJour, nomMembre } from '../../utils.js'
 import './GrillePlanning.css'
 
 // Grille de la semaine : tableau créneaux × jours sur grand écran ; sous 640 px, une
@@ -12,6 +12,8 @@ export default function GrillePlanning({
   jours,
   creneaux,
   cases,
+  membres,
+  calendrier,
   chargement,
   aujourdhui,
   moi,
@@ -37,6 +39,11 @@ export default function GrillePlanning({
   }
 
   const noms = (jour, creneau) => cases.get(`${jour}|${creneau.id}`) ?? []
+  // Membres en congé validé, jour par jour.
+  const absents = new Map(jours.map((jour) => [jour, absentsDuJour(calendrier, jour)]))
+  const enConge = (jour) =>
+    (membres ?? []).filter((m) => absents.get(jour).has(m.id)).map((m) => nomMembre(m))
+  const unAbsent = jours.some((jour) => absents.get(jour).size > 0)
 
   return (
     <>
@@ -74,7 +81,7 @@ export default function GrillePlanning({
                       jour === aujourdhui ? 'grille-planning__jour--aujourdhui' : undefined
                     }
                   >
-                    <Noms liste={noms(jour, creneau)} moi={moi} />
+                    <Noms liste={noms(jour, creneau)} moi={moi} absents={absents.get(jour)} />
                     {modifiable && (
                       <Button
                         variante="discret"
@@ -89,6 +96,14 @@ export default function GrillePlanning({
                 ))}
               </tr>
             ))}
+            {unAbsent && (
+              <tr className="grille-planning__conges">
+                <th scope="row">En congé</th>
+                {jours.map((jour) => (
+                  <td key={jour}>{enConge(jour).join(', ') || '—'}</td>
+                ))}
+              </tr>
+            )}
           </tbody>
         </table>
       </div>
@@ -114,7 +129,7 @@ export default function GrillePlanning({
                     {creneau.label}
                     <span className="grille-planning__horaires">{horairesCreneau(creneau)}</span>
                   </span>
-                  <Noms liste={noms(jour, creneau)} moi={moi} />
+                  <Noms liste={noms(jour, creneau)} moi={moi} absents={absents.get(jour)} />
                   {modifiable && (
                     <Button
                       variante="secondaire"
@@ -127,6 +142,9 @@ export default function GrillePlanning({
                 </li>
               ))}
             </ul>
+            {absents.get(jour).size > 0 && (
+              <p className="grille-planning__en-conge">En congé : {enConge(jour).join(', ')}</p>
+            )}
           </li>
         ))}
       </ol>
@@ -134,16 +152,23 @@ export default function GrillePlanning({
   )
 }
 
-function Noms({ liste, moi }) {
+function Noms({ liste, moi, absents }) {
   if (liste.length === 0) return <span className="grille-planning__vide">Personne</span>
   return (
     <ul className="grille-planning__noms">
       {liste.map(({ id, membre }) => {
         const estMoi = membre?.user_id === moi
+        // De garde alors que son congé est validé : conflit à régler dans le planning.
+        const conflit = membre && absents?.has(membre.id)
+        const classes = [
+          estMoi && 'grille-planning__nom--moi',
+          conflit && 'grille-planning__nom--conflit',
+        ]
         return (
-          <li key={id} className={estMoi ? 'grille-planning__nom--moi' : undefined}>
+          <li key={id} className={classes.filter(Boolean).join(' ') || undefined}>
             {nomMembre(membre)}
             {estMoi && ' (vous)'}
+            {conflit && <span className="grille-planning__conflit"> · en congé, conflit</span>}
           </li>
         )
       })}

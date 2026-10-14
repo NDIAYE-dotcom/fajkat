@@ -6,7 +6,7 @@ import Modal from '../../../../components/ui/Modal/Modal.jsx'
 import Select from '../../../../components/ui/Select/Select.jsx'
 import { useToast } from '../../../../hooks/useToast.js'
 import { affecter, retirerAffectation } from '../../api.js'
-import { horairesCreneau, libelleJour, libelleRole, nomMembre } from '../../utils.js'
+import { absentsDuJour, horairesCreneau, libelleJour, libelleRole, nomMembre } from '../../utils.js'
 import './ModaleCreneau.css'
 
 // Un créneau, un jour : qui est affecté, ajout par sélection (pas de glisser-déposer,
@@ -18,6 +18,7 @@ export default function ModaleCreneau({
   creneaux,
   cases,
   membres,
+  calendrier,
   onFermer,
   onChange,
 }) {
@@ -28,6 +29,8 @@ export default function ModaleCreneau({
   const affectes = cases.get(`${jour}|${creneau.id}`) ?? []
   const dejaLa = new Set(affectes.map((a) => a.membreId))
   const disponibles = (membres ?? []).filter((m) => m.is_active && !dejaLa.has(m.id))
+
+  const absents = absentsDuJour(calendrier, jour)
 
   // Autres créneaux du même jour pour la personne choisie : signalé, pas interdit.
   const autres = membreId
@@ -96,6 +99,9 @@ export default function ModaleCreneau({
                     {membre && (
                       <span className="modale-creneau__role"> · {libelleRole(membre.role)}</span>
                     )}
+                    {membre && absents.has(membre.id) && (
+                      <span className="modale-creneau__conflit"> · en congé ce jour-là</span>
+                    )}
                   </span>
                   <Button
                     variante="discret"
@@ -135,6 +141,11 @@ export default function ModaleCreneau({
               }}
             />
           </Field>
+          {membreId && absents.has(membreId) && (
+            <Message ton="erreur" titre="En congé ce jour-là">
+              <p>Son congé est validé pour cette date. Choisissez plutôt une autre personne.</p>
+            </Message>
+          )}
           {autres.length > 0 && (
             <Message titre="Déjà prévu ce jour-là">
               <p>

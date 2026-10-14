@@ -74,6 +74,30 @@
   color: var(--encre-douce);
 }
 
+.grille-planning__nom--conflit {
+  text-decoration: line-through;
+  text-decoration-color: var(--tampon);
+}
+
+.grille-planning__conflit {
+  font-size: var(--texte-xs);
+  font-weight: 700;
+  color: var(--tampon);
+  text-decoration: none;
+  display: inline-block;
+}
+
+.grille-planning__conges th,
+.grille-planning__conges td,
+.grille-planning__en-conge {
+  font-size: var(--texte-s);
+  color: var(--encre-douce);
+}
+
+.grille-planning__en-conge {
+  padding-top: var(--esp-2);
+}
+
 /* Téléphone : liste jour par jour. */
 .grille-planning__liste {
   display: flex;

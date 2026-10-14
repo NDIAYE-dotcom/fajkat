@@ -26,6 +26,11 @@ export const cles = {
   mesPresences: (orgId, userId) => ['personnel', 'mes-presences', orgId, userId],
   presencesDuJour: (orgId, jour) => ['personnel', 'presences', orgId, jour],
   corrections: (presenceId) => ['personnel', 'corrections', presenceId],
+  mesConges: (orgId, userId) => ['personnel', 'mes-conges', orgId, userId],
+  conges: (orgId, depuis) => ['personnel', 'conges', orgId, depuis],
+  calendrierConges: (orgId, du, au) => ['personnel', 'calendrier-conges', orgId, du, au],
+  conflits: (orgId, membreId, du, au) => ['personnel', 'conflits', orgId, membreId, du, au],
+  monAppartenance: (orgId, userId) => ['personnel', 'mon-appartenance', orgId, userId],
   invitationPublique: (jeton) => ['invitation', jeton],
 }
 
@@ -350,6 +355,102 @@ export async function corrigerPresence(orgId, correction) {
   })
   if (error) throw traduireErreur(error, 'La correction n’a pas pu être enregistrée. Réessayez.')
   return premiereLigne(data)
+}
+
+// --- Congés et absences --------------------------------------------------------------
+
+const COLONNES_CONGE =
+  'id, membership_id, leave_type, start_date, end_date, reason, status, decided_by, ' +
+  'decided_at, decision_note, created_at'
+
+export async function chargerMesConges(orgId, userId) {
+  const { data, error } = await client()
+    .from('leave_requests')
+    .select(`${COLONNES_CONGE}, memberships!inner (user_id)`)
+    .eq('org_id', orgId)
+    .eq('memberships.user_id', userId)
+    .is('deleted_at', null)
+    .order('start_date', { ascending: false })
+    .limit(30)
+  if (error) throw traduireErreur(error, 'Impossible de charger vos demandes de congé.')
+  return data ?? []
+}
+
+// Owner et admin : demandes qui se terminent à partir de « depuis » ('AAAA-MM-JJ').
+export async function chargerConges(orgId, depuis) {
+  const { data, error } = await client()
+    .from('leave_requests')
+    .select(COLONNES_CONGE)
+    .eq('org_id', orgId)
+    .is('deleted_at', null)
+    .gte('end_date', depuis)
+    .order('start_date')
+  if (error) throw traduireErreur(error, 'Impossible de charger les demandes de congé.')
+  return data ?? []
+}
+
+// Identifiant d'appartenance de l'utilisateur connecté dans la structure.
+export async function chargerMonAppartenance(orgId) {
+  const { data, error } = await client().rpc('current_membership_id', { p_org_id: orgId })
+  if (error || !data) {
+    throw traduireErreur(error, 'Votre appartenance à la structure n’a pas pu être lue.')
+  }
+  return data
+}
+
+// conge : { type, debut, fin, motif }. Le motif n'est jamais envoyé pour un congé maladie.
+export async function demanderConge(orgId, membreId, conge) {
+  const { error } = await client()
+    .from('leave_requests')
+    .insert({
+      org_id: orgId,
+      membership_id: membreId,
+      leave_type: conge.type,
+      start_date: conge.debut,
+      end_date: conge.fin,
+      reason: conge.type === 'maladie' ? null : conge.motif.trim() || null,
+    })
+  if (error?.code === '23514') {
+    throw new Error('Vérifiez les dates : la fin doit être le même jour que le début, ou après.')
+  }
+  if (error) throw traduireErreur(error, 'La demande n’a pas pu être envoyée. Réessayez.')
+}
+
+export async function deciderConge(congeId, approuve, note) {
+  const { error } = await client().rpc('decide_leave', {
+    p_leave_id: congeId,
+    p_approve: approuve,
+    p_note: note?.trim() || null,
+  })
+  if (error) throw traduireErreur(error, 'La décision n’a pas pu être enregistrée. Réessayez.')
+}
+
+export async function annulerConge(congeId) {
+  const { error } = await client().rpc('cancel_leave', { p_leave_id: congeId })
+  if (error) throw traduireErreur(error, 'La demande n’a pas pu être annulée. Réessayez.')
+}
+
+// Gardes prévues pendant la période : [{ assignment_id, shift_date, shift_label }].
+export async function chargerConflits(orgId, membreId, du, au) {
+  const { data, error } = await client().rpc('leave_conflicts', {
+    p_org_id: orgId,
+    p_membership_id: membreId,
+    p_from: du,
+    p_to: au,
+  })
+  if (error) throw traduireErreur(error, 'Impossible de vérifier les gardes prévues.')
+  return data ?? []
+}
+
+// Congés validés de toute l'équipe, sans type ni motif : [{ membership_id, start_date, end_date }].
+export async function chargerCalendrierConges(orgId, du, au) {
+  const { data, error } = await client().rpc('org_leave_calendar', {
+    p_org_id: orgId,
+    p_from: du,
+    p_to: au,
+  })
+  if (error) throw traduireErreur(error, 'Impossible de charger les absences de la semaine.')
+  return data ?? []
 }
 
 // --- Invitations -------------------------------------------------------------

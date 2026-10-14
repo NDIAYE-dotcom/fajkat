@@ -1,0 +1,37 @@
+.mes-conges {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-5);
+  max-width: 44rem;
+}
+
+.mes-conges__liste {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.mes-conges__ligne {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--esp-2) var(--esp-3);
+  padding: var(--esp-3) 0;
+  border-bottom: 1px solid var(--doux);
+}
+
+.mes-conges__type {
+  font-weight: 700;
+}
+
+.mes-conges__periode {
+  font-family: var(--police-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: var(--texte-s);
+}
+
+.mes-conges__note {
+  flex-basis: 100%;
+  font-size: var(--texte-s);
+  color: var(--encre-douce);
+}
