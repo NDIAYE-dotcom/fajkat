@@ -103,3 +103,25 @@ export async function copierTexte(texte) {
     }
   }
 }
+
+// --- Fiches du personnel -------------------------------------------------------
+
+export const CONTRATS = [
+  { valeur: 'titulaire', libelle: 'Titulaire' },
+  { valeur: 'contractuel', libelle: 'Contractuel' },
+  { valeur: 'benevole', libelle: 'Bénévole' },
+  { valeur: 'vacataire', libelle: 'Vacataire' },
+]
+
+export function libelleContrat(valeur) {
+  return CONTRATS.find((c) => c.valeur === valeur)?.libelle ?? ''
+}
+
+// Pièces jointes acceptées (mêmes règles que le bucket « personnel »).
+export const TYPES_PIECE = ['application/pdf', 'image/jpeg', 'image/png', 'image/webp']
+export const POIDS_MAX_PIECE = 10 * 1024 * 1024
+
+export function formatPoids(octets) {
+  if (octets < 1024 * 1024) return `${Math.max(1, Math.round(octets / 1024))} Ko`
+  return `${(octets / (1024 * 1024)).toLocaleString('fr-FR', { maximumFractionDigits: 1 })} Mo`
+}

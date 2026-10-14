@@ -21,6 +21,7 @@ import {
   cles,
 } from '../../api.js'
 import CompteurPlaces from '../../components/CompteurPlaces/CompteurPlaces.jsx'
+import FicheMembre from '../../components/FicheMembre/FicheMembre.jsx'
 import ListeMembres from '../../components/ListeMembres/ListeMembres.jsx'
 import MatricePermissions from '../../components/MatricePermissions/MatricePermissions.jsx'
 import ModaleInviter from '../../components/ModaleInviter/ModaleInviter.jsx'
@@ -54,6 +55,7 @@ function PagePersonnel() {
   const toast = useToast()
   const [parametres, setParametres] = useSearchParams()
   const [membreOuvert, setMembreOuvert] = useState(null)
+  const [ficheOuverte, setFicheOuverte] = useState(null)
   // null : fermée ; {} : nouvelle invitation ; { envoi } : écran du lien.
   const [inviter, setInviter] = useState(null)
   const orgId = structure.id
@@ -126,6 +128,7 @@ function PagePersonnel() {
                 chargement={membres.isPending}
                 moi={utilisateur?.id}
                 onGerer={setMembreOuvert}
+                onFiche={setFicheOuverte}
               />
             ),
           },
@@ -165,6 +168,16 @@ function PagePersonnel() {
             toast.succes(message)
             rafraichir()
           }}
+        />
+      )}
+
+      {ficheOuverte && (
+        <FicheMembre
+          key={ficheOuverte.id}
+          orgId={orgId}
+          membre={ficheOuverte}
+          onFermer={() => setFicheOuverte(null)}
+          onModifie={() => queryClient.invalidateQueries({ queryKey: cles.membres(orgId) })}
         />
       )}
 

@@ -1,4 +1,5 @@
-// Accès aux données du module Personnel : membres, invitations, places de l'offre.
+// Accès aux données du module Personnel : membres, invitations, places de l'offre,
+// fiches et pièces jointes (bucket privé « personnel », lues par URL signée).
 // Les invitations passent par des fonctions SQL (jeton haché, max_users, droits) et
 // par deux Edge Functions : invite-member (e-mail) et accept-invitation (compte créé
 // depuis un lien). La RLS limite tout à la structure ; seuls owner et admin écrivent.
@@ -16,6 +17,9 @@ export const cles = {
   invitations: (orgId) => ['personnel', 'invitations', orgId],
   aEnvoyer: (orgId) => ['personnel', 'a-envoyer', orgId],
   places: (orgId) => ['personnel', 'places', orgId],
+  fiche: (orgId, membreId) => ['personnel', 'fiche', orgId, membreId],
+  maFiche: (orgId, userId) => ['personnel', 'ma-fiche', orgId, userId],
+  pieces: (ficheId) => ['personnel', 'pieces', ficheId],
   invitationPublique: (jeton) => ['invitation', jeton],
 }
 
@@ -43,13 +47,18 @@ export async function chargerMembres(orgId) {
     .select(
       'id, user_id, role, is_active, created_at, invited_by, ' +
         'profil:profiles!memberships_user_id_fkey (full_name, phone, title), ' +
-        'inviteur:profiles!memberships_invited_by_fkey (full_name)',
+        'inviteur:profiles!memberships_invited_by_fkey (full_name), ' +
+        'fiches:staff_files (job_title, phone, deleted_at)',
     )
     .eq('org_id', orgId)
     .is('deleted_at', null)
     .order('created_at')
   if (error) throw traduireErreur(error, 'Impossible de charger la liste du personnel.')
-  return data ?? []
+  // Fiche visible seulement par owner et admin (RLS) : sinon, fiche = null.
+  return (data ?? []).map(({ fiches, ...membre }) => ({
+    ...membre,
+    fiche: fiches?.find((f) => !f.deleted_at) ?? null,
+  }))
 }
 
 // champs : { role } ou { is_active }. Jamais de suppression.
@@ -70,6 +79,121 @@ export async function chargerPlaces(orgId) {
   const { data, error } = await client().rpc('org_seats', { p_org_id: orgId })
   if (error) throw traduireErreur(error, 'Impossible de lire le nombre d’utilisateurs.')
   return (Array.isArray(data) ? data[0] : data) ?? null
+}
+
+// --- Fiches ------------------------------------------------------------------
+
+const COLONNES_FICHE =
+  'id, membership_id, job_title, professional_number, phone, emergency_contact_name, ' +
+  'emergency_contact_phone, start_date, contract_type, updated_at'
+
+// Fiche d'un membre (owner et admin), créée avec son appartenance.
+export async function chargerFiche(orgId, membreId) {
+  const { data, error } = await client()
+    .from('staff_files')
+    .select(COLONNES_FICHE)
+    .eq('org_id', orgId)
+    .eq('membership_id', membreId)
+    .is('deleted_at', null)
+    .maybeSingle()
+  if (error) throw traduireErreur(error, 'Impossible de charger la fiche.')
+  return data
+}
+
+// Fiche de l'utilisateur connecté dans la structure.
+export async function chargerMaFiche(orgId, userId) {
+  const { data, error } = await client()
+    .from('staff_files')
+    .select(`${COLONNES_FICHE}, memberships!inner (user_id)`)
+    .eq('org_id', orgId)
+    .eq('memberships.user_id', userId)
+    .is('deleted_at', null)
+    .maybeSingle()
+  if (error) throw traduireErreur(error, 'Impossible de charger votre fiche.')
+  return data
+}
+
+// champs : colonnes de staff_files. Un membre ne peut changer que phone et
+// emergency_contact_* (règle tenue par la base).
+export async function modifierFiche(ficheId, champs) {
+  const { data, error } = await client()
+    .from('staff_files')
+    .update(champs)
+    .eq('id', ficheId)
+    .select(COLONNES_FICHE)
+  if (error) throw traduireErreur(error, 'La fiche n’a pas pu être enregistrée. Réessayez.')
+  if (!data?.length) {
+    throw new Error('Vous n’avez pas les droits nécessaires pour modifier cette fiche.')
+  }
+  return data[0]
+}
+
+// --- Pièces jointes ------------------------------------------------------------
+
+const BUCKET_PERSONNEL = 'personnel'
+// Durée de validité d'un lien d'ouverture : assez pour l'ouvrir, trop court pour circuler.
+const DUREE_URL_SIGNEE = 120
+
+export async function chargerPieces(ficheId) {
+  const { data, error } = await client()
+    .from('staff_attachments')
+    .select('id, label, file_name, mime_type, size_bytes, storage_path, created_at')
+    .eq('staff_file_id', ficheId)
+    .is('deleted_at', null)
+    .order('created_at', { ascending: false })
+  if (error) throw traduireErreur(error, 'Impossible de charger les pièces jointes.')
+  return data ?? []
+}
+
+// Fichier rangé sous {org}/{fiche}/ avec un nom neuf : jamais de remplacement.
+export async function envoyerPiece(orgId, ficheId, fichier, libelle) {
+  const extension =
+    fichier.name
+      .split('.')
+      .pop()
+      ?.toLowerCase()
+      .replace(/[^a-z0-9]/g, '') || 'bin'
+  const chemin = `${orgId}/${ficheId}/${crypto.randomUUID()}.${extension}`
+  const { error: erreurDepot } = await client()
+    .storage.from(BUCKET_PERSONNEL)
+    .upload(chemin, fichier, { contentType: fichier.type, upsert: false })
+  if (erreurDepot) {
+    throw traduireErreur(
+      erreurDepot,
+      'Le fichier n’a pas pu être envoyé. Vérifiez votre connexion.',
+    )
+  }
+  const { error } = await client()
+    .from('staff_attachments')
+    .insert({
+      org_id: orgId,
+      staff_file_id: ficheId,
+      label: libelle.trim(),
+      file_name: fichier.name.slice(0, 200),
+      mime_type: fichier.type,
+      size_bytes: fichier.size,
+      storage_path: chemin,
+    })
+  if (error) throw traduireErreur(error, 'La pièce jointe n’a pas pu être enregistrée.')
+}
+
+export async function urlPiece(chemin) {
+  const { data, error } = await client()
+    .storage.from(BUCKET_PERSONNEL)
+    .createSignedUrl(chemin, DUREE_URL_SIGNEE)
+  if (error) throw traduireErreur(error, 'Ce fichier n’a pas pu être ouvert. Réessayez.')
+  return data.signedUrl
+}
+
+// Retrait doux : la ligne est marquée, le fichier reste dans le bucket.
+export async function retirerPiece(pieceId) {
+  const { data, error } = await client()
+    .from('staff_attachments')
+    .update({ deleted_at: new Date().toISOString() })
+    .eq('id', pieceId)
+    .select('id')
+  if (error) throw traduireErreur(error, 'La pièce jointe n’a pas pu être retirée.')
+  if (!data?.length) throw new Error('Vous n’avez pas les droits nécessaires pour la retirer.')
 }
 
 // --- Invitations -------------------------------------------------------------

@@ -22,3 +22,9 @@
   font-family: var(--police-mono);
   font-variant-numeric: tabular-nums;
 }
+
+.liste-membres__actions {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: var(--esp-2);
+}

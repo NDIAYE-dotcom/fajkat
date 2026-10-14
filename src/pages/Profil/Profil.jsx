@@ -4,12 +4,14 @@ import { useAuth } from '../../hooks/useAuth.js'
 import { useOrganization } from '../../hooks/useOrganization.js'
 import { getOffre } from '../../lib/offres.js'
 import { ROLES } from '../../router/navigation.js'
+import IdentiteProfil from './IdentiteProfil/IdentiteProfil.jsx'
+import MotDePasseProfil from './MotDePasseProfil/MotDePasseProfil.jsx'
 import './Profil.css'
 
-// Page provisoire : le compte en lecture. La modification (nom, téléphone, mot de passe,
-// signature) arrive avec la gestion du personnel.
+// Compte de l'utilisateur : nom, téléphone, mot de passe, structures. La fiche propre à
+// chaque structure (fonction, contrat, contact d'urgence) est dans « Mon espace ».
 export default function Profil() {
-  const { utilisateur, nomComplet } = useAuth()
+  const { utilisateur } = useAuth()
   const { structures } = useOrganization()
 
   useEffect(() => {
@@ -20,18 +22,8 @@ export default function Profil() {
     <div className="profil">
       <h1 className="profil__titre">Mon profil</h1>
 
-      <Panel titre="Votre compte" marque>
-        <dl>
-          <div className="profil__ligne">
-            <dt>Nom</dt>
-            <dd>{nomComplet || '—'}</dd>
-          </div>
-          <div className="profil__ligne">
-            <dt>E-mail</dt>
-            <dd className="profil__email">{utilisateur?.email || '—'}</dd>
-          </div>
-        </dl>
-      </Panel>
+      <IdentiteProfil utilisateur={utilisateur} />
+      <MotDePasseProfil email={utilisateur?.email} />
 
       <Panel titre={structures.length > 1 ? 'Vos structures' : 'Votre structure'}>
         <ul className="profil__structures">
@@ -45,11 +37,6 @@ export default function Profil() {
           ))}
         </ul>
       </Panel>
-
-      <p className="profil__note">
-        La modification de votre nom, de votre mot de passe et de votre signature arrivera avec la
-        gestion du personnel.
-      </p>
     </div>
   )
 }

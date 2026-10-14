@@ -22,18 +22,8 @@
   border-bottom: 0;
 }
 
-.profil__ligne dt,
 .profil__detail {
   color: var(--encre-douce);
-}
-
-.profil__ligne dd {
-  margin: 0;
-  font-weight: 700;
-}
-
-.profil__email {
-  overflow-wrap: anywhere;
 }
 
 .profil__structures {
@@ -44,11 +34,6 @@
 
 .profil__nom {
   font-weight: 700;
-}
-
-.profil__note {
-  font-size: var(--texte-s);
-  color: var(--encre-douce);
 }
 
 @media (max-width: 479px) {

@@ -1,0 +1,9 @@
+.fiche-membre {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-5);
+}
+
+.fiche-membre__role {
+  color: var(--encre-douce);
+}

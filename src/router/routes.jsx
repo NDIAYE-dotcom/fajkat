@@ -91,6 +91,10 @@ export const router = createBrowserRouter([
                 path: 'personnel',
                 lazy: composant(() => import('../modules/personnel/pages/Personnel/Personnel.jsx')),
               },
+              {
+                path: 'mon-espace',
+                lazy: composant(() => import('../modules/personnel/pages/MonEspace/MonEspace.jsx')),
+              },
               // Modules sans page dédiée : gardes d'offre et de rôle, puis « en préparation »
               // (navigation.js). Les modules construits ensuite ajoutent leur route ici.
               { path: '*', lazy: composant(() => import('./RouteModule.jsx')) },

@@ -1,0 +1,21 @@
+.identite-profil {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-4);
+}
+
+.identite-profil__email {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-1);
+}
+
+.identite-profil__terme {
+  font-size: var(--texte-s);
+  color: var(--encre-douce);
+}
+
+.identite-profil__valeur {
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}

@@ -9,7 +9,7 @@ import './ListeMembres.css'
 
 // Registre du personnel : actifs d'abord, puis désactivés. La date d'arrivée et la
 // personne qui a invité aident le responsable à repérer un accès inattendu.
-export default function ListeMembres({ membres, chargement, moi, onGerer }) {
+export default function ListeMembres({ membres, chargement, moi, onGerer, onFiche }) {
   const tries = [...(membres ?? [])].sort((a, b) => Number(b.is_active) - Number(a.is_active))
 
   const colonnes = [
@@ -21,7 +21,7 @@ export default function ListeMembres({ membres, chargement, moi, onGerer }) {
         <span className="liste-membres__nom">
           {m.profil?.full_name || 'Nom non renseigné'}
           {m.user_id === moi && <span className="liste-membres__vous"> (vous)</span>}
-          {m.profil?.title && <span className="liste-membres__titre">{m.profil.title}</span>}
+          {fonction(m) && <span className="liste-membres__titre">{fonction(m)}</span>}
         </span>
       ),
     },
@@ -30,8 +30,8 @@ export default function ListeMembres({ membres, chargement, moi, onGerer }) {
       cle: 'telephone',
       titre: 'Téléphone',
       rendu: (m) =>
-        m.profil?.phone ? (
-          <span className="liste-membres__chiffres">{formatTelephone(m.profil.phone)}</span>
+        telephone(m) ? (
+          <span className="liste-membres__chiffres">{formatTelephone(telephone(m))}</span>
         ) : (
           '—'
         ),
@@ -60,13 +60,22 @@ export default function ListeMembres({ membres, chargement, moi, onGerer }) {
       cle: 'action',
       titre: 'Action',
       rendu: (m) => (
-        <Button
-          variante="secondaire"
-          onClick={() => onGerer(m)}
-          aria-label={`Gérer l’accès de ${m.profil?.full_name || 'ce membre'}`}
-        >
-          Gérer
-        </Button>
+        <span className="liste-membres__actions">
+          <Button
+            variante="secondaire"
+            onClick={() => onFiche(m)}
+            aria-label={`Ouvrir la fiche de ${m.profil?.full_name || 'ce membre'}`}
+          >
+            Fiche
+          </Button>
+          <Button
+            variante="secondaire"
+            onClick={() => onGerer(m)}
+            aria-label={`Gérer l’accès de ${m.profil?.full_name || 'ce membre'}`}
+          >
+            Gérer
+          </Button>
+        </span>
       ),
     },
   ]
@@ -81,6 +90,15 @@ export default function ListeMembres({ membres, chargement, moi, onGerer }) {
       vide={<EmptyState icone={Users} titre="Aucun membre" texte="Invitez votre équipe." />}
     />
   )
+}
+
+// La fiche (propre à la structure) prime sur le profil du compte.
+function fonction(m) {
+  return m.fiche?.job_title || m.profil?.title || ''
+}
+
+function telephone(m) {
+  return m.fiche?.phone || m.profil?.phone || ''
 }
 
 function origine(m) {

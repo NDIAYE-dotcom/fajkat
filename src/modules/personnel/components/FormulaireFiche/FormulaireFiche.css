@@ -1,0 +1,67 @@
+.formulaire-fiche {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-5);
+}
+
+.formulaire-fiche__groupe {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-4);
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.formulaire-fiche__legende {
+  margin-bottom: var(--esp-3);
+  padding: 0;
+  font-family: var(--police-titre);
+  font-size: var(--texte-l);
+  font-weight: 600;
+  color: var(--primaire);
+}
+
+.formulaire-fiche__grille {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+  gap: var(--esp-4);
+}
+
+.formulaire-fiche__lecture {
+  margin: 0;
+}
+
+.formulaire-fiche__ligne {
+  display: grid;
+  grid-template-columns: minmax(8rem, 1fr) 2fr;
+  gap: var(--esp-3);
+  padding: var(--esp-2) 0;
+  border-bottom: 1px solid var(--doux);
+}
+
+.formulaire-fiche__ligne dt {
+  color: var(--encre-douce);
+}
+
+.formulaire-fiche__ligne dd {
+  margin: 0;
+  font-weight: 700;
+}
+
+.formulaire-fiche__mono {
+  font-family: var(--police-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+.formulaire-fiche__note {
+  font-size: var(--texte-s);
+  color: var(--encre-douce);
+}
+
+@media (max-width: 479px) {
+  .formulaire-fiche__ligne {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+}

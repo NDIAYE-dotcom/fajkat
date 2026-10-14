@@ -1,0 +1,5 @@
+.ma-fiche__corps {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-5);
+}
