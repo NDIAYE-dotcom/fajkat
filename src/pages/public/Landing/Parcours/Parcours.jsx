@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { mouvementReduit } from '../../../../lib/mouvement.js'
 import { FRAGMENTS } from './fragments.js'
 import './Parcours.css'
@@ -11,6 +11,31 @@ export default function Parcours({ parcours }) {
   const [statique] = useState(mouvementReduit)
   const [actif, setActif] = useState(0)
   const etapes = useRef([])
+  const ecran = useRef(null)
+
+  // Chaque fragment est réduit (transform: scale) juste assez pour tenir dans la scène :
+  // sur un petit téléphone, la fiche ou la facture ne passe plus sous la barre de navigation.
+  // offsetWidth / offsetHeight ignorent la transformation : la mesure reste stable.
+  useLayoutEffect(() => {
+    const zone = ecran.current
+    if (!zone) return undefined
+    const contenus = [...zone.querySelectorAll('.parcours__fragment-contenu')]
+    const ajuster = () => {
+      for (const contenu of contenus) {
+        const echelle = Math.min(
+          1,
+          zone.clientHeight / contenu.offsetHeight,
+          zone.clientWidth / contenu.offsetWidth,
+        )
+        contenu.style.setProperty('--echelle', echelle.toFixed(3))
+      }
+    }
+    ajuster()
+    const observateur = new ResizeObserver(ajuster)
+    observateur.observe(zone)
+    contenus.forEach((contenu) => observateur.observe(contenu))
+    return () => observateur.disconnect()
+  }, [statique])
 
   // L'étape active est celle qui croise une ligne placée un peu sous le milieu de l'écran
   // (sous la scène collante sur téléphone).
@@ -74,7 +99,7 @@ export default function Parcours({ parcours }) {
 
           {!statique && (
             <div className="parcours__scene" aria-hidden="true">
-              <div className="parcours__ecran">
+              <div ref={ecran} className="parcours__ecran">
                 {parcours.etapes.map((etape, index) => {
                   const Fragment = FRAGMENTS[etape.fragment]
                   return (
@@ -83,7 +108,9 @@ export default function Parcours({ parcours }) {
                       className="parcours__fragment"
                       data-visible={index === actif || undefined}
                     >
-                      <Fragment actif={index === actif} />
+                      <div className="parcours__fragment-contenu">
+                        <Fragment actif={index === actif} />
+                      </div>
                     </div>
                   )
                 })}

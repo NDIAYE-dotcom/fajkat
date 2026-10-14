@@ -180,6 +180,20 @@
   transform: none;
 }
 
+/* Centré au milieu de la scène, puis réduit (échelle calculée par Parcours.jsx)
+   pour tenir dans la scène sans passer sous la barre de navigation. */
+.parcours__fragment-contenu {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  display: grid;
+  justify-items: center;
+  width: max-content;
+  max-width: 100%;
+  transform: translate(-50%, -50%) scale(var(--echelle, 1));
+  transform-origin: center;
+}
+
 .parcours__points {
   display: flex;
   gap: var(--esp-2);
@@ -233,18 +247,28 @@
     gap: 0;
   }
 
+  /* Collée exactement sous l'en-tête (sa hauteur + son filet de 1 px), hauteur proportionnelle
+     à l'écran : il reste toujours la moitié de l'écran pour lire le texte de l'étape. */
   .parcours__corps:not([data-statique]) .parcours__scene {
-    top: var(--hauteur-entete);
+    top: calc(var(--hauteur-entete) + 1px);
     z-index: 2;
     order: -1;
-    height: 21rem;
-    padding-block: var(--esp-2);
+    gap: var(--esp-2);
+    height: clamp(15rem, 44svh, 22rem);
+    padding-block: var(--esp-3) var(--esp-2);
     background: var(--section-fond);
   }
 
-  .parcours__corps:not([data-statique]) .parcours__ecran {
-    transform: scale(0.86);
-    transform-origin: top center;
+  /* Fondu sous la scène : le texte des étapes disparaît en douceur en passant dessous */
+  .parcours__corps:not([data-statique]) .parcours__scene::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    right: 0;
+    left: 0;
+    height: var(--esp-6);
+    background: linear-gradient(var(--section-fond), transparent);
+    pointer-events: none;
   }
 
   .parcours__corps:not([data-statique]) .parcours__etape,
