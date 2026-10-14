@@ -28,6 +28,7 @@ export const cles = {
   corrections: (presenceId) => ['personnel', 'corrections', presenceId],
   mesConges: (orgId, userId) => ['personnel', 'mes-conges', orgId, userId],
   conges: (orgId, depuis) => ['personnel', 'conges', orgId, depuis],
+  conge: (orgId, congeId) => ['personnel', 'conges', orgId, 'demande', congeId],
   calendrierConges: (orgId, du, au) => ['personnel', 'calendrier-conges', orgId, du, au],
   conflits: (orgId, membreId, du, au) => ['personnel', 'conflits', orgId, membreId, du, au],
   monAppartenance: (orgId, userId) => ['personnel', 'mon-appartenance', orgId, userId],
@@ -387,6 +388,20 @@ export async function chargerConges(orgId, depuis) {
     .order('start_date')
   if (error) throw traduireErreur(error, 'Impossible de charger les demandes de congé.')
   return data ?? []
+}
+
+// Une demande précise (lien d'une notification), même hors de la période affichée.
+// null si elle n'existe pas ou n'est pas lisible (RLS).
+export async function chargerConge(orgId, congeId) {
+  const { data, error } = await client()
+    .from('leave_requests')
+    .select(COLONNES_CONGE)
+    .eq('org_id', orgId)
+    .eq('id', congeId)
+    .is('deleted_at', null)
+    .maybeSingle()
+  if (error) throw traduireErreur(error, 'Impossible de charger cette demande de congé.')
+  return data
 }
 
 // Identifiant d'appartenance de l'utilisateur connecté dans la structure.

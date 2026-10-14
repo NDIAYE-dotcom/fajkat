@@ -1,4 +1,5 @@
 .notifications__bouton {
+  position: relative;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -18,11 +19,80 @@
   color: var(--encre);
 }
 
+.notifications__pastille {
+  position: absolute;
+  top: 4px;
+  right: 2px;
+  min-width: 1.25rem;
+  height: 1.25rem;
+  padding: 0 var(--esp-1);
+  border: 2px solid var(--fond);
+  border-radius: 999px;
+  background: var(--primaire);
+  color: var(--fond);
+  font-family: var(--police-mono);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Au moins une urgence non lue. Texte --fond sur --tampon : 5,9:1. */
+.notifications__pastille--urgent {
+  background: var(--tampon);
+}
+
+/* Nouvelle notification : la cloche oscille brièvement. */
+.notifications__bouton--sonne {
+  animation: notifications-sonne 200ms var(--courbe) 2;
+  transform-origin: 50% 20%;
+}
+
+@keyframes notifications-sonne {
+  0% {
+    transform: rotate(0);
+  }
+
+  35% {
+    transform: rotate(-12deg);
+  }
+
+  70% {
+    transform: rotate(8deg);
+  }
+
+  100% {
+    transform: rotate(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .notifications__bouton--sonne {
+    animation: none;
+  }
+}
+
+.notifications .menu-deroulant__panneau {
+  width: min(24rem, calc(100vw - 2 * var(--esp-4)));
+}
+
 .notifications__panneau {
   display: flex;
   flex-direction: column;
   gap: var(--esp-2);
-  padding: var(--esp-4);
+  padding: var(--esp-3) 0 var(--esp-2);
+}
+
+.notifications__entete {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--esp-2);
+  padding: 0 var(--esp-4);
 }
 
 .notifications__titre {
@@ -32,11 +102,19 @@
   color: var(--primaire);
 }
 
-.notifications__vide {
-  font-weight: 700;
+.notifications__panneau > .message,
+.notifications__panneau > .spinner {
+  margin: 0 var(--esp-4);
 }
 
-.notifications__texte {
-  font-size: var(--texte-s);
+.notifications__vide {
+  padding: var(--esp-2) var(--esp-4) var(--esp-3);
   color: var(--encre-douce);
+}
+
+.notifications__liste {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--doux);
 }

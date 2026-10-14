@@ -8,10 +8,13 @@ import Tampon from '../../../../components/ui/Tampon/Tampon.jsx'
 import { useToast } from '../../../../hooks/useToast.js'
 import { annulerConge, chargerMesConges, chargerMonAppartenance, cles } from '../../api.js'
 import { libelleTypeConge, periodeConge, STATUTS_CONGE } from '../../utils.js'
+import { useDemandeLiee } from '../../hooks/useDemandeLiee.js'
 import FormulaireConge from '../FormulaireConge/FormulaireConge.jsx'
+import ModaleMaDemande from '../ModaleMaDemande/ModaleMaDemande.jsx'
 import './MesConges.css'
 
 // Onglet « Congés » de Mon espace : nouvelle demande et suivi des demandes.
+// ?demande=<id> (lien d'une notification) ouvre directement la demande.
 export default function MesConges({ orgId, userId }) {
   const queryClient = useQueryClient()
   const toast = useToast()
@@ -26,8 +29,11 @@ export default function MesConges({ orgId, userId }) {
     queryFn: () => chargerMesConges(orgId, userId),
   })
 
+  const lien = useDemandeLiee(orgId, conges.data)
+
   function rafraichir() {
     queryClient.invalidateQueries({ queryKey: cles.mesConges(orgId, userId) })
+    queryClient.invalidateQueries({ queryKey: ['personnel', 'conges', orgId] })
   }
 
   async function annuler(conge) {
@@ -110,6 +116,32 @@ export default function MesConges({ orgId, userId }) {
             })}
           </ul>
         </Panel>
+      )}
+
+      {(lien.introuvable || lien.erreur) && (
+        <Message
+          ton={lien.erreur ? 'erreur' : 'info'}
+          titre="Cette demande n’a pas pu être ouverte"
+          action={
+            <Button variante="discret" onClick={lien.fermer}>
+              Fermer
+            </Button>
+          }
+        >
+          <p>{lien.erreur?.message ?? 'Elle a peut-être été retirée.'}</p>
+        </Message>
+      )}
+
+      {lien.conge && (
+        <ModaleMaDemande
+          key={lien.conge.id}
+          conge={lien.conge}
+          onFermer={lien.fermer}
+          onAnnulee={() => {
+            lien.fermer()
+            rafraichir()
+          }}
+        />
       )}
     </div>
   )

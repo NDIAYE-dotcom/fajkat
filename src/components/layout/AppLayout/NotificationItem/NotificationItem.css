@@ -1,0 +1,72 @@
+.notification-item {
+  border-bottom: 1px solid var(--doux);
+}
+
+.notification-item:last-child {
+  border-bottom: 0;
+}
+
+.notification-item__bouton {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-1);
+  width: 100%;
+  min-height: 44px;
+  padding: var(--esp-3) var(--esp-4) var(--esp-3) var(--esp-5);
+  border: 0;
+  border-left: 3px solid transparent;
+  background: transparent;
+  color: var(--encre);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.notification-item__bouton:hover {
+  background: var(--surface);
+}
+
+.notification-item__bouton:focus-visible {
+  outline: 2px solid var(--primaire);
+  outline-offset: -2px;
+}
+
+/* Marge du registre : repère des non lues, rouge tampon pour une urgence. */
+.notification-item--non-lue .notification-item__bouton {
+  border-left-color: var(--accent);
+}
+
+.notification-item--non-lue.notification-item--urgent .notification-item__bouton {
+  border-left-color: var(--tampon);
+}
+
+.notification-item__ligne {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--esp-2);
+}
+
+.notification-item__titre {
+  font-weight: 400;
+}
+
+.notification-item--non-lue .notification-item__titre {
+  font-weight: 700;
+}
+
+.notification-item__tampon {
+  flex-shrink: 0;
+}
+
+.notification-item__corps {
+  font-size: var(--texte-s);
+  color: var(--encre-douce);
+}
+
+.notification-item__date {
+  font-family: var(--police-mono);
+  font-size: var(--texte-xs);
+  font-variant-numeric: tabular-nums;
+  color: var(--encre-douce);
+}

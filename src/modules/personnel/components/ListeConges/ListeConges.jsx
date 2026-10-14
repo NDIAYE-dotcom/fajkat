@@ -16,11 +16,12 @@ import {
   periodeConge,
   STATUTS_CONGE,
 } from '../../utils.js'
+import { useDemandeLiee } from '../../hooks/useDemandeLiee.js'
 import ModaleDecision from '../ModaleDecision/ModaleDecision.jsx'
 import './ListeConges.css'
 
 // Congés à traiter et congés validés (owner et admin). Les gardes prévues pendant un
-// congé sont signalées sur chaque demande.
+// congé sont signalées sur chaque demande. ?demande=<id> ouvre directement sa fenêtre.
 export default function ListeConges({ orgId }) {
   const queryClient = useQueryClient()
   const [ouverte, setOuverte] = useState(null)
@@ -31,6 +32,7 @@ export default function ListeConges({ orgId }) {
     queryFn: () => chargerConges(orgId, depuis),
   })
   const membres = useQuery({ queryKey: cles.membres(orgId), queryFn: () => chargerMembres(orgId) })
+  const lien = useDemandeLiee(orgId, conges.data)
 
   const actives = (conges.data ?? []).filter((c) => ['pending', 'approved'].includes(c.status))
   const du = actives.reduce((min, c) => (c.start_date < min ? c.start_date : min), '9999-12-31')
@@ -62,6 +64,12 @@ export default function ListeConges({ orgId }) {
   }
   if (conges.isPending || membres.isPending) return <Spinner libelle="Chargement des congés…" />
 
+  const affichee = ouverte ?? lien.conge
+  function fermer() {
+    setOuverte(null)
+    lien.fermer()
+  }
+
   const sections = [
     { id: 'pending', titre: 'À traiter', liste: actives.filter((c) => c.status === 'pending') },
     { id: 'approved', titre: 'Validés', liste: actives.filter((c) => c.status === 'approved') },
@@ -72,18 +80,36 @@ export default function ListeConges({ orgId }) {
     },
   ]
 
-  if (!conges.data.length) {
+  const avisLien = (lien.introuvable || lien.erreur) && (
+    <Message
+      ton={lien.erreur ? 'erreur' : 'info'}
+      titre="Cette demande n’a pas pu être ouverte"
+      action={
+        <Button variante="discret" onClick={lien.fermer}>
+          Fermer
+        </Button>
+      }
+    >
+      <p>{lien.erreur?.message ?? 'Elle a peut-être été retirée.'}</p>
+    </Message>
+  )
+
+  if (!conges.data.length && !affichee) {
     return (
-      <EmptyState
-        icone={CalendarOff}
-        titre="Aucune demande"
-        texte="Les demandes de congé de l’équipe apparaîtront ici."
-      />
+      <>
+        {avisLien}
+        <EmptyState
+          icone={CalendarOff}
+          titre="Aucune demande"
+          texte="Les demandes de congé de l’équipe apparaîtront ici."
+        />
+      </>
     )
   }
 
   return (
     <div className="liste-conges">
+      {avisLien}
       {sections.map(
         (section) =>
           section.liste.length > 0 && (
@@ -136,14 +162,15 @@ export default function ListeConges({ orgId }) {
           ),
       )}
 
-      {ouverte && (
+      {affichee && (
         <ModaleDecision
+          key={affichee.id}
           orgId={orgId}
-          conge={ouverte}
-          membre={parId.get(ouverte.membership_id)}
-          onFermer={() => setOuverte(null)}
+          conge={affichee}
+          membre={parId.get(affichee.membership_id)}
+          onFermer={fermer}
           onDecide={() => {
-            setOuverte(null)
+            fermer()
             queryClient.invalidateQueries({ queryKey: ['personnel', 'conges', orgId] })
             queryClient.invalidateQueries({ queryKey: ['personnel', 'calendrier-conges', orgId] })
           }}

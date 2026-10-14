@@ -7,7 +7,7 @@ import Textarea from '../../../../components/ui/Textarea/Textarea.jsx'
 import { useToast } from '../../../../hooks/useToast.js'
 import { formatDate } from '../../../../lib/format.js'
 import { annulerConge, deciderConge } from '../../api.js'
-import { libelleTypeConge, nomMembre, periodeConge } from '../../utils.js'
+import { libelleTypeConge, nomMembre, periodeConge, STATUTS_CONGE } from '../../utils.js'
 import ConflitsGardes from '../ConflitsGardes/ConflitsGardes.jsx'
 import './ModaleDecision.css'
 
@@ -20,6 +20,8 @@ export default function ModaleDecision({ orgId, conge, membre, onFermer, onDecid
   const [echec, setEchec] = useState(null)
   const nom = nomMembre(membre)
   const enAttente = conge.status === 'pending'
+  // Refusée ou annulée (ouverte depuis une notification) : consultation seule.
+  const terminee = !['pending', 'approved'].includes(conge.status)
 
   async function executer(quoi, action, succes) {
     setEnvoi(quoi)
@@ -34,7 +36,11 @@ export default function ModaleDecision({ orgId, conge, membre, onFermer, onDecid
     }
   }
 
-  const actions = enAttente ? (
+  const actions = terminee ? (
+    <Button variante="secondaire" onClick={onFermer}>
+      Fermer
+    </Button>
+  ) : enAttente ? (
     <>
       <Button
         variante="secondaire"
@@ -123,7 +129,12 @@ export default function ModaleDecision({ orgId, conge, membre, onFermer, onDecid
             />
           </Field>
         )}
-        {!enAttente && (
+        {terminee && (
+          <Message ton="info" titre="Demande déjà traitée">
+            <p>{`Statut : ${STATUTS_CONGE[conge.status].libelle.toLowerCase()}.`}</p>
+          </Message>
+        )}
+        {!enAttente && !terminee && (
           <p className="modale-decision__texte">
             Annuler ce congé le retire du planning. La personne verra « Annulé » dans son espace.
           </p>

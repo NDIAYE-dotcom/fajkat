@@ -65,6 +65,20 @@ export function formatDateHeure(date) {
   return d ? d.format('DD/MM/YYYY HH:mm') : ''
 }
 
+// Heure relative courte : « à l’instant », « il y a 5 min », « il y a 3 h »,
+// « hier à 14:30 », puis « 13/10 à 14:30 » (« 13/10/2025 à 14:30 » une autre année).
+export function formatIlYa(date, maintenant = new Date()) {
+  const d = versFuseau(date)
+  if (!d) return ''
+  const now = dayjs(maintenant).tz(fuseauCourant)
+  const minutes = now.diff(d, 'minute')
+  if (minutes < 1) return 'à l’instant'
+  if (minutes < 60) return `il y a ${minutes} min`
+  if (now.isSame(d, 'day')) return `il y a ${now.diff(d, 'hour')} h`
+  if (now.subtract(1, 'day').isSame(d, 'day')) return `hier à ${d.format('HH:mm')}`
+  return d.format(now.isSame(d, 'year') ? 'DD/MM [à] HH:mm' : 'DD/MM/YYYY [à] HH:mm')
+}
+
 // « +221771234567 » -> « +221 77 123 45 67 ». Numéro non reconnu : renvoyé tel quel.
 export function formatTelephone(e164) {
   if (!e164) return ''
