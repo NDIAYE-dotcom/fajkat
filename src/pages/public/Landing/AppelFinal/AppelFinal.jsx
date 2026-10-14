@@ -31,6 +31,7 @@ export default function AppelFinal({ titre, questionAutre, image }) {
               alt=""
               width="720"
               height="480"
+              loading="lazy"
               decoding="async"
             />
           </span>

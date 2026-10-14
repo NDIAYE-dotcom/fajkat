@@ -10,6 +10,11 @@
   }
 }
 
+/* Espace réservé pendant le chargement d'une vue */
+.landing-attente {
+  min-height: calc(100svh - var(--hauteur-entete));
+}
+
 @media (prefers-reduced-motion: reduce) {
   .landing-fondu {
     animation: none;

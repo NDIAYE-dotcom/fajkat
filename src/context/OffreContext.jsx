@@ -1,17 +1,17 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
-import { useSearchParams } from 'react-router-dom'
-import { getOffre } from '../lib/offres.js'
+import { useCallback, useEffect, useMemo } from 'react'
+import { useLocation, useNavigate } from 'react-router-dom'
+import { getOffre, OFFRES, offreDepuisChemin } from '../lib/offres.js'
 import { OffreContext } from './offreContexte.js'
 
 // Choix commercial du visiteur sur le site public.
 // Ce n'est ni une authentification ni une autorisation : il ne fait que choisir
 // la présentation affichée. L'offre d'une structure inscrite viendra de la base.
 
-const CLE_SESSION = 'fajkat.derniereOffre'
+const CLE_STOCKAGE = 'fajkat.offre'
 
 function lireDerniereOffre() {
   try {
-    return getOffre(window.sessionStorage.getItem(CLE_SESSION))?.type ?? null
+    return getOffre(window.localStorage.getItem(CLE_STOCKAGE))?.type ?? null
   } catch {
     return null
   }
@@ -19,36 +19,45 @@ function lireDerniereOffre() {
 
 function memoriserOffre(type) {
   try {
-    window.sessionStorage.setItem(CLE_SESSION, type)
+    window.localStorage.setItem(CLE_STOCKAGE, type)
   } catch {
-    // Stockage indisponible (navigation privée, réglages) : le choix reste dans l'URL.
+    // Stockage indisponible (navigation privée, réglages) : seul le rappel « déjà consultée » est perdu.
   }
 }
 
 export function OffreProvider({ children }) {
-  const [parametres, setParametres] = useSearchParams()
-  const [derniereOffre, setDerniereOffre] = useState(lireDerniereOffre)
+  const { pathname } = useLocation()
+  const navigate = useNavigate()
 
-  // L'URL est la source de vérité : ?offre=poste_sante ou ?offre=clinique.
-  // Une valeur inconnue est ignorée et ramène à l'écran de choix.
-  const offre = getOffre(parametres.get('offre'))
+  // L'adresse est la source de vérité : /poste-de-sante ou /clinique.
+  // Toute autre adresse publique (/, pages légales) n'a pas d'offre affichée.
+  const offre = offreDepuisChemin(pathname)
+
+  // Dernière offre consultée, relue à chaque changement d'adresse : au retour sur l'écran
+  // de choix, la carte correspondante porte « Déjà consultée ».
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const derniereOffre = useMemo(() => offre?.type ?? lireDerniereOffre(), [pathname])
+
+  // Toute page d'offre affichée, qu'on y arrive par l'écran de choix ou par un lien partagé,
+  // devient la « dernière offre consultée ».
+  useEffect(() => {
+    if (offre) memoriserOffre(offre.type)
+  }, [offre])
 
   // transition : passage animé par la View Transitions API (ignoré si le navigateur ne la gère pas).
   const choisirOffre = useCallback(
     (type, { transition = false } = {}) => {
       if (!getOffre(type)) return
-      memoriserOffre(type)
-      setDerniereOffre(type)
-      setParametres({ offre: type }, { viewTransition: transition })
+      navigate(OFFRES[type].chemin, { viewTransition: transition })
       window.scrollTo(0, 0)
     },
-    [setParametres],
+    [navigate],
   )
 
   const changerOffre = useCallback(() => {
-    setParametres({})
+    navigate('/')
     window.scrollTo(0, 0)
-  }, [setParametres])
+  }, [navigate])
 
   // Le thème de couleur suit l'offre affichée, puis est retiré en quittant la page.
   useEffect(() => {

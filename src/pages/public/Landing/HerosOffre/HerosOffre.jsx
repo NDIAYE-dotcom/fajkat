@@ -58,6 +58,7 @@ export default function HerosOffre({ offre, heros }) {
             width="720"
             height="480"
             decoding="async"
+            fetchPriority="high"
           />
         </span>
         {heros.vignettes.map(({ cle, titre, detail }, rang) => {

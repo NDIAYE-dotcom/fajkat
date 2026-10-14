@@ -21,12 +21,8 @@ export default function CarteOffre({
 }) {
   const ref = useRef(null)
   const visible = useVisible(ref)
-  const libelle = [
-    `Découvrir toutes les fonctionnalités de l’offre ${offre.nom}`,
-    rappel && 'dernière offre consultée',
-  ]
-    .filter(Boolean)
-    .join(', ')
+  // Pas de nom accessible imposé : il est calculé à partir du texte visible de la carte
+  // (les aperçus sont masqués aux lecteurs d'écran), comme l'attendent les commandes vocales.
 
   return (
     <button
@@ -35,7 +31,6 @@ export default function CarteOffre({
       className={`carte-offre carte-offre--${offre.type} carte-offre--${etat}`}
       style={{ '--rang': rang }}
       data-visible={visible || undefined}
-      aria-label={libelle}
       aria-disabled={etat !== 'repos' || undefined}
       onClick={() => etat === 'repos' && onChoisir(offre.type)}
     >
@@ -52,6 +47,7 @@ export default function CarteOffre({
               width="720"
               height="480"
               decoding="async"
+              fetchPriority={rang === 0 ? 'high' : undefined}
             />
           </picture>
         </span>
@@ -69,7 +65,7 @@ export default function CarteOffre({
         <Apercu actif={visible && etat !== 'estompe'} statique={mouvementReduit()} />
       </span>
 
-      <span className="carte-offre__bouton" aria-hidden="true">
+      <span className="carte-offre__bouton">
         Découvrir toutes les fonctionnalités
         <ArrowRight size={22} />
       </span>

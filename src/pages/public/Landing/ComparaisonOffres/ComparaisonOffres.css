@@ -1,0 +1,195 @@
+.comparaison-offres__lien {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--esp-2);
+  min-height: 44px;
+  margin-top: var(--esp-4);
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--primaire);
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 0.25em;
+  cursor: pointer;
+}
+
+.comparaison-offres__lien:hover {
+  text-decoration-thickness: 2px;
+}
+
+/* Modale (page publique : coins de 20 px, ombre de modale) */
+.comparaison-offres {
+  width: min(44rem, calc(100% - 2 * var(--gouttiere)));
+  max-height: calc(100svh - 2 * var(--esp-5));
+  padding: 0;
+  border: 0;
+  border-radius: var(--rayon-carte);
+  background: var(--blanc);
+  box-shadow: var(--ombre-modale);
+  color: var(--encre);
+}
+
+.comparaison-offres:focus-visible {
+  outline: none;
+}
+
+.comparaison-offres[open] {
+  animation: comparaison-offres-ouvre 200ms var(--courbe);
+}
+
+.comparaison-offres::backdrop {
+  background: color-mix(in srgb, var(--encre) 45%, transparent);
+}
+
+@keyframes comparaison-offres-ouvre {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+}
+
+.comparaison-offres__boite {
+  display: flex;
+  flex-direction: column;
+  max-height: calc(100svh - 2 * var(--esp-5));
+}
+
+.comparaison-offres__tete {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--esp-3);
+  padding: var(--esp-4) var(--esp-5);
+  border-bottom: 1px solid var(--doux);
+}
+
+.comparaison-offres__titre {
+  font-size: var(--titre-3);
+}
+
+.comparaison-offres__fermer {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: var(--esp-1);
+  min-height: 44px;
+  padding: 0 var(--esp-3);
+  border: 1px solid var(--doux);
+  border-radius: var(--rayon-champ);
+  background: var(--fond);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.comparaison-offres__defilement {
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.comparaison-offres__tableau {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--texte-s);
+}
+
+.comparaison-offres__tableau thead th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  padding: var(--esp-3) var(--esp-4);
+  border-bottom: 2px solid var(--encre);
+  background: var(--blanc);
+  font-size: var(--texte-xs);
+  text-align: left;
+}
+
+.comparaison-offres__tableau thead .comparaison-offres__offre {
+  width: 7.5rem;
+  text-align: center;
+}
+
+.comparaison-offres__prix {
+  display: block;
+  color: var(--encre-douce);
+  font-weight: 400;
+  white-space: nowrap;
+}
+
+.comparaison-offres__famille th {
+  padding: var(--esp-4) var(--esp-4) var(--esp-2);
+  color: var(--primaire);
+  font-size: var(--texte-xs);
+  letter-spacing: 0.12em;
+  text-align: left;
+  text-transform: uppercase;
+}
+
+.comparaison-offres__module {
+  padding: var(--esp-2) var(--esp-4);
+  border-bottom: 1px solid color-mix(in srgb, var(--doux) 60%, transparent);
+  font-weight: 400;
+  text-align: left;
+}
+
+.comparaison-offres__case {
+  border-bottom: 1px solid color-mix(in srgb, var(--doux) 60%, transparent);
+  text-align: center;
+}
+
+.comparaison-offres__case svg {
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.comparaison-offres__oui {
+  color: var(--primaire);
+}
+
+.comparaison-offres__non {
+  color: var(--encre-douce);
+}
+
+.comparaison-offres__note {
+  padding: var(--esp-3) var(--esp-5);
+  border-top: 1px solid var(--doux);
+  color: var(--encre-douce);
+  font-size: var(--texte-xs);
+}
+
+/* Téléphone : la modale occupe tout l'écran */
+@media (max-width: 30rem) {
+  .comparaison-offres {
+    width: 100%;
+    max-width: none;
+    height: 100svh;
+    max-height: none;
+    margin: 0;
+    border-radius: 0;
+  }
+
+  .comparaison-offres__boite {
+    height: 100%;
+    max-height: none;
+  }
+
+  .comparaison-offres__tete,
+  .comparaison-offres__note {
+    padding-inline: var(--esp-4);
+  }
+
+  .comparaison-offres__tableau thead th,
+  .comparaison-offres__famille th,
+  .comparaison-offres__module {
+    padding-inline: var(--esp-3);
+  }
+
+  .comparaison-offres__tableau thead .comparaison-offres__offre {
+    width: 4.75rem;
+    padding-inline: var(--esp-1);
+  }
+
+  .comparaison-offres__prix {
+    white-space: normal;
+  }
+}

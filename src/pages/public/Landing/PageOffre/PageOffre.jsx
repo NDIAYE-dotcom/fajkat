@@ -3,12 +3,13 @@ import AppelDemo from '../AppelDemo/AppelDemo.jsx'
 import AppelFinal from '../AppelFinal/AppelFinal.jsx'
 import Atouts from '../Atouts/Atouts.jsx'
 import EtatAvancement from '../EtatAvancement/EtatAvancement.jsx'
+import FaqOffre from '../FaqOffre/FaqOffre.jsx'
 import HerosOffre from '../HerosOffre/HerosOffre.jsx'
 import Parcours from '../Parcours/Parcours.jsx'
-import PiedDePage from '../PiedDePage/PiedDePage.jsx'
 import ModulesFamilles from '../ModulesFamilles/ModulesFamilles.jsx'
 import RecuTarif from '../RecuTarif/RecuTarif.jsx'
 import { CONTENU_OFFRES } from './contenu.js'
+import { FAQ_OFFRES } from './faq.js'
 import './PageOffre.css'
 
 // Page d'une offre, commune aux deux offres : seul le contenu (contenu.js) et la couleur changent.
@@ -50,14 +51,14 @@ export default function PageOffre({ offre }) {
 
         <Atouts atouts={contenu.atouts} />
 
+        <FaqOffre questions={FAQ_OFFRES[offre.type]} />
+
         <AppelFinal
           titre={contenu.appelFinal}
           questionAutre={contenu.questionAutre}
           image={contenu.heros.image}
         />
       </main>
-
-      <PiedDePage />
     </>
   )
 }

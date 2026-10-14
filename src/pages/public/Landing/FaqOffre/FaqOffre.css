@@ -1,0 +1,83 @@
+.faq-offre {
+  scroll-margin-top: var(--hauteur-entete);
+}
+
+.faq-offre__interieur {
+  max-width: 48rem;
+  margin-inline: auto;
+  padding: var(--esp-8) var(--gouttiere) 0;
+}
+
+.faq-offre__surtitre {
+  color: var(--primaire);
+  font-size: var(--texte-xs);
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+
+.faq-offre__titre {
+  margin-top: var(--esp-3);
+  font-size: var(--titre-2);
+}
+
+.faq-offre__liste {
+  margin-top: var(--esp-5);
+  padding: 0;
+  list-style: none;
+  border-top: 2px solid var(--encre);
+}
+
+.faq-offre__element {
+  border-bottom: 1px solid var(--doux);
+}
+
+.faq-offre__question {
+  font-family: var(--police-texte);
+  font-size: var(--texte-m);
+}
+
+.faq-offre__bouton {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--esp-4);
+  width: 100%;
+  min-height: 56px;
+  padding: var(--esp-3) var(--esp-2);
+  border: 0;
+  background: transparent;
+  font-weight: 700;
+  line-height: 1.35;
+  text-align: left;
+  cursor: pointer;
+}
+
+.faq-offre__bouton:hover {
+  color: var(--primaire);
+}
+
+.faq-offre__chevron {
+  flex-shrink: 0;
+  color: var(--primaire);
+  transition: transform var(--duree) var(--courbe);
+}
+
+.faq-offre__bouton[aria-expanded='true'] .faq-offre__chevron {
+  transform: rotate(180deg);
+}
+
+.faq-offre__reponse {
+  display: grid;
+  gap: var(--esp-2);
+  padding: 0 var(--esp-2) var(--esp-4);
+  color: var(--encre-douce);
+  animation: faq-offre-ouvre 220ms var(--courbe);
+}
+
+@keyframes faq-offre-ouvre {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+}

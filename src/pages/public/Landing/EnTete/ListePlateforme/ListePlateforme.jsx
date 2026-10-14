@@ -35,11 +35,7 @@ export default function ListePlateforme({ onNaviguer, idPrefixe = 'plateforme' }
           const phares = famille.fonctionnalites.filter((f) => f.phare)
           const autres = famille.fonctionnalites.filter((f) => !f.phare)
           const idTitre = `${idPrefixe}-${famille.id}`
-          const lien = (f) => ({
-            pathname: '/',
-            search: `?offre=${affichee.type}`,
-            hash: `module-${f.code}`,
-          })
+          const lien = (f) => ({ pathname: affichee.chemin, hash: `module-${f.code}` })
 
           return (
             <div

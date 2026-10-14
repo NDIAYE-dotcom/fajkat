@@ -26,12 +26,16 @@ const MODULES_DISPONIBLES = []
 export const CONTACT_DEMO = {
   whatsapp: '+221779605825',
   message: 'Bonjour, je souhaite une démo de Fajkat',
+  // Adresse e-mail de contact (null = « [à compléter] »).
+  email: 'contact@fajkat.com',
 }
 
 const DEFINITIONS = {
   poste_sante: {
     type: 'poste_sante',
     nom: 'Poste de santé',
+    // Adresse publique de la page de l'offre.
+    chemin: '/poste-de-sante',
     prixMensuel: 5500,
     // Complément du message de démo : « … pour mon poste de santé. »
     pourDemo: 'mon poste de santé',
@@ -46,6 +50,7 @@ const DEFINITIONS = {
   clinique: {
     type: 'clinique',
     nom: 'Clinique',
+    chemin: '/clinique',
     prixMensuel: 10500,
     pourDemo: 'ma clinique',
     choix: {
@@ -93,6 +98,11 @@ export function estTypeOffre(type) {
 
 export function getOffre(type) {
   return estTypeOffre(type) ? OFFRES[type] : null
+}
+
+// Offre correspondant à une adresse (« /clinique »), ou null pour toute autre adresse.
+export function offreDepuisChemin(chemin) {
+  return Object.values(OFFRES).find((offre) => offre.chemin === chemin) ?? null
 }
 
 export function autreOffre(type) {
