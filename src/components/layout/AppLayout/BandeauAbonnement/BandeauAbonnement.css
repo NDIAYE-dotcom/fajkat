@@ -1,0 +1,54 @@
+.bandeau-abonnement {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--esp-1) var(--esp-3);
+  padding: var(--esp-2) var(--gouttiere);
+  border-bottom: var(--trait);
+  border-left: 4px solid var(--accent);
+  background: var(--surface);
+  color: var(--encre);
+  font-size: var(--texte-s);
+}
+
+.bandeau-abonnement--attention {
+  border-left-color: var(--attention);
+  background: var(--fond);
+}
+
+.bandeau-abonnement--erreur {
+  border-left-color: var(--tampon);
+  background: var(--fond);
+}
+
+.bandeau-abonnement__icone {
+  flex-shrink: 0;
+  color: var(--primaire);
+}
+
+.bandeau-abonnement--attention .bandeau-abonnement__icone {
+  color: var(--attention);
+}
+
+.bandeau-abonnement--erreur .bandeau-abonnement__icone {
+  color: var(--tampon);
+}
+
+.bandeau-abonnement__texte {
+  flex: 1 1 14rem;
+  min-width: 0;
+}
+
+.bandeau-abonnement__titre {
+  color: var(--encre);
+}
+
+.bandeau-abonnement .bandeau-abonnement__action {
+  min-height: 44px;
+}
+
+@media print {
+  .bandeau-abonnement {
+    display: none;
+  }
+}

@@ -131,6 +131,7 @@ function Formulaire(props) {
     <EtapeCadre
       titre="Votre équipe"
       pourquoi="Chaque personne aura son propre accès, limité à ce dont elle a besoin pour son travail."
+      edition={props.edition}
       brouillon={brouillon}
       erreur={erreurEnvoi}
       envoi={envoi}

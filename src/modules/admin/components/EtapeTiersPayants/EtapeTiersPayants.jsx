@@ -112,6 +112,7 @@ function Formulaire({ structure, onboarding, tiers, onEnregistre, ...etape }) {
     <EtapeCadre
       titre="Tiers payants acceptés"
       pourquoi="À l’encaissement, Fajkat calcule la part prise en charge et la part que paie le patient."
+      edition={etape.edition}
       brouillon={brouillon}
       erreur={erreurEnvoi}
       envoi={envoi}

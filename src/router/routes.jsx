@@ -25,7 +25,7 @@ export const router = createBrowserRouter([
       { path: '/cgu', lazy: pageLegale('cgu') },
     ],
   },
-  // Pages qui ont besoin de la session : fournisseurs Auth / Org / Toast chargés à la demande.
+  // Pages qui ont besoin de la session : fournisseurs Auth / Org chargés à la demande.
   {
     lazy: composant(() => import('./RacineSession.jsx')),
     children: [
@@ -59,15 +59,34 @@ export const router = createBrowserRouter([
         path: '/app',
         lazy: composant(() => import('./guards/RequireAuth/RequireAuth.jsx')),
         children: [
-          {
-            index: true,
-            lazy: composant(() => import('../modules/admin/pages/TableauDeBord/TableauDeBord.jsx')),
-          },
+          // Assistant de démarrage : plein écran, hors de la coquille.
           {
             path: 'demarrage',
             lazy: composant(() => import('../modules/admin/pages/Demarrage/Demarrage.jsx')),
           },
-          { path: '*', element: <NonTrouve /> },
+          {
+            lazy: composant(() => import('../components/layout/AppLayout/AppLayout.jsx')),
+            children: [
+              {
+                index: true,
+                lazy: composant(
+                  () => import('../modules/admin/pages/TableauDeBord/TableauDeBord.jsx'),
+                ),
+              },
+              {
+                path: 'parametres',
+                lazy: composant(() => import('../modules/admin/pages/Parametres/Parametres.jsx')),
+              },
+              {
+                path: 'abonnement',
+                lazy: composant(() => import('../modules/admin/pages/Abonnement/Abonnement.jsx')),
+              },
+              { path: 'profil', lazy: composant(() => import('../pages/Profil/Profil.jsx')) },
+              // Modules sans page dédiée : gardes d'offre et de rôle, puis « en préparation »
+              // (navigation.js). Les modules construits ensuite ajoutent leur route ici.
+              { path: '*', lazy: composant(() => import('./RouteModule.jsx')) },
+            ],
+          },
         ],
       },
     ],

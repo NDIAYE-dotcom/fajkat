@@ -1,0 +1,59 @@
+.profil {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-5);
+  max-width: 44rem;
+}
+
+.profil__titre {
+  font-size: var(--titre-2);
+  color: var(--primaire);
+}
+
+.profil__ligne {
+  display: grid;
+  grid-template-columns: minmax(7rem, 1fr) 2fr;
+  gap: var(--esp-3);
+  padding: var(--esp-3) 0;
+  border-bottom: 1px solid var(--doux);
+}
+
+.profil__ligne:last-child {
+  border-bottom: 0;
+}
+
+.profil__ligne dt,
+.profil__detail {
+  color: var(--encre-douce);
+}
+
+.profil__ligne dd {
+  margin: 0;
+  font-weight: 700;
+}
+
+.profil__email {
+  overflow-wrap: anywhere;
+}
+
+.profil__structures {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.profil__nom {
+  font-weight: 700;
+}
+
+.profil__note {
+  font-size: var(--texte-s);
+  color: var(--encre-douce);
+}
+
+@media (max-width: 479px) {
+  .profil__ligne {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+}

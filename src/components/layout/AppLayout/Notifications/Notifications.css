@@ -1,0 +1,42 @@
+.notifications__bouton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--rayon-champ);
+  background: transparent;
+  color: var(--encre-douce);
+  cursor: pointer;
+}
+
+.notifications__bouton:hover,
+.notifications__bouton[aria-expanded='true'] {
+  background: var(--surface);
+  color: var(--encre);
+}
+
+.notifications__panneau {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-2);
+  padding: var(--esp-4);
+}
+
+.notifications__titre {
+  font-family: var(--police-titre);
+  font-size: var(--texte-l);
+  font-weight: 600;
+  color: var(--primaire);
+}
+
+.notifications__vide {
+  font-weight: 700;
+}
+
+.notifications__texte {
+  font-size: var(--texte-s);
+  color: var(--encre-douce);
+}

@@ -1,0 +1,105 @@
+.menu-utilisateur__bouton {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--esp-2);
+  min-height: 44px;
+  padding: var(--esp-1);
+  border: 0;
+  border-radius: var(--rayon-champ);
+  background: transparent;
+  color: var(--encre);
+  cursor: pointer;
+}
+
+.menu-utilisateur__bouton:hover,
+.menu-utilisateur__bouton[aria-expanded='true'] {
+  background: var(--surface);
+}
+
+.menu-utilisateur__prenom,
+.menu-utilisateur__chevron {
+  display: none;
+}
+
+.menu-utilisateur__panneau {
+  padding-top: var(--esp-4);
+}
+
+.menu-utilisateur__identite {
+  padding: 0 var(--esp-4) var(--esp-3);
+}
+
+.menu-utilisateur__nom {
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+
+.menu-utilisateur__email {
+  font-size: var(--texte-s);
+  color: var(--encre-douce);
+  overflow-wrap: anywhere;
+}
+
+.menu-utilisateur__role {
+  margin-top: var(--esp-1);
+  font-size: var(--texte-s);
+  color: var(--encre-douce);
+}
+
+.menu-utilisateur__liste {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.menu-utilisateur__action {
+  display: flex;
+  align-items: center;
+  gap: var(--esp-3);
+  width: 100%;
+  min-height: 48px;
+  padding: var(--esp-2) var(--esp-4);
+  border: 0;
+  border-top: var(--trait);
+  background: transparent;
+  color: var(--encre);
+  font-size: var(--texte-m);
+  text-align: left;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.menu-utilisateur__action:hover {
+  background: var(--surface);
+}
+
+.menu-utilisateur__action:focus-visible {
+  outline-offset: -3px;
+}
+
+.menu-utilisateur__action--sortie {
+  color: var(--tampon);
+}
+
+.menu-utilisateur__action:disabled {
+  cursor: progress;
+}
+
+.menu-utilisateur__icone {
+  color: var(--primaire);
+}
+
+.menu-utilisateur__action--sortie .menu-utilisateur__icone {
+  color: var(--tampon);
+}
+
+@media (min-width: 768px) {
+  .menu-utilisateur__prenom,
+  .menu-utilisateur__chevron {
+    display: inline;
+  }
+
+  .menu-utilisateur__chevron {
+    color: var(--encre-douce);
+  }
+}

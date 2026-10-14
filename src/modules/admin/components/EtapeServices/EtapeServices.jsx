@@ -159,6 +159,7 @@ function Formulaire({ structure, modeles, services, onEnregistre, ...etape }) {
     <EtapeCadre
       titre="Services et tarifs"
       pourquoi="La caisse et les tickets reprennent ces tarifs : plus besoin de les retenir ni de les recalculer."
+      edition={etape.edition}
       brouillon={brouillon}
       erreur={erreurEnvoi}
       envoi={envoi}

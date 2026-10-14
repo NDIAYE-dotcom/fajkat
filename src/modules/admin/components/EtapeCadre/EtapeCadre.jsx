@@ -8,13 +8,16 @@ import './EtapeCadre.css'
 
 // Cadre commun des écrans de l'assistant : titre, raison de la demande (une phrase),
 // brouillon retrouvé, erreur d'envoi, et les trois actions (précédent, passer, enregistrer).
+// edition : écran repris dans les Paramètres (un seul bouton « Enregistrer », pas de focus
+// automatique, les quatre écrans y étant montés ensemble dans des onglets).
 export default function EtapeCadre({
+  edition = false,
   titre,
   pourquoi,
   brouillon,
   erreur,
   envoi = false,
-  libelleEnvoi = 'Enregistrer et continuer',
+  libelleEnvoi = edition ? 'Enregistrer les modifications' : 'Enregistrer et continuer',
   onEnvoyer,
   onPasser,
   onPrecedent,
@@ -23,7 +26,9 @@ export default function EtapeCadre({
   // Nouvel écran : le focus va sur son titre (clavier, lecteurs d'écran).
   const refTitre = useRef(null)
   useEffect(() => {
-    refTitre.current?.focus()
+    if (!edition) refTitre.current?.focus()
+    // Une seule fois, à l'ouverture de l'écran.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   function surEnvoi(evenement) {

@@ -1,0 +1,104 @@
+.selecteur-structure {
+  min-width: 0;
+  flex-shrink: 1;
+}
+
+.selecteur-structure__bouton {
+  display: flex;
+  align-items: center;
+  gap: var(--esp-2);
+  min-width: 0;
+  max-width: 100%;
+  min-height: 44px;
+  padding: var(--esp-1) var(--esp-2) var(--esp-1) 0;
+  border: 0;
+  border-radius: var(--rayon-champ);
+  background: transparent;
+  color: var(--encre);
+  text-align: left;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.selecteur-structure__nom {
+  min-width: 0;
+  overflow: hidden;
+  font-family: var(--police-titre);
+  font-size: var(--texte-l);
+  font-weight: 600;
+  line-height: 1.2;
+  color: var(--primaire);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.selecteur-structure__chevron {
+  flex-shrink: 0;
+  color: var(--encre-douce);
+}
+
+button.selecteur-structure__bouton:hover {
+  background: var(--surface);
+}
+
+.selecteur-structure__panneau {
+  padding: var(--esp-3) 0;
+}
+
+.selecteur-structure__titre {
+  padding: 0 var(--esp-4) var(--esp-2);
+  font-size: var(--texte-xs);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--encre-douce);
+}
+
+.selecteur-structure__liste {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.selecteur-structure__choix {
+  display: flex;
+  align-items: center;
+  gap: var(--esp-3);
+  width: 100%;
+  min-height: 56px;
+  padding: var(--esp-2) var(--esp-4);
+  border: 0;
+  border-top: var(--trait);
+  background: transparent;
+  color: var(--encre);
+  text-align: left;
+  cursor: pointer;
+}
+
+.selecteur-structure__choix:hover {
+  background: var(--surface);
+}
+
+.selecteur-structure__choix[aria-current='true'] {
+  box-shadow: inset 4px 0 0 var(--accent);
+}
+
+.selecteur-structure__choix:focus-visible {
+  outline-offset: -3px;
+}
+
+.selecteur-structure__texte {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.selecteur-structure__choix-nom {
+  font-weight: 700;
+}
+
+.selecteur-structure__details {
+  font-size: var(--texte-s);
+  color: var(--encre-douce);
+}

@@ -1,0 +1,4 @@
+.module-non-inclus {
+  max-width: var(--largeur-texte);
+  padding-block: var(--esp-6);
+}

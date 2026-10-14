@@ -18,6 +18,7 @@ export function useFeatures(orgId) {
     features: requete.data ?? [],
     chargement: Boolean(id) && requete.isPending,
     erreur: requete.error,
+    recharger: requete.refetch,
   }
 }
 

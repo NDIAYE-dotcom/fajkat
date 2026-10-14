@@ -1,0 +1,116 @@
+.barre-mobile {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 20;
+  border-top: 1px solid var(--doux);
+  background: var(--fond);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.barre-mobile__liste {
+  display: grid;
+  grid-auto-columns: minmax(0, 1fr);
+  grid-auto-flow: column;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.barre-mobile__case {
+  min-width: 0;
+}
+
+.barre-mobile__lien {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  width: 100%;
+  min-height: var(--hauteur-barre-mobile);
+  padding: var(--esp-1) 2px;
+  border: 0;
+  border-top: 3px solid transparent;
+  background: transparent;
+  color: var(--encre-douce);
+  font-size: var(--texte-xs);
+  line-height: 1.2;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.barre-mobile__libelle {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.barre-mobile__lien:is([aria-current='page'], .barre-mobile__lien--actif) {
+  border-top-color: var(--accent);
+  background: var(--surface);
+  color: var(--primaire);
+  font-weight: 700;
+}
+
+.barre-mobile__lien:focus-visible {
+  outline-offset: -3px;
+}
+
+.barre-mobile__contenu {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-5);
+}
+
+.barre-mobile__titre {
+  padding-bottom: var(--esp-1);
+  font-family: var(--police-texte);
+  font-size: var(--texte-xs);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--encre-douce);
+}
+
+.barre-mobile__compte {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.barre-mobile__lien-compte {
+  display: flex;
+  align-items: center;
+  gap: var(--esp-3);
+  min-height: 48px;
+  padding-left: var(--esp-3);
+  border-bottom: var(--trait);
+  color: var(--encre);
+  text-decoration: none;
+}
+
+.barre-mobile__icone {
+  color: var(--primaire);
+}
+
+.barre-mobile__lien-compte[aria-current='page'] {
+  background: var(--surface);
+  box-shadow: inset 4px 0 0 var(--accent);
+  font-weight: 700;
+  color: var(--primaire);
+}
+
+@media (min-width: 768px) {
+  .barre-mobile {
+    display: none;
+  }
+}
+
+@media print {
+  .barre-mobile {
+    display: none;
+  }
+}

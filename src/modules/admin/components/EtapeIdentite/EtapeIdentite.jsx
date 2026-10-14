@@ -47,7 +47,8 @@ function valider(v) {
   return erreurs
 }
 
-function Formulaire({ structure, fiche, onEnregistre, enregistrer, passer, precedent, suivant }) {
+function Formulaire(props) {
+  const { structure, fiche, onEnregistre, enregistrer, passer, precedent, suivant, edition } = props
   const [initiale] = useState(() => valeursDe(fiche))
   const brouillon = useBrouillon(`demarrage.${structure.id}.identite`, initiale)
   const v = brouillon.valeur
@@ -92,6 +93,7 @@ function Formulaire({ structure, fiche, onEnregistre, enregistrer, passer, prece
     <EtapeCadre
       titre="Identité de la structure"
       pourquoi="Ces informations figurent sur vos ordonnances, reçus et certificats, et permettent aux patients de vous joindre."
+      edition={edition}
       brouillon={brouillon}
       erreur={erreurEnvoi}
       envoi={envoi}

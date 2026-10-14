@@ -1,0 +1,59 @@
+.recherche-globale {
+  flex-shrink: 0;
+}
+
+.recherche-globale__champ {
+  position: relative;
+}
+
+/* Rappel du raccourci clavier, dans le champ vide (grand écran seulement). */
+.recherche-globale__touche {
+  position: absolute;
+  top: 50%;
+  right: var(--esp-3);
+  display: none;
+  min-width: 1.6rem;
+  padding: 0 var(--esp-1);
+  border: var(--trait);
+  border-radius: 4px;
+  background: var(--surface);
+  color: var(--encre-douce);
+  font-family: var(--police-mono);
+  font-size: var(--texte-xs);
+  text-align: center;
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+/* Téléphone : loupe dans l'en-tête, champ ouvert sur toute la largeur, sous l'en-tête. */
+@media (max-width: 767px) {
+  .recherche-globale__champ {
+    display: none;
+  }
+
+  .recherche-globale--ouverte .recherche-globale__champ {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    left: 0;
+    display: block;
+    padding: var(--esp-2) var(--esp-4);
+    border-bottom: var(--trait);
+    background: var(--fond);
+  }
+}
+
+@media (min-width: 768px) {
+  .recherche-globale {
+    flex: 1;
+    max-width: 28rem;
+  }
+
+  .recherche-globale__loupe {
+    display: none;
+  }
+
+  .recherche-globale__touche {
+    display: block;
+  }
+}

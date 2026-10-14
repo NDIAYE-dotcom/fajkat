@@ -1,0 +1,44 @@
+.menu-deroulant {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.menu-deroulant__panneau {
+  position: absolute;
+  top: calc(100% + var(--esp-2));
+  z-index: 30;
+  width: min(20rem, calc(100vw - 2 * var(--esp-4)));
+  max-height: calc(100dvh - var(--hauteur-entete) - var(--esp-4));
+  overflow-y: auto;
+  border: var(--trait);
+  border-radius: var(--rayon-panneau);
+  background: var(--fond);
+  color: var(--encre);
+  box-shadow: var(--ombre-flottante);
+  animation: menu-deroulant-entree var(--duree) var(--courbe);
+}
+
+.menu-deroulant__panneau[hidden] {
+  display: none;
+}
+
+.menu-deroulant__panneau--droite {
+  right: 0;
+}
+
+.menu-deroulant__panneau--gauche {
+  left: 0;
+}
+
+@keyframes menu-deroulant-entree {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .menu-deroulant__panneau {
+    animation: none;
+  }
+}

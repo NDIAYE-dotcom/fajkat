@@ -1,0 +1,48 @@
+.abonnement {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-5);
+  max-width: 44rem;
+}
+
+.abonnement__surtitre {
+  font-size: var(--texte-s);
+  color: var(--encre-douce);
+}
+
+.abonnement__titre {
+  font-size: var(--titre-2);
+  color: var(--primaire);
+}
+
+/* Lignes du registre : filets horizontaux fins. */
+.abonnement__ligne {
+  display: grid;
+  grid-template-columns: minmax(7rem, 1fr) 2fr;
+  gap: var(--esp-3);
+  padding: var(--esp-3) 0;
+  border-bottom: 1px solid var(--doux);
+}
+
+.abonnement__ligne:last-child {
+  border-bottom: 0;
+}
+
+.abonnement__ligne dt {
+  color: var(--encre-douce);
+}
+
+.abonnement__ligne dd {
+  margin: 0;
+  font-weight: 700;
+}
+
+.abonnement__chiffre {
+  font-family: var(--police-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+.abonnement__detail {
+  font-weight: 400;
+  color: var(--encre-douce);
+}

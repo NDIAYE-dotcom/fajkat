@@ -1,106 +1,96 @@
-import { LogOut } from 'lucide-react'
-import { useEffect, useState } from 'react'
-import { Navigate, useNavigate } from 'react-router-dom'
-import Button from '../../../../components/ui/Button/Button.jsx'
-import Field from '../../../../components/ui/Field/Field.jsx'
+import { Bell, CalendarClock, Users, Wallet } from 'lucide-react'
+import { useEffect } from 'react'
+import { Navigate } from 'react-router-dom'
 import Icone from '../../../../components/ui/Icone/Icone.jsx'
-import Panel from '../../../../components/ui/Panel/Panel.jsx'
-import Select from '../../../../components/ui/Select/Select.jsx'
 import { useAuth } from '../../../../hooks/useAuth.js'
+import { useNavigation } from '../../../../hooks/useNavigation.js'
 import { useOrganization } from '../../../../hooks/useOrganization.js'
-import { dayjs, formatDate } from '../../../../lib/format.js'
-import { getOffre } from '../../../../lib/offres.js'
+import { dayjs } from '../../../../lib/format.js'
 import CarteConfiguration from '../../components/CarteConfiguration/CarteConfiguration.jsx'
 import { doitOuvrirAssistant, peutConfigurer } from '../../utils.js'
 import './TableauDeBord.css'
 
-// Jours d'essai restants, arrondis au jour supérieur (il reste « 1 jour » jusqu'à la fin).
-function joursRestants(finEssai) {
-  if (!finEssai) return null
-  const heures = dayjs(finEssai).diff(dayjs(), 'hour', true)
-  return Math.max(0, Math.ceil(heures / 24))
+// Emplacements des indicateurs : remplis par les modules des étapes suivantes.
+// Aucun chiffre n'est affiché tant que la donnée réelle n'existe pas.
+const EMPLACEMENTS = [
+  {
+    code: 'patients',
+    titre: 'Patients du jour',
+    icone: Users,
+    entree: 'patients',
+    texte: 'Les patients reçus aujourd’hui et ceux qui attendent encore s’afficheront ici.',
+  },
+  {
+    code: 'rendez_vous',
+    titre: 'Rendez-vous',
+    icone: CalendarClock,
+    entree: 'rendez_vous',
+    texte: 'Les rendez-vous du jour et les rappels WhatsApp envoyés la veille s’afficheront ici.',
+  },
+  {
+    code: 'recettes',
+    titre: 'Recettes',
+    icone: Wallet,
+    entree: 'caisse',
+    texte: 'Les encaissements du jour, par espèces et mobile money, s’afficheront ici.',
+  },
+  {
+    code: 'alertes',
+    titre: 'Alertes',
+    icone: Bell,
+    entree: null,
+    texte: 'Ruptures de stock, vaccins en retard et échéances s’afficheront ici.',
+  },
+]
+
+// « mercredi 14 octobre 2026 » -> « Mercredi 14 octobre 2026 », dans le fuseau de la structure.
+function dateDuJour() {
+  const texte = dayjs.tz().format('dddd D MMMM YYYY')
+  return texte.charAt(0).toLocaleUpperCase('fr') + texte.slice(1)
 }
 
-// Page provisoire (étape 6) : la coquille de l'application arrive à l'étape 8.
+// Journée du jour : la date, la configuration à terminer, et les indicateurs à venir.
 export default function TableauDeBord() {
-  const { prenom, deconnecter } = useAuth()
-  const { structure, structures, role, changerStructure } = useOrganization()
-  const navigate = useNavigate()
-  const [sortie, setSortie] = useState(false)
-  const offre = getOffre(structure.type)
-  const jours = structure.status === 'trial' ? joursRestants(structure.trial_ends_at) : null
+  const { prenom } = useAuth()
+  const { structure, role } = useOrganization()
+  const { estVisible } = useNavigation()
 
   useEffect(() => {
-    document.title = `${structure.name} — Fajkat`
+    document.title = `Journée du jour — ${structure.name} — Fajkat`
   }, [structure.name])
 
   // Première connexion du propriétaire : l'assistant de démarrage s'ouvre, une seule fois.
   if (doitOuvrirAssistant(structure)) return <Navigate to="/app/demarrage" replace />
 
-  async function surDeconnexion() {
-    setSortie(true)
-    await deconnecter()
-    navigate('/connexion', { replace: true })
-  }
+  const emplacements = EMPLACEMENTS.filter((e) => !e.entree || estVisible(e.entree))
 
   return (
     <div className="tableau-de-bord">
       <header className="tableau-de-bord__entete">
-        <span className="tableau-de-bord__marque">Fajkat</span>
-        <Button
-          variante="secondaire"
-          iconeDebut={<Icone icone={LogOut} />}
-          chargement={sortie}
-          onClick={surDeconnexion}
-        >
-          Déconnexion
-        </Button>
+        <h1 className="tableau-de-bord__date">{dateDuJour()}</h1>
+        <p className="tableau-de-bord__salut">
+          Bonjour {prenom || 'et bienvenue'}, voici la journée de {structure.name}.
+        </p>
       </header>
 
-      <main className="tableau-de-bord__contenu" id="contenu">
-        <h1 className="tableau-de-bord__titre">
-          Bonjour {prenom || 'et bienvenue'}
-          <span className="tableau-de-bord__structure"> — {structure.name}</span>
-        </h1>
+      {peutConfigurer(role) && <CarteConfiguration />}
 
-        {peutConfigurer(role) && <CarteConfiguration />}
-
-        <Panel titre="Votre abonnement" marque>
-          <dl className="tableau-de-bord__fiche">
-            <div className="tableau-de-bord__ligne">
-              <dt>Offre</dt>
-              <dd>{offre?.nom ?? structure.type}</dd>
-            </div>
-            {jours !== null && (
-              <div className="tableau-de-bord__ligne">
-                <dt>Essai gratuit</dt>
-                <dd>
-                  <span className="tableau-de-bord__chiffre">{jours}</span>{' '}
-                  {jours > 1 ? 'jours restants' : jours === 1 ? 'jour restant' : '— terminé'}
-                  <span className="tableau-de-bord__date">
-                    {' '}
-                    (jusqu’au {formatDate(structure.trial_ends_at)})
-                  </span>
-                </dd>
-              </div>
-            )}
-          </dl>
-        </Panel>
-
-        {structures.length > 1 && (
-          <Field id="tdb-structure" label="Structure ouverte">
-            <Select
-              options={structures.map((s) => ({ valeur: s.id, libelle: s.name }))}
-              value={structure.id}
-              onChange={(e) => changerStructure(e.target.value)}
-            />
-          </Field>
-        )}
-
-        <p className="tableau-de-bord__note">
-          Page provisoire : les modules de votre structure arrivent aux prochaines étapes.
-        </p>
-      </main>
+      <section aria-labelledby="tdb-indicateurs">
+        <h2 id="tdb-indicateurs" className="sr-only">
+          Indicateurs du jour
+        </h2>
+        <ul className="tableau-de-bord__grille">
+          {emplacements.map((e) => (
+            <li key={e.code} className="tableau-de-bord__emplacement">
+              <h3 className="tableau-de-bord__titre">
+                <Icone icone={e.icone} className="tableau-de-bord__icone" />
+                {e.titre}
+              </h3>
+              <p className="tableau-de-bord__texte">{e.texte}</p>
+            </li>
+          ))}
+        </ul>
+      </section>
     </div>
   )
 }

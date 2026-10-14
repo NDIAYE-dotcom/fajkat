@@ -1,80 +1,71 @@
 .tableau-de-bord {
-  min-height: 100vh;
-  background: var(--fond);
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-5);
 }
 
 .tableau-de-bord__entete {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--esp-4);
-  min-height: var(--hauteur-entete);
-  padding: var(--esp-2) var(--gouttiere);
-  border-bottom: var(--trait);
-}
-
-.tableau-de-bord__marque {
-  font-family: var(--police-titre);
-  font-size: var(--texte-l);
-  font-weight: 600;
-  color: var(--primaire);
-}
-
-.tableau-de-bord__contenu {
-  display: flex;
   flex-direction: column;
-  gap: var(--esp-5);
-  max-width: 44rem;
-  padding: var(--esp-6) var(--gouttiere) var(--esp-8);
+  gap: var(--esp-2);
 }
 
-.tableau-de-bord__titre {
+.tableau-de-bord__date {
   font-size: var(--titre-2);
   color: var(--primaire);
 }
 
-.tableau-de-bord__structure {
+.tableau-de-bord__salut {
+  color: var(--encre-douce);
+}
+
+.tableau-de-bord__grille {
+  display: grid;
+  /* Une colonne sur téléphone, 2 × 2 sur tablette, une seule ligne sur grand écran. */
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--esp-4);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+@media (min-width: 640px) {
+  .tableau-de-bord__grille {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1200px) {
+  .tableau-de-bord__grille {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+/* Emplacement encore vide : un cadre en pointillés, sans aucun chiffre. */
+.tableau-de-bord__emplacement {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-2);
+  min-height: 8.5rem;
+  padding: var(--esp-4);
+  border: 1px dashed var(--doux);
+  border-radius: var(--rayon-panneau);
+}
+
+.tableau-de-bord__titre {
+  display: flex;
+  align-items: center;
+  gap: var(--esp-2);
+  font-size: var(--texte-l);
   color: var(--encre);
 }
 
-.tableau-de-bord__fiche {
-  display: flex;
-  flex-direction: column;
+.tableau-de-bord__icone {
+  flex-shrink: 0;
+  color: var(--primaire);
 }
 
-/* Lignes du registre : filets horizontaux fins. */
-.tableau-de-bord__ligne {
-  display: grid;
-  grid-template-columns: minmax(7rem, 1fr) 2fr;
-  gap: var(--esp-3);
-  padding: var(--esp-3) 0;
-  border-bottom: 1px solid var(--doux);
-}
-
-.tableau-de-bord__ligne:last-child {
-  border-bottom: 0;
-}
-
-.tableau-de-bord__ligne dt {
-  color: var(--encre-douce);
-}
-
-.tableau-de-bord__ligne dd {
-  margin: 0;
-  font-weight: 700;
-}
-
-.tableau-de-bord__chiffre {
-  font-family: var(--police-mono);
-  font-variant-numeric: tabular-nums;
-}
-
-.tableau-de-bord__date {
-  font-weight: 400;
-  color: var(--encre-douce);
-}
-
-.tableau-de-bord__note {
+.tableau-de-bord__texte {
   font-size: var(--texte-s);
   color: var(--encre-douce);
 }

@@ -1,13 +1,19 @@
 import { Link } from 'react-router-dom'
 
-export default function NonTrouve() {
+// integre : à l'intérieur de l'application connectée (le <main> existe déjà).
+export default function NonTrouve({ integre = false }) {
+  const Conteneur = integre ? 'div' : 'main'
   return (
-    <main>
+    <Conteneur>
       <h1>Page introuvable</h1>
       <p>L’adresse demandée n’existe pas ou a été déplacée.</p>
       <p>
-        <Link to="/">Revenir à l’accueil</Link>
+        {integre ? (
+          <Link to="/app">Revenir à la journée</Link>
+        ) : (
+          <Link to="/">Revenir à l’accueil</Link>
+        )}
       </p>
-    </main>
+    </Conteneur>
   )
 }

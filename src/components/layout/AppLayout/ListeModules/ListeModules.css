@@ -1,0 +1,135 @@
+.liste-modules {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-4);
+}
+
+.liste-modules__titre {
+  padding: 0 var(--esp-4) var(--esp-1);
+  font-family: var(--police-texte);
+  font-size: var(--texte-xs);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--encre-douce);
+}
+
+.liste-modules__liste {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 0;
+  list-style: none;
+}
+
+/* Onglet d'intercalaire : arrondi côté gauche, l'onglet actif rejoint la page à droite. */
+.liste-modules__lien {
+  display: flex;
+  align-items: center;
+  gap: var(--esp-3);
+  min-height: 44px;
+  padding: var(--esp-2) var(--esp-3) var(--esp-2) var(--esp-4);
+  border-radius: var(--rayon-panneau) 0 0 var(--rayon-panneau);
+  color: var(--encre);
+  font-size: var(--texte-s);
+  text-decoration: none;
+  transition: background-color var(--duree) var(--courbe);
+}
+
+.liste-modules__icone {
+  flex-shrink: 0;
+  color: var(--primaire);
+}
+
+.liste-modules__libelle {
+  min-width: 0;
+}
+
+.liste-modules__lien:hover {
+  background: var(--surface);
+}
+
+.liste-modules__lien[aria-current='page'] {
+  background: var(--surface);
+  box-shadow: inset 4px 0 0 var(--accent);
+  font-weight: 700;
+  color: var(--primaire);
+}
+
+/* — Menu latéral : posé sur l'ambiance de section (claire en Poste, sombre en Clinique) — */
+.liste-modules--menu .liste-modules__titre {
+  color: var(--section-texte-doux);
+}
+
+.liste-modules--menu .liste-modules__lien {
+  margin-left: var(--esp-2);
+  color: var(--section-texte);
+}
+
+.liste-modules--menu .liste-modules__icone {
+  color: inherit;
+}
+
+.liste-modules--menu .liste-modules__lien:hover {
+  background: var(--section-survol);
+}
+
+.liste-modules--menu .liste-modules__lien:focus-visible {
+  outline-color: var(--section-focus);
+  outline-offset: -3px;
+}
+
+/* L'onglet actif prend la couleur de la page : il « sort » de l'intercalaire. */
+.liste-modules--menu .liste-modules__lien[aria-current='page'] {
+  margin-right: -1px;
+  background: var(--fond);
+  color: var(--primaire);
+}
+
+.liste-modules--menu .liste-modules__lien[aria-current='page']:focus-visible {
+  outline-color: var(--primaire);
+}
+
+/* — Menu replié : icônes seules, libellés pour les lecteurs d'écran — */
+.liste-modules--replie .liste-modules__titre,
+.liste-modules--replie .liste-modules__libelle {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+}
+
+.liste-modules--replie .liste-modules__famille + .liste-modules__famille {
+  padding-top: var(--esp-3);
+  border-top: 1px solid var(--section-filet);
+}
+
+.liste-modules--replie .liste-modules__lien {
+  justify-content: center;
+  padding-inline: 0;
+}
+
+/* — Tiroir « Plus » : liste en registre, cibles larges — */
+.liste-modules--tiroir .liste-modules__titre {
+  padding-inline: 0;
+}
+
+.liste-modules--tiroir .liste-modules__liste {
+  gap: 0;
+}
+
+.liste-modules--tiroir .liste-modules__lien {
+  min-height: 48px;
+  padding-left: var(--esp-3);
+  border-bottom: var(--trait);
+  border-radius: 0;
+  font-size: var(--texte-m);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .liste-modules__lien {
+    transition: none;
+  }
+}

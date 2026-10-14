@@ -32,5 +32,8 @@
 }
 
 .empty-state__action {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--esp-2);
   margin-top: var(--esp-2);
 }

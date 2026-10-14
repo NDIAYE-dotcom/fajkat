@@ -1,0 +1,72 @@
+.menu-lateral {
+  position: sticky;
+  top: var(--hauteur-entete);
+  display: flex;
+  flex-direction: column;
+  width: var(--largeur-menu);
+  height: calc(100dvh - var(--hauteur-entete));
+  border-right: 1px solid var(--section-filet);
+  background: var(--section-fond);
+  color: var(--section-texte);
+  transition: width var(--duree) var(--courbe);
+}
+
+.menu-lateral--replie {
+  width: var(--largeur-menu-replie);
+}
+
+.menu-lateral__defilement {
+  flex: 1;
+  min-height: 0;
+  padding: var(--esp-4) 0 var(--esp-4);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.menu-lateral__bascule {
+  display: flex;
+  align-items: center;
+  gap: var(--esp-3);
+  min-height: 48px;
+  padding: var(--esp-2) var(--esp-4);
+  border: 0;
+  border-top: 1px solid var(--section-filet);
+  background: transparent;
+  color: var(--section-texte);
+  font-size: var(--texte-s);
+  text-align: left;
+  cursor: pointer;
+}
+
+.menu-lateral--replie .menu-lateral__bascule {
+  justify-content: center;
+  padding-inline: 0;
+}
+
+.menu-lateral__bascule:hover {
+  background: var(--section-survol);
+}
+
+.menu-lateral__bascule:focus-visible {
+  outline-color: var(--section-focus);
+  outline-offset: -3px;
+}
+
+/* Téléphone : pas de menu latéral, la barre inférieure le remplace. */
+@media (max-width: 767px) {
+  .menu-lateral {
+    display: none;
+  }
+}
+
+@media print {
+  .menu-lateral {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .menu-lateral {
+    transition: none;
+  }
+}

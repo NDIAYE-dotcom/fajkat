@@ -1,0 +1,47 @@
+.indicateur-connexion {
+  display: flex;
+  align-items: center;
+  gap: var(--esp-2);
+  font-size: var(--texte-s);
+}
+
+.indicateur-connexion--pastille {
+  display: none;
+  flex-shrink: 0;
+  padding: var(--esp-1) var(--esp-3);
+  border: 1px solid var(--doux);
+  border-radius: 999px;
+  color: var(--encre-douce);
+  white-space: nowrap;
+}
+
+.indicateur-connexion--pastille .indicateur-connexion__icone {
+  color: var(--accent);
+}
+
+.indicateur-connexion--hors-ligne {
+  border-color: var(--tampon);
+  color: var(--tampon);
+}
+
+.indicateur-connexion--hors-ligne .indicateur-connexion__icone {
+  color: var(--tampon);
+}
+
+.indicateur-connexion--bandeau {
+  padding: var(--esp-2) var(--gouttiere);
+  border-bottom: 1px solid var(--tampon);
+  background: var(--fond);
+  color: var(--encre);
+}
+
+.indicateur-connexion--bandeau .indicateur-connexion__icone {
+  flex-shrink: 0;
+  color: var(--tampon);
+}
+
+@media (min-width: 1024px) {
+  .indicateur-connexion--pastille {
+    display: flex;
+  }
+}
