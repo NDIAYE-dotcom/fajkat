@@ -149,6 +149,12 @@ export const router = createBrowserRouter([
     path: '/ticket/:code',
     lazy: composant(() => import('../pages/public/SuiviTicket/SuiviTicket.jsx')),
   },
+  // Écran d'appel de la salle d'attente (télévision), ouvert par un lien à jeton : sans
+  // connexion, non indexé.
+  {
+    path: '/ecran/:jeton',
+    lazy: composant(() => import('../pages/public/EcranAppel/EcranAppel.jsx')),
+  },
   // Vitrine du design system de l'application : accessible, non indexée (noindex, hors sitemap).
   { path: '/atelier', lazy: composant(() => import('../pages/Atelier/Atelier.jsx')) },
   { path: '*', element: <NonTrouve /> },

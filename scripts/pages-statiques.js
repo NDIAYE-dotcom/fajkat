@@ -72,6 +72,7 @@ const robots = `User-agent: *
 Allow: /
 Disallow: /app
 Disallow: /ticket/
+Disallow: /ecran/
 
 Sitemap: ${new URL('/sitemap.xml', SITE.url).href}
 `

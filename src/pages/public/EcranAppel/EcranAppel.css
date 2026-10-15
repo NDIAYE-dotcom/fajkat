@@ -1,0 +1,216 @@
+/* Écran de télévision : section sombre, très grands chiffres, lisible du fond de la salle. */
+.ecran-appel {
+  position: relative;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--esp-5);
+  min-height: 100dvh;
+  padding: clamp(1rem, 3vw, 3rem);
+  background: var(--primaire);
+  color: var(--fond);
+}
+
+@media (min-width: 64rem) {
+  .ecran-appel {
+    grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+  }
+
+  .ecran-appel__entete,
+  .ecran-appel__pied {
+    grid-column: 1 / -1;
+  }
+}
+
+.ecran-appel--message {
+  place-items: center;
+  grid-template-rows: 1fr;
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.ecran-appel__message {
+  max-width: 40rem;
+  font-size: var(--titre-3);
+  text-align: center;
+}
+
+.ecran-appel__entete {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--esp-3);
+}
+
+.ecran-appel__structure {
+  font-family: var(--police-titre);
+  font-size: clamp(1.5rem, 3vw, 3rem);
+  font-weight: 600;
+}
+
+.ecran-appel__heure,
+.ecran-appel__petit-numero {
+  font-family: var(--police-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+.ecran-appel__heure {
+  font-size: clamp(1.5rem, 3vw, 3rem);
+}
+
+/* Un numéro ne se coupe jamais en deux, même à côté d'un long nom de salle. */
+.ecran-appel__petit-numero {
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.ecran-appel__scene {
+  display: grid;
+  place-items: center;
+  text-align: center;
+}
+
+.ecran-appel__appel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--esp-2);
+  padding: var(--esp-5) var(--esp-6);
+  border: 3px solid transparent;
+  border-radius: var(--rayon-panneau);
+}
+
+/* Nouvel appel : cadre clair qui pulse quelques secondes. */
+.ecran-appel__appel--nouveau {
+  border-color: var(--fond);
+  animation: ecran-appel-pulse 1.2s ease-out 4;
+}
+
+@keyframes ecran-appel-pulse {
+  from {
+    background: var(--encre);
+  }
+
+  to {
+    background: transparent;
+  }
+}
+
+.ecran-appel__mention {
+  font-size: clamp(1.25rem, 2.5vw, 2.5rem);
+  color: var(--surface);
+}
+
+.ecran-appel__numero {
+  font-family: var(--police-mono);
+  font-size: clamp(5rem, 18vw, 16rem);
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+
+.ecran-appel__initiales {
+  font-size: clamp(2rem, 5vw, 5rem);
+  font-weight: 700;
+}
+
+.ecran-appel__salle {
+  font-size: clamp(1.75rem, 4.5vw, 4.5rem);
+  font-weight: 700;
+}
+
+.ecran-appel__salle::before {
+  content: '→ ';
+}
+
+.ecran-appel__historique {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-3);
+  align-self: start;
+}
+
+.ecran-appel__titre {
+  font-family: var(--police-texte);
+  font-size: clamp(1.25rem, 2vw, 2rem);
+  font-weight: 700;
+  color: var(--surface);
+}
+
+.ecran-appel__liste {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--accent);
+}
+
+.ecran-appel__ligne {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--esp-3);
+  text-align: right;
+  padding-block: var(--esp-2);
+  border-bottom: 1px solid var(--accent);
+  font-size: clamp(1.25rem, 2.5vw, 2.5rem);
+}
+
+.ecran-appel__pied {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--esp-2) var(--esp-5);
+  font-size: var(--texte-s);
+  color: var(--surface);
+}
+
+/* Démarrage : le clic qui autorise le son. */
+.ecran-appel__voile {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: var(--esp-4);
+  background: var(--voile);
+}
+
+.ecran-appel__depart {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-4);
+  max-width: 32rem;
+  padding: var(--esp-6);
+  border-radius: var(--rayon-panneau);
+  background: var(--fond);
+  color: var(--encre);
+  box-shadow: var(--ombre-modale);
+}
+
+.ecran-appel__depart-titre {
+  font-size: var(--titre-2);
+  color: var(--primaire);
+}
+
+.ecran-appel__boutons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--esp-3);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ecran-appel__appel--nouveau {
+    animation: none;
+  }
+}
+
+.ecran-appel__voix {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: var(--esp-3);
+}
+
+.ecran-appel__voix > :first-child {
+  flex: 1 1 14rem;
+}

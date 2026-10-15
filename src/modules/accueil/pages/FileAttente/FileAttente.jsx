@@ -1,4 +1,4 @@
-import { ListOrdered, Ticket, UserCheck } from 'lucide-react'
+import { ListOrdered, MonitorPlay, Ticket, UserCheck } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import Button from '../../../../components/ui/Button/Button.jsx'
 import EmptyState from '../../../../components/ui/EmptyState/EmptyState.jsx'
@@ -14,6 +14,7 @@ import { usePermissionsPatients } from '../../../patients/hooks/usePermissionsPa
 import { chargerJetonTicket } from '../../api.js'
 import ArriveesDuJour from '../../components/ArriveesDuJour/ArriveesDuJour.jsx'
 import FenetresAccueil from '../../components/FenetresAccueil/FenetresAccueil.jsx'
+import ModaleEcrans from '../../components/ModaleEcrans/ModaleEcrans.jsx'
 import TableauFile from '../../components/TableauFile/TableauFile.jsx'
 import { usePermissionsFile, useTableau } from '../../hooks/useFile.js'
 import { useFileTempsReel } from '../../hooks/useTableauFile.js'
@@ -48,6 +49,7 @@ function AccueilDuJour() {
   useFileTempsReel(orgId)
   const [fenetre, setFenetre] = useState(null)
   const [preparation, setPreparation] = useState(null)
+  const [ecrans, setEcrans] = useState(false)
 
   useEffect(() => {
     document.title = `File d’attente — ${structure.name} — Fajkat`
@@ -91,9 +93,18 @@ function AccueilDuJour() {
           {droits.vendreTicket ? 'Arrivée sans ticket' : 'Nouvelle arrivée'}
         </Button>
       )}
+      {droits.gerer && (
+        <Button
+          variante="discret"
+          iconeDebut={<Icone icone={MonitorPlay} />}
+          onClick={() => setEcrans(true)}
+        >
+          Écrans d’appel
+        </Button>
+      )}
     </>
   )
-  const peutAgir = droits.ecrire || droits.vendreTicket
+  const peutAgir = droits.ecrire || droits.vendreTicket || droits.gerer
 
   return (
     <div className="file-attente">
@@ -155,6 +166,7 @@ function AccueilDuJour() {
         fenetre={fenetre}
         setFenetre={setFenetre}
       />
+      {ecrans && <ModaleEcrans orgId={orgId} onFermer={() => setEcrans(false)} />}
     </div>
   )
 }

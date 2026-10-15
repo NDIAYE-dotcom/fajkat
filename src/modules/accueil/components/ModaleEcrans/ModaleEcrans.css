@@ -1,0 +1,70 @@
+.modale-ecrans {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-5);
+}
+
+.modale-ecrans__liste {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: var(--trait);
+}
+
+.modale-ecrans__ligne {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--esp-2) var(--esp-4);
+  padding-block: var(--esp-3);
+  border-bottom: var(--trait);
+}
+
+.modale-ecrans__texte {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.modale-ecrans__nom {
+  font-weight: 700;
+  color: var(--encre);
+}
+
+.modale-ecrans__doux {
+  font-size: var(--texte-s);
+  color: var(--encre-douce);
+}
+
+.modale-ecrans__creation {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--esp-3);
+  padding-top: var(--esp-4);
+  border-top: var(--trait);
+}
+
+.modale-ecrans__creation > * {
+  align-self: stretch;
+}
+
+.modale-ecrans__creation > button {
+  align-self: flex-start;
+}
+
+.modale-ecrans__titre {
+  font-family: var(--police-texte);
+  font-size: var(--texte-m);
+  font-weight: 700;
+  color: var(--encre);
+}
+
+.modale-ecrans__files {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 12rem), 1fr));
+  gap: var(--esp-2) var(--esp-4);
+}

@@ -17,7 +17,8 @@ Pendant une étape, on corrige seulement les bugs. Toute idée d'amélioration e
 - **Contrôle d'âge facultatif sur un motif de gratuité** (exemple : « moins de 5 ans » refusé pour un adulte), contre la fraude ; borne d'âge paramétrable par motif.
 - **Clôture des passages restés ouverts** en fin de journée (patient parti sans être marqué).
 - **Temps d'attente estimé** sur la page de suivi du ticket (QR).
-- **Annonce vocale du numéro** sur l'écran d'appel, en français et en wolof.
+- **Annonce en wolof sur l'écran d'appel** avec une vraie voix sénégalaise enregistrée (lettres, nombres et noms des salles assemblés), qui marche aussi hors ligne. L'annonce en français utilise déjà la synthèse vocale de l'appareil (partie E).
+- **Code court d'appairage pour l'écran d'appel** (6 chiffres à saisir sur la télévision, valable quelques minutes) : taper un lien long avec une télécommande est pénible.
 - **Priorité proposée d'après le dossier** à l'arrivée (« Enfant de moins de 5 ans » pré-cochée selon l'âge), avec une règle d'âge paramétrable.
 
 ## Hébergement

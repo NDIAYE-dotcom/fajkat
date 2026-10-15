@@ -28,6 +28,7 @@ export const cles = {
   tickets: (orgId) => ['accueil', 'tickets', orgId],
   bilan: (orgId) => ['accueil', 'bilan', orgId],
   salles: (orgId) => ['accueil', 'salles', orgId],
+  ecrans: (orgId) => ['accueil', 'ecrans', orgId],
 }
 
 // Refus métier des fonctions de la file (22023, ou 42501 levé par elles) : message en
@@ -275,6 +276,63 @@ export function ecouterFile(orgId, { surChangement, surConnexion }) {
     .subscribe((statut) => {
       if (statut === 'SUBSCRIBED') surConnexion()
     })
+  return () => {
+    supabase.removeChannel(canal)
+  }
+}
+
+// --- Écrans d'appel (télévision de la salle d'attente) ----------------------------
+// Ouverts par un lien à jeton (jeton haché en base), créé et retiré par owner et admin.
+// L'écran ne reçoit que numéro, initiales et salle, poussés par la base sur un canal
+// Realtime Broadcast public au nom secret (realtime.send).
+
+// Seules certaines colonnes sont lisibles (ni le jeton haché, ni le nom du canal, ni
+// deleted_at) : la requête ne doit ni lire ni filtrer une autre colonne, sous peine de
+// refus. Un écran n'est jamais supprimé, seulement retiré (revoked_at).
+export async function chargerEcrans(orgId) {
+  const { data, error } = await client()
+    .from('display_screens')
+    .select('id, label, queue_service_ids, last_seen_at, revoked_at, created_at')
+    .eq('org_id', orgId)
+    .order('created_at', { ascending: false })
+  if (error) throw traduireErreur(error, 'Les écrans d’appel n’ont pas pu être chargés.')
+  return data ?? []
+}
+
+// { id, token } : le jeton n'est rendu qu'une fois (le lien à ouvrir sur la télévision).
+export async function creerEcran(orgId, libelle, serviceIds) {
+  const { data, error } = await client().rpc('create_display_screen', {
+    p_org_id: orgId,
+    p_label: libelle.trim(),
+    p_queue_service_ids: serviceIds?.length ? serviceIds : null,
+  })
+  if (error) throw erreurFile(error, 'L’écran n’a pas été créé. Réessayez.')
+  return Array.isArray(data) ? data[0] : data
+}
+
+// L'écran ouvert l'apprend aussitôt et s'arrête. Le lien ne sert plus jamais.
+export async function retirerEcran(id) {
+  const { error } = await client().rpc('revoke_display_screen', { p_screen_id: id })
+  if (error) throw erreurFile(error, 'L’écran n’a pas été retiré. Réessayez.')
+}
+
+// Page de l'écran, sans connexion : { status, org_name, screen_label, topic, calls }.
+// status : valid | revoked | unavailable | unknown.
+export async function chargerEcranPublic(jeton) {
+  const { data, error } = await client().rpc('get_display_board', { p_token: jeton })
+  if (error) throw traduireErreur(error, 'L’écran n’a pas pu être chargé.')
+  return data ?? { status: 'unknown' }
+}
+
+// Écoute du canal de l'écran. surAppel(appel) ; surRetrait() ; surEtat(statut) avec
+// statut : SUBSCRIBED | CHANNEL_ERROR | TIMED_OUT | CLOSED. Renvoie le désabonnement.
+export function ecouterEcran(topic, { surAppel, surRetrait, surEtat }) {
+  if (!supabase) return () => {}
+  const canal = supabase
+    .channel(topic, { config: { private: false } })
+    .on('broadcast', { event: 'call' }, ({ payload }) => surAppel(payload))
+    .on('broadcast', { event: 'revoked' }, () => surRetrait())
+    .subscribe((statut) => surEtat(statut))
   return () => {
     supabase.removeChannel(canal)
   }

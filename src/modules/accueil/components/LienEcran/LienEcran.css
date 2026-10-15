@@ -1,0 +1,16 @@
+.lien-ecran__lien {
+  padding: var(--esp-2) var(--esp-3);
+  border: var(--trait);
+  border-radius: var(--rayon-champ);
+  background: var(--fond);
+  font-family: var(--police-mono);
+  font-size: var(--texte-xs);
+  overflow-wrap: anywhere;
+  user-select: all;
+}
+
+.lien-ecran__boutons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--esp-2);
+}
