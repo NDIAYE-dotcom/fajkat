@@ -1,0 +1,11 @@
+/* Repère de coupe entre le ticket de file et le reçu, sur le même rouleau. */
+.impression-ticket__coupe {
+  width: var(--ticket-largeur);
+  max-width: 100%;
+  margin-inline: auto;
+  padding-block: 2mm;
+  font-family: var(--police-mono);
+  font-size: var(--texte-xs);
+  color: var(--encre-douce);
+  text-align: center;
+}

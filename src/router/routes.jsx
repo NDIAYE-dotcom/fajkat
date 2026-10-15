@@ -123,6 +123,14 @@ export const router = createBrowserRouter([
                   () => import('../modules/accueil/pages/FileAttente/FileAttente.jsx'),
                 ),
               },
+              // Tickets de consultation des postes de santé : vente, bilan, gratuités.
+              {
+                path: 'tickets',
+                lazy: composant(
+                  () =>
+                    import('../modules/accueil/pages/TicketsConsultation/TicketsConsultation.jsx'),
+                ),
+              },
               {
                 path: 'mon-espace',
                 lazy: composant(() => import('../modules/personnel/pages/MonEspace/MonEspace.jsx')),

@@ -2,6 +2,10 @@
 // Le numéro de ticket (A-001), la date du jour et le jeton du QR sont attribués par la base
 // (register_arrival), jamais par l'application. Le motif de venue est envoyé à
 // l'enregistrement mais ne revient que pour les soignants (get_queue_board).
+// Tickets de consultation (postes de santé, feature tickets_consultation) :
+// sell_consultation_ticket vend le ticket ET enregistre l'arrivée ; la recette attend
+// son rattachement à la caisse. Gratuité : motif choisi dans exemption_reasons, liste
+// propre à la structure (owner et admin). Bilan : gratuits comptés à part, par motif.
 // Suivi public du ticket : get_ticket_public, sans connexion (numéro, personnes devant,
 // salle ; jamais de nom, de motif ni de service).
 
@@ -19,6 +23,10 @@ export const cles = {
   priorites: () => ['accueil', 'priorites'],
   tableau: (orgId) => ['accueil', 'tableau', orgId],
   suivi: (code) => ['accueil', 'suivi', code],
+  prestations: (orgId) => ['accueil', 'prestations', orgId],
+  motifsGratuite: (orgId) => ['accueil', 'motifs-gratuite', orgId],
+  tickets: (orgId) => ['accueil', 'tickets', orgId],
+  bilan: (orgId) => ['accueil', 'bilan', orgId],
 }
 
 // Refus métier des fonctions de la file (22023, ou 42501 levé par elles) : message en
@@ -44,7 +52,7 @@ export async function chargerPermissions(orgId) {
 export async function chargerServices(orgId) {
   const { data, error } = await client()
     .from('queue_services')
-    .select('id, label, letter, default_room_id, sort_order')
+    .select('id, template_code, label, letter, default_room_id, sort_order')
     .eq('org_id', orgId)
     .eq('is_active', true)
     .is('deleted_at', null)
@@ -103,4 +111,99 @@ export async function chargerSuiviTicket(code) {
   const { data, error } = await client().rpc('get_ticket_public', { p_code: code })
   if (error) throw traduireErreur(error, 'Le suivi du ticket n’a pas pu être chargé.')
   return data ?? { status: 'unknown' }
+}
+
+// --- Tickets de consultation -------------------------------------------------
+
+// Prestations vendues au ticket : services « consultation » de la structure, avec leur
+// tarif (null tant qu'il n'est pas saisi dans Paramètres).
+export async function chargerPrestations(orgId) {
+  const { data, error } = await client()
+    .from('services')
+    .select('id, label, price, sort_order')
+    .eq('org_id', orgId)
+    .eq('category', 'consultation')
+    .eq('is_active', true)
+    .is('deleted_at', null)
+    .order('sort_order')
+    .order('label')
+  if (error) throw traduireErreur(error, 'Les prestations n’ont pas pu être chargées.')
+  return data ?? []
+}
+
+// Motifs de gratuité de la structure. tous : retirés compris (gestion de la liste).
+export async function chargerMotifsGratuite(orgId, { tous = false } = {}) {
+  let requete = client()
+    .from('exemption_reasons')
+    .select('id, label, is_active, sort_order')
+    .eq('org_id', orgId)
+    .is('deleted_at', null)
+  if (!tous) requete = requete.eq('is_active', true)
+  const { data, error } = await requete.order('sort_order').order('label')
+  if (error) throw traduireErreur(error, 'Les motifs de gratuité n’ont pas pu être chargés.')
+  return data ?? []
+}
+
+function erreurMotif(error, repli) {
+  if (error?.code === '23505') return new Error('Ce motif existe déjà dans la liste.')
+  if (error?.code === '23514') return new Error('Le motif doit compter de 2 à 60 caractères.')
+  if (error?.code === '42501') {
+    return new Error('Seuls le propriétaire et les administrateurs modifient cette liste.')
+  }
+  return traduireErreur(error, repli)
+}
+
+export async function ajouterMotifGratuite(orgId, libelle, ordre) {
+  const { error } = await client()
+    .from('exemption_reasons')
+    .insert({ org_id: orgId, label: libelle.trim(), sort_order: ordre })
+  if (error) throw erreurMotif(error, 'Le motif n’a pas été ajouté. Réessayez.')
+}
+
+// champs : { label } ou { is_active }. Jamais de suppression : un motif retiré reste dans
+// les tickets déjà vendus et dans les bilans.
+export async function modifierMotifGratuite(id, champs) {
+  const { data, error } = await client()
+    .from('exemption_reasons')
+    .update(champs)
+    .eq('id', id)
+    .select('id')
+  if (error) throw erreurMotif(error, 'Le motif n’a pas été modifié. Réessayez.')
+  if (!data?.length) {
+    throw new Error('Seuls le propriétaire et les administrateurs modifient cette liste.')
+  }
+}
+
+// Vente + arrivée. paiement : 'cash' | 'wave' | 'orange_money' | 'free_money' | 'gratuit'.
+// Réponse : { visit_id, ticket_number, public_code, arrived_at, amount, service_label,
+// exemption_reason, receipt_number, payment_method, payment_reference, received_at }.
+export async function vendreTicket(orgId, saisie) {
+  const gratuit = saisie.paiement === 'gratuit'
+  const { data, error } = await client().rpc('sell_consultation_ticket', {
+    p_org_id: orgId,
+    p_patient_id: saisie.patient.id,
+    p_service_id: saisie.prestationId,
+    p_queue_service_id: saisie.serviceId,
+    p_priority: saisie.priorite,
+    p_reason: saisie.motif?.trim() || null,
+    p_payment_method: gratuit ? null : saisie.paiement,
+    p_payment_reference: gratuit ? null : saisie.reference?.trim() || null,
+    p_exemption_reason_id: gratuit ? saisie.motifGratuiteId : null,
+  })
+  if (error) throw erreurFile(error, 'Le ticket n’a pas été vendu. Réessayez.')
+  return data
+}
+
+// Tickets vendus aujourd'hui (jour de la structure), reçu compris.
+export async function chargerTicketsDuJour(orgId) {
+  const { data, error } = await client().rpc('list_consultation_tickets', { p_org_id: orgId })
+  if (error) throw erreurFile(error, 'Les tickets du jour n’ont pas pu être chargés.')
+  return data ?? []
+}
+
+// { paid_count, paid_amount, free_count, by_method: [...], free_by_reason: [...] }
+export async function chargerBilanTickets(orgId) {
+  const { data, error } = await client().rpc('consultation_tickets_summary', { p_org_id: orgId })
+  if (error) throw erreurFile(error, 'Le bilan des tickets n’a pas pu être chargé.')
+  return data
 }

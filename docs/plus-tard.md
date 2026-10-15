@@ -12,7 +12,8 @@ Pendant une étape, on corrige seulement les bugs. Toute idée d'amélioration e
 - **Numéro de ticket envoyé par WhatsApp** à l'arrivée. Prévu à l'étape 23.
 - **Seuils des constantes de l'enfant par tranche d'âge** (pouls, fréquence respiratoire de la PCIME) ; la fréquence respiratoire n'est pas encore saisie.
 - **Part du tiers payant sur le ticket de consultation** (SEN-CSU, mutuelle) : aujourd'hui, le ticket est payé en entier ou gratuit avec un motif.
-- **Annulation ou remboursement d'un ticket vendu**, avec motif, à traiter avec la caisse (étape 19).
+- **Étape 19 (caisse) : annulation d'un ticket vendu par erreur**, réservée à un rôle autorisé, avec motif obligatoire et trace dans le journal, sans jamais supprimer la vente (remboursement éventuel compris).
+- **Contrôle d'âge facultatif sur un motif de gratuité** (exemple : « moins de 5 ans » refusé pour un adulte), contre la fraude ; borne d'âge paramétrable par motif.
 - **Clôture des passages restés ouverts** en fin de journée (patient parti sans être marqué).
 - **Temps d'attente estimé** sur la page de suivi du ticket (QR).
 - **Annonce vocale du numéro** sur l'écran d'appel, en français et en wolof.

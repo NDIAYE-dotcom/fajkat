@@ -27,3 +27,8 @@
   width: 100%;
   height: 100%;
 }
+
+/* Le QR n'est jamais coupé entre deux pages. */
+.ticket-file__suivi {
+  break-inside: avoid;
+}

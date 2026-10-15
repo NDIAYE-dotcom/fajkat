@@ -58,3 +58,54 @@ export function adresseSuivi(jeton) {
 export function personnes(n) {
   return `${n} personne${n > 1 ? 's' : ''}`
 }
+
+// --- Tickets de consultation -------------------------------------------------
+
+export const MODES_PAIEMENT = [
+  { valeur: 'cash', libelle: 'Espèces' },
+  { valeur: 'wave', libelle: 'Wave' },
+  { valeur: 'orange_money', libelle: 'Orange Money' },
+  { valeur: 'free_money', libelle: 'Free Money' },
+]
+
+export function libellePaiement(code) {
+  return MODES_PAIEMENT.find((m) => m.valeur === code)?.libelle ?? ''
+}
+
+export const REFERENCE_MAX = 60
+
+export const VENTE_VIDE = {
+  ...ARRIVEE_VIDE,
+  prestationId: '',
+  paiement: 'cash',
+  reference: '',
+  motifGratuiteId: '',
+}
+
+// Ordre des champs à l'écran : le curseur va sur la première erreur.
+export const ORDRE_CHAMPS_VENTE = [
+  ...ORDRE_CHAMPS_ARRIVEE,
+  'prestationId',
+  'paiement',
+  'motifGratuiteId',
+  'reference',
+]
+
+export function validerVente(saisie, prestation) {
+  const erreurs = validerArrivee(saisie)
+  if (!prestation) erreurs.prestationId = 'Choisissez la prestation vendue.'
+  else if (prestation.price == null) {
+    erreurs.prestationId = 'Son tarif n’est pas encore saisi : voyez avec le responsable.'
+  }
+  if (!saisie.paiement) erreurs.paiement = 'Choisissez le mode de paiement.'
+  if (saisie.paiement === 'gratuit' && !saisie.motifGratuiteId) {
+    erreurs.motifGratuiteId = 'Choisissez le motif de la gratuité.'
+  }
+  if (saisie.paiement !== 'gratuit' && prestation?.price === 0) {
+    erreurs.paiement = 'Cette prestation est à 0 FCFA : choisissez « Gratuit » et son motif.'
+  }
+  if (saisie.reference.length > REFERENCE_MAX) {
+    erreurs.reference = `La référence ne doit pas dépasser ${REFERENCE_MAX} caractères.`
+  }
+  return erreurs
+}

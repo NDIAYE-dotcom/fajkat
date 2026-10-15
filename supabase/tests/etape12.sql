@@ -18,7 +18,8 @@
 --
 -- Chaque vérification affiche « OK : … ». Au premier échec, une erreur
 -- « ÉCHEC : … » interrompt le script.
--- Prérequis : migrations des étapes 3 à 12 appliquées (dont etape12_confidentialite).
+-- Prérequis : migrations des étapes 3 à 12 appliquées (dont etape12_confidentialite et
+-- etape12c_gratuites).
 -- =============================================================================
 
 begin;
@@ -488,13 +489,27 @@ begin
      or v_msg ->> 'room' <> 'Salle de consultation' then
     raise exception 'ÉCHEC : appel non poussé vers l''écran : %', v_msg;
   end if;
+  -- Messages de ce test seulement (les deux écrans créés plus haut). realtime.send ajoute
+  -- un « id » (identifiant du message) quand il manque : seule clé tolérée en plus.
   if exists (select 1 from realtime.messages
-             where topic like 'ecran-%' and event = 'call'
-               and (payload::text ~* 'sow|awa|ndiaye|fatou|fall|coumba' or private
-                    or (select array_agg(k order by k) from jsonb_object_keys(payload) k)
-                       <> array['call_count', 'called_at', 'initials', 'room', 'ticket_number',
-                                'visit_id'])) then
-    raise exception 'ÉCHEC : nom ou service envoyé à l''écran, ou canal privé';
+             where topic in (current_setting('test.topic'), current_setting('test.topic_vacc'))
+               and event = 'call' and payload::text ~* 'sow|awa|ndiaye|fatou|fall|coumba') then
+    raise exception 'ÉCHEC : nom du patient envoyé à l''écran';
+  end if;
+  if exists (select 1 from realtime.messages
+             where topic in (current_setting('test.topic'), current_setting('test.topic_vacc'))
+               and event = 'call' and private is distinct from false) then
+    raise exception 'ÉCHEC : message envoyé sur un canal privé (l''écran sans compte ne le reçoit pas)';
+  end if;
+  if exists (select 1 from realtime.messages
+             where topic in (current_setting('test.topic'), current_setting('test.topic_vacc'))
+               and event = 'call'
+               and exists (select 1 from jsonb_object_keys(payload - 'id') k
+                            where k not in ('call_count', 'called_at', 'initials', 'room',
+                                            'ticket_number', 'visit_id'))) then
+    raise exception 'ÉCHEC : champ en trop envoyé à l''écran (service ?) : %',
+      (select payload from realtime.messages
+        where topic = current_setting('test.topic') and event = 'call' limit 1);
   end if;
   if exists (select 1 from realtime.messages where topic = current_setting('test.topic_vacc')) then
     raise exception 'ÉCHEC : écran de la vaccination prévenu pour une consultation';
@@ -624,6 +639,66 @@ begin
   raise notice 'OK : suivi du ticket sans connexion : numéro, rang, salle ; ni nom, ni motif, ni service';
 end $$;
 
+-- Personnes devant : même ordre que « Appeler le suivant » (priorité, puis arrivée), en
+-- comptant les patients en attente ET aux constantes ; jamais ceux d'une autre file.
+reset role;
+set local role authenticated;
+select pg_temp.en_tant_que('09');
+do $$
+declare
+  v_org uuid := current_setting('test.org_a')::uuid;
+  v_p   uuid[];
+  v_v   public.visits;
+  v_c   text[] := '{}';
+begin
+  insert into public.patients (org_id, last_name, first_name, sex, declared_age)
+  select v_org, 'Rang', 'Patient ' || i, 'M', 30 + i from generate_series(1, 4) i;
+  v_p := array(select id from public.patients where org_id = v_org and last_name = 'Rang'
+               order by first_name);
+  -- File D (soins), vide jusqu'ici : D-001 et D-002 normales, D-003 normale, D-004 urgence.
+  foreach v_v in array array[
+      public.register_arrival(v_org, v_p[1], pg_temp.service('D'), 'normal'),
+      public.register_arrival(v_org, v_p[2], pg_temp.service('D'), 'normal'),
+      public.register_arrival(v_org, v_p[3], pg_temp.service('D'), 'normal'),
+      public.register_arrival(v_org, v_p[4], pg_temp.service('D'), 'emergency')] loop
+    v_c := v_c || v_v.public_code;
+  end loop;
+  perform set_config('test.rang', array_to_string(v_c, ','), true);
+end $$;
+
+set local role anon;
+do $$
+declare
+  v_c text[] := string_to_array(current_setting('test.rang'), ',');
+begin
+  if (public.get_ticket_public(v_c[2]) ->> 'ahead')::int <> 2 then
+    raise exception 'ÉCHEC : D-002 (normale) derrière D-001 (normale) et D-004 (urgence) : %',
+      public.get_ticket_public(v_c[2]);
+  end if;
+  if (public.get_ticket_public(v_c[4]) ->> 'ahead')::int <> 0 then
+    raise exception 'ÉCHEC : l''urgence passe devant tout le monde';
+  end if;
+  raise notice 'OK : personnes devant : priorité, puis heure d''arrivée (normale derrière normale)';
+end $$;
+
+-- D-001 aux constantes : elle reste devant D-002 (call_next l'appellera avant).
+reset role;
+update public.visits set status = 'vitals'
+ where public_code = split_part(current_setting('test.rang'), ',', 1);
+set local role anon;
+do $$
+declare
+  v_c text[] := string_to_array(current_setting('test.rang'), ',');
+begin
+  if (public.get_ticket_public(v_c[2]) ->> 'ahead')::int <> 2
+     or (public.get_ticket_public(v_c[3]) ->> 'ahead')::int <> 3 then
+    raise exception 'ÉCHEC : patient aux constantes oublié dans les personnes devant';
+  end if;
+  raise notice 'OK : un patient aux constantes reste compté devant (même ordre que l''appel)';
+end $$;
+reset role;
+set local role authenticated;
+
 -- Le lendemain, le jeton ne vaut plus rien.
 reset role;
 update public.visits set visit_date = visit_date - 1 where id = current_setting('test.v4')::uuid;
@@ -673,7 +748,10 @@ begin
   insert into public.patients (org_id, last_name, first_name, sex, declared_age)
   values (v_org, 'Diallo', 'Aïssatou', 'F', 3) returning id into v_p;
   v_r := public.sell_consultation_ticket(v_org, v_p, v_svc, pg_temp.service('A'), 'under_five',
-                                         null, null, null, 'Gratuité des moins de 5 ans');
+                                         null, null, null,
+                                         (select id from public.exemption_reasons
+                                           where org_id = v_org
+                                             and template_code = 'moins_5_ans'));
   if (v_r ->> 'amount')::bigint <> 0 or v_r ->> 'receipt_number' is not null then
     raise exception 'ÉCHEC : gratuité : %', v_r;
   end if;

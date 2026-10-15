@@ -16,10 +16,24 @@ function formatDe(element) {
   return 'a4'
 }
 
-// Page du ticket à sa hauteur réelle : le rouleau ne déroule que ce qui est imprimé.
-// Mesure faite à l'écran, où le ticket est un peu plus grand qu'imprimé : marge suffisante.
+// Hauteur de l'élément tel qu'affiché. Une copie réservée à l'impression (.impression-seule)
+// est masquée à l'écran et mesurerait 0 : on l'affiche hors champ, le temps de la mesure.
+function hauteurPx(element) {
+  if (element.getClientRects().length > 0) return element.scrollHeight
+  const style = element.getAttribute('style')
+  element.style.cssText +=
+    ';display:block!important;position:absolute;left:-10000px;top:0;visibility:hidden'
+  const hauteur = element.scrollHeight
+  if (style === null) element.removeAttribute('style')
+  else element.setAttribute('style', style)
+  return hauteur
+}
+
+// Page du ticket à sa hauteur réelle : le rouleau ne déroule que ce qui est imprimé, en une
+// seule bande (ticket de file, puis reçu éventuel). Mesure faite à l'écran, où le ticket
+// est un peu plus grand qu'imprimé : marge suffisante.
 function styleTicket(element) {
-  const hauteur = Math.ceil(element.scrollHeight * MM_PAR_PIXEL) + MARGE_TICKET_MM
+  const hauteur = Math.ceil(hauteurPx(element) * MM_PAR_PIXEL) + MARGE_TICKET_MM
   const style = document.createElement('style')
   style.textContent = `@media print { @page ticket { size: 80mm ${hauteur}mm; margin: 0; } }`
   document.head.append(style)

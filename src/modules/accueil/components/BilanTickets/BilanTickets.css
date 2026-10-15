@@ -1,0 +1,62 @@
+.bilan-tickets {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
+  gap: var(--esp-4);
+}
+
+/* Panneau de registre : marge colorée à gauche, filets fins. */
+.bilan-tickets__bloc {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-1);
+  padding: var(--esp-4);
+  border: var(--trait);
+  border-left: 4px solid var(--accent);
+  border-radius: var(--rayon-panneau);
+  background: var(--fond);
+}
+
+.bilan-tickets__titre {
+  font-family: var(--police-texte);
+  font-size: var(--texte-s);
+  font-weight: 700;
+  color: var(--encre-douce);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.bilan-tickets__chiffre {
+  font-family: var(--police-mono);
+  font-size: var(--titre-3);
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  color: var(--encre);
+}
+
+.bilan-tickets__detail {
+  font-size: var(--texte-s);
+  color: var(--encre-douce);
+}
+
+.bilan-tickets__liste {
+  display: flex;
+  flex-direction: column;
+  margin: var(--esp-2) 0 0;
+  padding: 0;
+  list-style: none;
+  border-top: var(--trait);
+}
+
+.bilan-tickets__liste li {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--esp-3);
+  padding-block: var(--esp-1);
+  border-bottom: var(--trait);
+  font-size: var(--texte-s);
+}
+
+.bilan-tickets__nombre {
+  font-family: var(--police-mono);
+  font-variant-numeric: tabular-nums;
+}

@@ -21,3 +21,9 @@
   font-size: var(--titre-2);
   color: var(--primaire);
 }
+
+.file-attente__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--esp-3);
+}

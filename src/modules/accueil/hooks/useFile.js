@@ -1,9 +1,13 @@
 import { useQuery } from '@tanstack/react-query'
 import {
+  chargerBilanTickets,
+  chargerMotifsGratuite,
   chargerPermissions,
+  chargerPrestations,
   chargerPriorites,
   chargerServices,
   chargerTableau,
+  chargerTicketsDuJour,
   cles,
 } from '../api.js'
 
@@ -50,6 +54,44 @@ export function useTableau(orgId) {
   return useQuery({
     queryKey: cles.tableau(orgId),
     queryFn: () => chargerTableau(orgId),
+    enabled: Boolean(orgId),
+    staleTime: 15 * 1000,
+  })
+}
+
+// --- Tickets de consultation -------------------------------------------------
+
+export function usePrestations(orgId) {
+  return useQuery({
+    queryKey: cles.prestations(orgId),
+    queryFn: () => chargerPrestations(orgId),
+    enabled: Boolean(orgId),
+    staleTime: 5 * 60 * 1000,
+  })
+}
+
+export function useMotifsGratuite(orgId) {
+  return useQuery({
+    queryKey: cles.motifsGratuite(orgId),
+    queryFn: () => chargerMotifsGratuite(orgId, { tous: true }),
+    enabled: Boolean(orgId),
+    staleTime: 5 * 60 * 1000,
+  })
+}
+
+export function useTicketsDuJour(orgId) {
+  return useQuery({
+    queryKey: cles.tickets(orgId),
+    queryFn: () => chargerTicketsDuJour(orgId),
+    enabled: Boolean(orgId),
+    staleTime: 15 * 1000,
+  })
+}
+
+export function useBilanTickets(orgId) {
+  return useQuery({
+    queryKey: cles.bilan(orgId),
+    queryFn: () => chargerBilanTickets(orgId),
     enabled: Boolean(orgId),
     staleTime: 15 * 1000,
   })

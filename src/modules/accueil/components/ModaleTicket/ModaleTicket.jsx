@@ -11,14 +11,23 @@ import { imprimer } from '../../../../lib/impression.js'
 import { dessinerQr } from '../../../../lib/qr.js'
 import { chargerSuiviTicket } from '../../api.js'
 import { adresseSuivi } from '../../utils.js'
-import TicketFile from '../TicketFile/TicketFile.jsx'
+import ImpressionTicket from '../ImpressionTicket/ImpressionTicket.jsx'
 import './ModaleTicket.css'
 
 // Aperçu du ticket et impression sur rouleau de 80 mm. La copie imprimée est rendue hors
 // de la fenêtre (portail) : un <dialog> ne s'imprime pas proprement.
 // visite : { ticket_number, arrived_at, public_code } ; service : libellé, pour l'accueil
-// seulement (il n'est pas imprimé).
-export default function ModaleTicket({ structureNom, visite, service, nouveau, onFermer }) {
+// seulement (il n'est pas imprimé). recu : ticket de consultation payé, imprimé à la suite
+// (voir RecuTicket) ; gratuite : motif d'un ticket gratuit, rappelé à l'écran seulement.
+export default function ModaleTicket({
+  structureNom,
+  visite,
+  service,
+  recu,
+  gratuite,
+  nouveau,
+  onFermer,
+}) {
   const aImprimer = useRef(null)
   const adresse = adresseSuivi(visite.public_code)
   const qr = useQuery({
@@ -36,7 +45,13 @@ export default function ModaleTicket({ structureNom, visite, service, nouveau, o
   const pret = Boolean(qr.data) && !suivi.isPending
 
   const ticket = (
-    <TicketFile structureNom={structureNom} visite={visite} devant={devant} qrSvg={qr.data} />
+    <ImpressionTicket
+      structureNom={structureNom}
+      visite={visite}
+      devant={devant}
+      qrSvg={qr.data}
+      recu={recu}
+    />
   )
 
   return (
@@ -57,7 +72,7 @@ export default function ModaleTicket({ structureNom, visite, service, nouveau, o
           <Button
             iconeDebut={<Icone icone={Printer} />}
             disabled={!pret}
-            onClick={() => imprimer(aImprimer.current)}
+            onClick={() => imprimer(aImprimer.current, 'ticket')}
           >
             Imprimer le ticket
           </Button>
@@ -65,6 +80,11 @@ export default function ModaleTicket({ structureNom, visite, service, nouveau, o
       }
     >
       <div className="modale-ticket">
+        {gratuite && (
+          <Message ton="info">
+            <p>Ticket gratuit : {gratuite}. Aucun reçu n’est imprimé.</p>
+          </Message>
+        )}
         {qr.error && (
           <Message ton="erreur" action={<Button onClick={() => qr.refetch()}>Réessayer</Button>}>
             <p>Le QR code n’a pas pu être dessiné. {qr.error.message}</p>

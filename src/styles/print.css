@@ -293,6 +293,13 @@
     transform: none;
   }
 
+  /* Ticket imprimé par imprimer(…, 'ticket') : tout l'élément (ticket de file, « coupez
+     ici », reçu) est sur la même page nommée. Sans cela, un bloc hors .ticket-80 prendrait
+     la page A4 par défaut, avec un saut de page avant et après lui. */
+  html[data-impression='ticket'] [data-imprime] {
+    page: ticket;
+  }
+
   /* Impression d'un seul élément (src/lib/impression.js) : tout le reste sort du flux.
      display: none et non visibility: hidden, qui laisserait des pages blanches derrière lui.
      Les ascendants de l'élément restent affichés, sans marges ni mise en page propre. */
