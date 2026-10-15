@@ -1,0 +1,49 @@
+/* Repère du registre : fiche à marge colorée, comme l'en-tête d'une page de registre. */
+.repere-registre {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-2);
+  margin: 0;
+  padding: var(--esp-4) var(--esp-5);
+  border: 1px solid var(--doux);
+  border-left: 4px solid var(--accent);
+  border-radius: var(--rayon-panneau);
+  background: var(--fond);
+}
+
+.repere-registre__titre {
+  float: left;
+  width: 100%;
+  padding: 0;
+  font-family: var(--police-titre);
+  font-size: var(--titre-3);
+  font-weight: 600;
+  color: var(--primaire);
+}
+
+.repere-registre__facultatif {
+  font-family: var(--police-texte);
+  font-size: var(--texte-s);
+  font-weight: 400;
+  color: var(--encre-douce);
+}
+
+.repere-registre__aide {
+  clear: both;
+  font-size: var(--texte-s);
+  color: var(--encre-douce);
+}
+
+.repere-registre__champs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--esp-3) var(--esp-5);
+}
+
+.repere-registre__annee {
+  width: 11rem;
+}
+
+.repere-registre__page {
+  width: 8rem;
+}

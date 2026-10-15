@@ -5,7 +5,9 @@
 // attribué par la base, jamais par l'application. Recherche et doublons : fonctions SQL
 // search_patients et find_duplicate_candidates (sans accents, fautes tolérées, paginée).
 // Import d'une liste (owner et admin) : start_patient_import (journal), import_patients
-// par lots de 500, find_import_duplicates (doublons de tout un lot en un appel).
+// par lots de 500, find_import_duplicates (doublons de tout un lot en un appel). Page de
+// registre papier recopiée (rôles qui créent un patient) : mêmes fonctions, source
+// 'registre', 60 lignes au plus.
 
 import { MESSAGE_INDISPONIBLE, traduireErreur } from '../../lib/erreursAuth.js'
 import { supabase } from '../../lib/supabase.js'
@@ -262,32 +264,41 @@ export async function chargerStructureCarte(orgId) {
   return data
 }
 
-// --- Import d'une liste (owner et admin) ---------------------------------------
+// --- Import d'une liste (owner et admin) ou d'une page de registre -------------
 
-// Doublons probables d'un lot (500 lignes au plus) : [{ line, id, file_number, …, reason }].
-export async function chercherDoublonsImport(orgId, criteres) {
+// Doublons probables d'un lot (500 lignes au plus, 60 pour une page de registre) :
+// [{ line, id, file_number, …, reason }].
+export async function chercherDoublonsImport(orgId, criteres, source = 'fichier') {
   const { data, error } = await client().rpc('find_import_duplicates', {
     p_org_id: orgId,
     p_rows: criteres,
+    p_source: source,
   })
   if (error) throw traduireErreur(error, 'La recherche des doublons n’a pas abouti. Réessayez.')
   return data ?? []
 }
 
 // Ouvre le journal de l'import (auteur et date fixés par la base). Renvoie son id.
-export async function commencerImport(orgId, { nomFichier, total, refusees, ignorees }) {
+// annee / page : repère facultatif d'une page de registre.
+export async function commencerImport(
+  orgId,
+  { source = 'fichier', nomFichier = null, annee = null, page = null, total, refusees, ignorees },
+) {
   const { data, error } = await client().rpc('start_patient_import', {
     p_org_id: orgId,
     p_file_name: nomFichier,
     p_total_rows: total,
     p_rejected_rows: refusees,
     p_skipped_rows: ignorees,
+    p_source: source,
+    p_register_year: annee,
+    p_register_page: page,
   })
   if (error) throw traduireErreur(error, 'L’import n’a pas pu commencer. Réessayez.')
   return data
 }
 
-// Un lot de 500 lignes au plus : [{ line, patient_id, file_number, error }].
+// Un lot de 500 lignes au plus (60 pour une page de registre) : [{ line, patient_id, file_number, error }].
 export async function importerLot(orgId, importId, lignes) {
   const { data, error } = await client().rpc('import_patients', {
     p_org_id: orgId,

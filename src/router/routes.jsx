@@ -102,6 +102,13 @@ export const router = createBrowserRouter([
                   () => import('../modules/patients/pages/ImportPatients/ImportPatients.jsx'),
                 ),
               },
+              // Page de registre papier recopiée : rôles qui créent un patient.
+              {
+                path: 'patients/registre',
+                lazy: composant(
+                  () => import('../modules/patients/pages/RegistrePapier/RegistrePapier.jsx'),
+                ),
+              },
               // Fiche d'un patient : lien du registre, de la recherche et du QR de la carte.
               {
                 path: 'patients/:id',

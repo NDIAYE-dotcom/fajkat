@@ -1,0 +1,227 @@
+/* Ligne de registre : cases sur un filet fin, comme une ligne du grand registre ligné. */
+.ligne-registre > * {
+  padding: 0;
+  border-bottom: 1px solid var(--doux);
+  vertical-align: middle;
+}
+
+.ligne-registre--erreur > * {
+  border-bottom-color: transparent;
+}
+
+.ligne-registre__numero {
+  width: 3rem;
+  padding-inline: var(--esp-2);
+  font-family: var(--police-mono);
+  font-size: var(--texte-s);
+  font-weight: 400;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+  color: var(--encre-douce);
+}
+
+/* Libellés des cases : lus par les lecteurs d'écran, affichés seulement sur téléphone. */
+.ligne-registre__mot,
+.ligne-registre__libelle {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.ligne-registre__etiquette {
+  display: block;
+}
+
+.ligne-registre__champ {
+  width: 100%;
+  min-width: 7rem;
+  min-height: 44px;
+  padding: var(--esp-2);
+  border: 1px solid transparent;
+  border-radius: var(--rayon-champ);
+  background: transparent;
+  font: inherit;
+  color: var(--encre);
+}
+
+.ligne-registre__case--sexe .ligne-registre__champ {
+  min-width: 3.5rem;
+}
+
+.ligne-registre__case--ancienNumero .ligne-registre__champ {
+  min-width: 5.5rem;
+}
+
+.ligne-registre__case--ageNaissance .ligne-registre__champ,
+.ligne-registre__case--telephone .ligne-registre__champ {
+  min-width: 9rem;
+}
+
+.ligne-registre__champ--mono {
+  font-family: var(--police-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+.ligne-registre__champ:hover {
+  border-color: var(--doux);
+}
+
+.ligne-registre__champ:focus-visible,
+.ligne-registre__champ:focus {
+  outline: 3px solid var(--primaire);
+  outline-offset: -1px;
+  border-color: var(--primaire);
+  background: var(--fond);
+}
+
+.ligne-registre--erreur .ligne-registre__champ {
+  border-color: var(--tampon);
+}
+
+.ligne-registre--erreur .ligne-registre__champ:focus {
+  outline-color: var(--tampon);
+}
+
+.ligne-registre__action {
+  width: 3rem;
+  text-align: center;
+}
+
+/* Raisons d'une ligne en erreur, sous la ligne. */
+.ligne-registre__erreurs > td {
+  padding: 0 var(--esp-2) var(--esp-3) 3rem;
+  border-bottom: 1px solid var(--doux);
+  font-size: var(--texte-s);
+  color: var(--tampon);
+}
+
+.ligne-registre__mot-erreur {
+  font-weight: 700;
+}
+
+.ligne-registre__liste {
+  margin: 0;
+  padding-left: var(--esp-5);
+}
+
+/* Téléphone : chaque ligne devient une fiche, libellés visibles. */
+@media (max-width: 639.98px) {
+  .ligne-registre {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--esp-2) var(--esp-3);
+    padding: var(--esp-3);
+    border: 1px solid var(--doux);
+    border-left: 4px solid var(--accent);
+    border-radius: var(--rayon-panneau);
+    background: var(--fond);
+  }
+
+  .ligne-registre--erreur {
+    border-color: var(--tampon);
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+  }
+
+  .ligne-registre > * {
+    display: block;
+    border-bottom: 0;
+  }
+
+  .ligne-registre__numero {
+    grid-column: 1;
+    align-self: center;
+    width: auto;
+    padding: 0;
+    text-align: left;
+    font-family: var(--police-texte);
+    font-weight: 700;
+    color: var(--primaire);
+  }
+
+  .ligne-registre__mot {
+    position: static;
+    width: auto;
+    height: auto;
+    overflow: visible;
+    clip-path: none;
+  }
+
+  .ligne-registre__action {
+    grid-column: 2;
+    grid-row: 1;
+    justify-self: end;
+    width: auto;
+  }
+
+  .ligne-registre__case--nom,
+  .ligne-registre__case--prenom,
+  .ligne-registre__case--telephone,
+  .ligne-registre__case--quartier,
+  .ligne-registre__case--mere {
+    grid-column: 1 / -1;
+  }
+
+  .ligne-registre__libelle {
+    position: static;
+    display: block;
+    width: auto;
+    height: auto;
+    margin-bottom: var(--esp-1);
+    overflow: visible;
+    clip-path: none;
+    white-space: normal;
+    font-size: var(--texte-s);
+    font-weight: 700;
+    color: var(--encre);
+  }
+
+  .ligne-registre__aide {
+    font-weight: 400;
+    color: var(--encre-douce);
+  }
+
+  .ligne-registre__rang {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  .ligne-registre__champ,
+  .ligne-registre__case--sexe .ligne-registre__champ,
+  .ligne-registre__case--ancienNumero .ligne-registre__champ,
+  .ligne-registre__case--ageNaissance .ligne-registre__champ,
+  .ligne-registre__case--telephone .ligne-registre__champ {
+    min-width: 0;
+    border-color: var(--encre-douce);
+    background: var(--fond);
+  }
+
+  .ligne-registre__erreurs {
+    display: block;
+    margin-top: calc(-1 * var(--esp-3));
+  }
+
+  .ligne-registre__erreurs > td {
+    display: block;
+    padding: var(--esp-2) var(--esp-3) var(--esp-3);
+    border: 1px solid var(--tampon);
+    border-top: 0;
+    border-radius: 0 0 var(--rayon-panneau) var(--rayon-panneau);
+    background: var(--fond);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .ligne-registre__champ {
+    transition:
+      border-color var(--duree) var(--courbe),
+      background-color var(--duree) var(--courbe);
+  }
+}

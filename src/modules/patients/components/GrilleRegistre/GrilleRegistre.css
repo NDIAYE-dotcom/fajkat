@@ -1,0 +1,112 @@
+.grille-registre {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-3);
+}
+
+.grille-registre__consigne {
+  font-size: var(--texte-s);
+  color: var(--encre-douce);
+}
+
+.grille-registre__touche {
+  padding: 0 var(--esp-1);
+  border: 1px solid var(--doux);
+  border-radius: var(--rayon-champ);
+  background: var(--surface);
+  font-family: var(--police-mono);
+  font-size: var(--texte-xs);
+  color: var(--encre);
+}
+
+/* La grille défile dans son cadre sur un écran moyen : la page, elle, ne défile pas. */
+.grille-registre__defilement {
+  overflow-x: auto;
+  border: 1px solid var(--doux);
+  border-left: 4px solid var(--accent);
+  border-radius: var(--rayon-panneau);
+  background: var(--fond);
+}
+
+.grille-registre__table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.grille-registre__legende,
+.grille-registre__masque {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.grille-registre__entete th {
+  padding: var(--esp-2);
+  border-bottom: 2px solid var(--doux);
+  background: var(--surface);
+  font-size: var(--texte-s);
+  font-weight: 700;
+  text-align: left;
+  vertical-align: bottom;
+  color: var(--encre);
+  white-space: nowrap;
+}
+
+.grille-registre__entete .grille-registre__col-numero {
+  text-align: right;
+}
+
+.grille-registre__aide {
+  display: block;
+  font-weight: 400;
+  font-size: var(--texte-xs);
+  color: var(--encre-douce);
+}
+
+.grille-registre__pied {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--esp-3) var(--esp-5);
+}
+
+.grille-registre__compte {
+  font-family: var(--police-mono);
+  font-size: var(--texte-s);
+  font-variant-numeric: tabular-nums;
+  color: var(--encre-douce);
+}
+
+.grille-registre__annonce {
+  min-height: 1.5em;
+  font-size: var(--texte-s);
+  color: var(--encre-douce);
+}
+
+/* Téléphone : plus de tableau, une fiche par ligne. */
+@media (max-width: 639.98px) {
+  .grille-registre__defilement {
+    overflow: visible;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+  }
+
+  .grille-registre__table,
+  .grille-registre__corps {
+    display: block;
+  }
+
+  .grille-registre__corps {
+    display: flex;
+    flex-direction: column;
+    gap: var(--esp-3);
+  }
+
+  .grille-registre__entete {
+    display: none;
+  }
+}

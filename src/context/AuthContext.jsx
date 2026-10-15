@@ -1,7 +1,7 @@
 import { useQueryClient } from '@tanstack/react-query'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { deconnecter as fermerSession, ecouterSession } from '../lib/auth.js'
-import { effacerBrouillons } from '../lib/brouillons.js'
+import { fermerBrouillons, ouvrirBrouillons } from '../lib/brouillons.js'
 import { AuthContexte } from './authContexte.js'
 
 // Session de récupération (lien « mot de passe oublié ») : gardée pour l'onglet, afin
@@ -32,10 +32,16 @@ export function AuthProvider({ children }) {
   const [etat, setEtat] = useState({ session: null, initialise: false })
   // Arrivée par le lien « mot de passe oublié » : la page /reinitialiser s'ouvre.
   const [recuperation, setRecuperation] = useState(lireRecuperation)
+  // Compte connecté : ses brouillons sont verrouillés dès le début de sa déconnexion.
+  const compte = useRef(null)
 
   useEffect(
     () =>
       ecouterSession((evenement, session) => {
+        if (session?.user && ['INITIAL_SESSION', 'SIGNED_IN'].includes(evenement)) {
+          compte.current = session.user.id
+          ouvrirBrouillons(session.user.id)
+        }
         if (evenement === 'PASSWORD_RECOVERY') {
           ecrireRecuperation(true)
           setRecuperation(true)
@@ -45,7 +51,7 @@ export function AuthProvider({ children }) {
         if (evenement === 'SIGNED_OUT') {
           ecrireRecuperation(false)
           setRecuperation(false)
-          effacerBrouillons()
+          fermerBrouillons(compte.current)
           queryClient.clear()
         }
         setEtat({ session, initialise: true })
@@ -54,8 +60,11 @@ export function AuthProvider({ children }) {
   )
 
   const deconnecter = useCallback(async () => {
+    // Avant tout : plus aucun brouillon ne s'écrit, même si la page se ferme pendant
+    // la déconnexion (sauvegarde immédiate de useBrouillon).
+    fermerBrouillons(compte.current)
     const fermee = await fermerSession()
-    effacerBrouillons()
+    fermerBrouillons(compte.current)
     queryClient.clear()
     // Hors ligne, la session a été effacée à la main : on recharge pour repartir de zéro.
     if (!fermee) window.location.assign('/connexion')

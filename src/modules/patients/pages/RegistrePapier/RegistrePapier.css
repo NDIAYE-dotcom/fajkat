@@ -1,0 +1,51 @@
+.registre-papier {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-5);
+  min-width: 0;
+}
+
+.registre-papier__entete {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-2);
+  max-width: var(--largeur-texte);
+}
+
+/* Lien de retour : cible tactile de 44 px. */
+.registre-papier__retour {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--esp-2);
+  align-self: flex-start;
+  min-height: 44px;
+  color: var(--primaire);
+  font-size: var(--texte-s);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.registre-papier__retour:hover {
+  text-decoration: underline;
+}
+
+.registre-papier__retour:focus-visible {
+  outline: 2px solid var(--primaire);
+  outline-offset: 2px;
+}
+
+.registre-papier__titre {
+  font-size: var(--titre-2);
+  color: var(--primaire);
+}
+
+.registre-papier__intro {
+  color: var(--encre-douce);
+}
+
+.registre-papier__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: var(--esp-3);
+}

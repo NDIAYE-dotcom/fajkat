@@ -2,10 +2,16 @@ import { ExternalLink } from 'lucide-react'
 import Icone from '../../../../components/ui/Icone/Icone.jsx'
 import Radio from '../../../../components/ui/Radio/Radio.jsx'
 import { formatTelephone } from '../../../../lib/format.js'
-import { RAISONS_IMPORT } from '../../hooks/useImportPatients.js'
+import { RAISONS_IMPORT } from '../../import/traitement.js'
 import { libelleAge, libelleNaissance, nomComplet } from '../../utils.js'
 
 // Colonnes des trois onglets de l'aperçu (lignes valides, en erreur, doublons probables).
+// source : 'fichier' (import d'une liste) ou 'registre' (page recopiée).
+
+const ORIGINE = {
+  fichier: { titre: 'Dans le fichier', de: 'du fichier' },
+  registre: { titre: 'Dans la page', de: 'de la page' },
+}
 
 const chiffres = (v) => <span className="import-apercu__chiffres">{v}</span>
 
@@ -45,11 +51,11 @@ export const COLONNES_VALIDES = [
   },
 ]
 
-export const COLONNES_ERREURS = [
+export const colonnesErreurs = (source) => [
   colonneLigne,
   {
     cle: 'nom',
-    titre: 'Dans le fichier',
+    titre: ORIGINE[source].titre,
     principale: true,
     rendu: (l) =>
       [l.valeurs.nom, l.valeurs.prenom].filter(Boolean).join(' ') || (
@@ -69,9 +75,13 @@ export const COLONNES_ERREURS = [
   },
 ]
 
-function dossiersProches(l) {
+function dossiersProches(l, source) {
   if (l.ligneJumelle) {
-    return <span>Même patient que la ligne {chiffres(l.ligneJumelle)} du fichier</span>
+    return (
+      <span>
+        Même patient que la ligne {chiffres(l.ligneJumelle)} {ORIGINE[source].de}
+      </span>
+    )
   }
   return (
     <ul className="import-apercu__candidats">
@@ -101,11 +111,15 @@ function dossiersProches(l) {
   )
 }
 
-export function colonnesDoublons(onDecider) {
+export function colonnesDoublons(onDecider, source) {
   return [
     colonneLigne,
-    { cle: 'patient', titre: 'Dans le fichier', principale: true, rendu: patientLu },
-    { cle: 'proches', titre: 'Dossier déjà au registre', rendu: dossiersProches },
+    { cle: 'patient', titre: ORIGINE[source].titre, principale: true, rendu: patientLu },
+    {
+      cle: 'proches',
+      titre: 'Dossier déjà au registre',
+      rendu: (l) => dossiersProches(l, source),
+    },
     {
       cle: 'decision',
       titre: 'Décision',
@@ -120,7 +134,7 @@ export function colonnesDoublons(onDecider) {
           />
           <Radio
             name={`decision-${l.numero}`}
-            label="Importer quand même"
+            label={source === 'registre' ? 'Enregistrer quand même' : 'Importer quand même'}
             checked={l.importer}
             onChange={() => onDecider(l.numero, true)}
           />
