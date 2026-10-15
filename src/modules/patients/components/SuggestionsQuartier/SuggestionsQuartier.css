@@ -1,0 +1,60 @@
+/* Position (top ou bottom, left, width) calculée par useSuggestionsQuartier. */
+.suggestions-quartier {
+  position: fixed;
+  z-index: 40;
+  max-height: 15rem;
+  margin: 0;
+  padding: 0;
+  overflow-y: auto;
+  border: var(--trait);
+  border-radius: var(--rayon-panneau);
+  background: var(--fond);
+  box-shadow: var(--ombre-flottante);
+  list-style: none;
+}
+
+.suggestions-quartier[hidden] {
+  display: none;
+}
+
+/* Filets fins entre les lignes, façon registre. */
+.suggestions-quartier__option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--esp-2);
+  min-height: 44px;
+  padding: var(--esp-2) var(--esp-3);
+  border-top: 1px solid var(--doux);
+  font-family: var(--police-texte);
+  font-size: var(--texte-s);
+  color: var(--encre);
+  cursor: pointer;
+}
+
+.suggestions-quartier__option:first-child {
+  border-top: 0;
+}
+
+.suggestions-quartier__option--active,
+.suggestions-quartier__option:hover {
+  background: var(--surface);
+}
+
+.suggestions-quartier__option--active {
+  box-shadow: inset 3px 0 0 var(--primaire);
+}
+
+.suggestions-quartier__compte {
+  flex-shrink: 0;
+  font-family: var(--police-mono);
+  font-size: var(--texte-xs);
+  font-variant-numeric: tabular-nums;
+  color: var(--encre-douce);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .suggestions-quartier__option {
+    transition: background-color var(--duree) var(--courbe);
+  }
+}

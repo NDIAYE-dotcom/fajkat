@@ -4,14 +4,18 @@ import Input from '../../../../components/ui/Input/Input.jsx'
 import PhoneInput from '../../../../components/ui/PhoneInput/PhoneInput.jsx'
 import Radio from '../../../../components/ui/Radio/Radio.jsx'
 import Select from '../../../../components/ui/Select/Select.jsx'
+import { useSuggestionsQuartier } from '../../hooks/useSuggestionsQuartier.js'
 import { SEXES, TITULAIRES } from '../../utils.js'
+import SuggestionsQuartier from '../SuggestionsQuartier/SuggestionsQuartier.jsx'
 import './ChampsIdentite.css'
 
 // Champs d'identité d'un patient : nom, prénom, sexe, naissance (date exacte, âge déclaré
-// en ans ou en mois ; date estimée avant 5 ans), téléphone et son titulaire, quartier, mère,
+// en ans ou en mois ; date estimée avant 5 ans), téléphone et son titulaire, quartier
+// (quartiers déjà saisis proposés pendant la frappe), mère,
 // ancien n° de dossier (registre papier ou carnet), accord WhatsApp. Les ids des champs sont « {id}-{champ} » (focus sur la première erreur).
 export default function ChampsIdentite({ id, saisie, erreurs, onChange }) {
   const telephoneSaisi = Boolean(saisie.telephone)
+  const quartier = useSuggestionsQuartier(saisie.quartier, (v) => onChange('quartier', v))
 
   return (
     <>
@@ -101,14 +105,15 @@ export default function ChampsIdentite({ id, saisie, erreurs, onChange }) {
       </div>
 
       <div className="champs-identite__ligne">
-        <Field id={`${id}-quartier`} label="Quartier ou village" facultatif>
-          <Input
-            autoComplete="off"
-            maxLength={120}
-            value={saisie.quartier}
-            onChange={(e) => onChange('quartier', e.target.value)}
-          />
+        <Field
+          id={`${id}-quartier`}
+          label="Quartier ou village"
+          facultatif
+          aide="Les quartiers déjà saisis sont proposés. Vous pouvez en taper un nouveau."
+        >
+          <Input autoComplete="off" maxLength={120} value={saisie.quartier} {...quartier.champ} />
         </Field>
+        <SuggestionsQuartier {...quartier.liste} />
         <Field
           id={`${id}-mere`}
           label="Prénom de la mère"

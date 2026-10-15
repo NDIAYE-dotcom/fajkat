@@ -1,0 +1,5 @@
+.modale-fusion {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-4);
+}

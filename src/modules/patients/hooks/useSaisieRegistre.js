@@ -1,7 +1,10 @@
-import { useQueryClient } from '@tanstack/react-query'
-import { useState } from 'react'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { useEffect, useRef, useState } from 'react'
+import { useAuth } from '../../../hooks/useAuth.js'
 import { useBrouillon } from '../../../hooks/useBrouillon.js'
+import { chargerDernierePageRegistre, cles } from '../api.js'
 import {
+  estVide,
   LIGNES_MAX,
   libelleRepere,
   lignesLues,
@@ -20,7 +23,12 @@ import { preparerLignes } from '../import/validation.js'
 //   3. envoi après confirmation, journalisé avec le repère « année, page ».
 // Après l'envoi, les lignes enregistrées et les doublons ignorés quittent la grille ; les
 // lignes refusées y restent pour être corrigées. Page entièrement enregistrée : la grille
-// se vide et la page passe à la suivante.
+// se vide et la page passe à la suivante. Ce repère vient aussi du journal : à l'ouverture,
+// une grille vide reprend la page qui suit la dernière page entièrement enregistrée par
+// l'utilisateur, même s'il a quitté par le menu avant que le brouillon ne soit écrit.
+
+const PAGE_MAX = 10000
+
 // Objet sans la clé donnée (erreurs d'une ligne corrigée ou supprimée).
 function sans(objet, cle) {
   const copie = { ...objet }
@@ -40,6 +48,30 @@ export function useSaisieRegistre(orgId, codePays) {
   const [envoi, setEnvoi] = useState({ lot: 0, total: 0 })
   const [resultat, setResultat] = useState(null)
   const [erreurEnvoi, setErreurEnvoi] = useState(null)
+  const { utilisateur } = useAuth()
+  const utilisateurId = utilisateur?.id
+
+  // Repère repris du journal, une seule fois par ouverture, et seulement sur une grille vide
+  // dont le repère est vide ou en retard (même année, page déjà enregistrée).
+  const repereRepris = useRef(false)
+  const dernierePage = useQuery({
+    queryKey: cles.dernierePage(orgId, utilisateurId),
+    queryFn: () => chargerDernierePageRegistre(orgId, utilisateurId),
+    enabled: Boolean(orgId && utilisateurId),
+  })
+  useEffect(() => {
+    const d = dernierePage.data
+    if (repereRepris.current || !dernierePage.isFetchedAfterMount) return
+    repereRepris.current = true
+    if (!d?.complete || !d.register_page || d.register_page >= PAGE_MAX) return
+    brouillon.setValeur((s) => {
+      const annee = d.register_year ? String(d.register_year) : ''
+      const memeAnnee = String(s.annee ?? '').trim() === '' || String(s.annee).trim() === annee
+      const pageEnRetard = !String(s.page ?? '').trim() || Number(s.page) <= d.register_page
+      if (!s.lignes.every(estVide) || !memeAnnee || !pageEnRetard) return s
+      return { ...s, annee, page: String(d.register_page + 1) }
+    })
+  }, [dernierePage.data, dernierePage.isFetchedAfterMount, brouillon])
 
   function changerLignes(transformer) {
     brouillon.setValeur((s) => ({ ...s, lignes: transformer(s.lignes) }))
@@ -168,12 +200,13 @@ export function useSaisieRegistre(orgId, codePays) {
       brouillon.setValeur({
         ...SAISIE_VIDE,
         annee: saisie.annee,
-        page: repere.page ? String(Math.min(repere.page + 1, 10000)) : '',
+        page: repere.page ? String(Math.min(repere.page + 1, PAGE_MAX)) : '',
       })
       setErreursLignes({})
     }
     setResultat({ ...bilan, restantes: restantes.length, repere: libelleRepere(repere) })
     setEtape('resultat')
+    queryClient.invalidateQueries({ queryKey: cles.dernierePage(orgId, utilisateurId) })
     if (bilan.importees > 0) {
       queryClient.invalidateQueries({ queryKey: ['patients', 'recherche', orgId] })
     }

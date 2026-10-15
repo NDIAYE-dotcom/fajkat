@@ -7,7 +7,9 @@
 // Import d'une liste (owner et admin) : start_patient_import (journal), import_patients
 // par lots de 500, find_import_duplicates (doublons de tout un lot en un appel). Page de
 // registre papier recopiée (rôles qui créent un patient) : mêmes fonctions, source
-// 'registre', 60 lignes au plus.
+// 'registre', 60 lignes au plus. Variantes d'orthographe (Mamadou / Momodou) rapprochées
+// par la base (patient_phonetic). Quartiers déjà saisis : suggest_neighborhoods. Fusion
+// de deux dossiers (owner et admin) : merge_patients, journalisée par la base.
 
 import { MESSAGE_INDISPONIBLE, traduireErreur } from '../../lib/erreursAuth.js'
 import { supabase } from '../../lib/supabase.js'
@@ -31,6 +33,8 @@ export const cles = {
   medical: (id) => ['patients', 'medical', id],
   journal: (id) => ['patients', 'journal', id],
   structureCarte: (orgId) => ['patients', 'structure-carte', orgId],
+  quartiers: (orgId, saisie) => ['patients', 'quartiers', orgId, saisie],
+  dernierePage: (orgId, utilisateurId) => ['patients', 'derniere-page', orgId, utilisateurId],
 }
 
 const COLONNES_IDENTITE =
@@ -73,6 +77,18 @@ export async function chercherDoublons(orgId, { nom, prenom, telephone, mere, an
     p_birth_year: anneeNaissance ?? null,
   })
   if (error) throw traduireErreur(error, 'La vérification des doublons n’a pas abouti.')
+  return data ?? []
+}
+
+// Quartiers déjà saisis dans la structure, les plus fréquents d'abord, fautes tolérées :
+// [{ neighborhood, patient_count }].
+export async function suggererQuartiers(orgId, saisie) {
+  const { data, error } = await client().rpc('suggest_neighborhoods', {
+    p_org_id: orgId,
+    p_query: saisie ?? '',
+    p_limit: 6,
+  })
+  if (error) throw traduireErreur(error, 'Les quartiers n’ont pas pu être proposés.')
   return data ?? []
 }
 
@@ -124,6 +140,19 @@ export async function modifierPatient(id, champs) {
       'Modification refusée : ce dossier a été fusionné, ou la structure est en lecture seule.',
     )
   }
+  return data
+}
+
+// Fusion (owner et admin) : le doublon renvoie ensuite vers le dossier conservé, qui
+// reçoit ses couvertures, sa fiche médicale et complète ses champs vides. Journalisée
+// par la base (patient_merges), sans suppression. Renvoie le dossier conservé.
+export async function fusionnerPatients(gardeId, doublonId, motif) {
+  const { data, error } = await client().rpc('merge_patients', {
+    p_keep_id: gardeId,
+    p_duplicate_id: doublonId,
+    p_reason: motif?.trim() || null,
+  })
+  if (error) throw traduireErreur(error, 'La fusion n’a pas abouti. Aucun dossier n’a changé.')
   return data
 }
 
@@ -233,6 +262,7 @@ export async function enregistrerMedical(patientId, fiche) {
 // --- Journal des modifications (owner et admin) -------------------------------
 
 // [{ id, action, created_at, auteur, old_data, new_data }] — les plus récentes d'abord.
+// Les fusions dans ce dossier y figurent aussi : { action: 'FUSION', fusion }.
 export async function chargerJournal(patientId) {
   const { data, error } = await client()
     .from('audit_logs')
@@ -242,13 +272,39 @@ export async function chargerJournal(patientId) {
     .order('created_at', { ascending: false })
     .limit(30)
   if (error) throw traduireErreur(error, 'Le journal des modifications n’a pas pu être chargé.')
-  const ids = [...new Set((data ?? []).map((l) => l.user_id).filter(Boolean))]
+  // Dossiers fusionnés dans celui-ci (patient_merges : auteur, motif, identité absorbée).
+  const fusions = await client()
+    .from('patient_merges')
+    .select('id, created_at, created_by, reason, merged_snapshot')
+    .eq('kept_patient_id', patientId)
+    .is('deleted_at', null)
+    .order('created_at', { ascending: false })
+    .limit(30)
+  if (fusions.error) {
+    throw traduireErreur(fusions.error, 'Le journal des modifications n’a pas pu être chargé.')
+  }
+  const entrees = [
+    ...(data ?? []),
+    ...(fusions.data ?? []).map((f) => ({
+      id: f.id,
+      action: 'FUSION',
+      user_id: f.created_by,
+      created_at: f.created_at,
+      fusion: {
+        file_number: f.merged_snapshot?.file_number,
+        last_name: f.merged_snapshot?.last_name ?? '',
+        first_name: f.merged_snapshot?.first_name ?? '',
+        motif: f.reason,
+      },
+    })),
+  ].sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+  const ids = [...new Set(entrees.map((l) => l.user_id).filter(Boolean))]
   let noms = {}
   if (ids.length) {
     const profils = await client().from('profiles').select('id, full_name').in('id', ids)
     noms = Object.fromEntries((profils.data ?? []).map((p) => [p.id, p.full_name]))
   }
-  return (data ?? []).map((l) => ({ ...l, auteur: noms[l.user_id] ?? null }))
+  return entrees.map((l) => ({ ...l, auteur: noms[l.user_id] ?? null }))
 }
 
 // --- Carte patient -----------------------------------------------------------
@@ -296,6 +352,32 @@ export async function commencerImport(
   })
   if (error) throw traduireErreur(error, 'L’import n’a pas pu commencer. Réessayez.')
   return data
+}
+
+// Dernière page de registre recopiée par l'utilisateur dans la structure :
+// { register_year, register_page, complete } ou null. complete : toutes les lignes
+// envoyées ont été enregistrées ou laissées de côté comme doublons.
+export async function chargerDernierePageRegistre(orgId, utilisateurId) {
+  const { data, error } = await client()
+    .from('patient_imports')
+    .select(
+      'register_year, register_page, total_rows, imported_count, rejected_count, skipped_count',
+    )
+    .eq('org_id', orgId)
+    .eq('source', 'registre')
+    .eq('created_by', utilisateurId)
+    .is('deleted_at', null)
+    .order('created_at', { ascending: false })
+    .limit(1)
+    .maybeSingle()
+  if (error) throw traduireErreur(error, 'Le dernier repère du registre n’a pas pu être lu.')
+  if (!data) return null
+  return {
+    register_year: data.register_year,
+    register_page: data.register_page,
+    complete:
+      data.rejected_count === 0 && data.imported_count + data.skipped_count >= data.total_rows,
+  }
 }
 
 // Un lot de 500 lignes au plus (60 pour une page de registre) : [{ line, patient_id, file_number, error }].

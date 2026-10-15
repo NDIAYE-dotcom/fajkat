@@ -1,0 +1,49 @@
+.fusion-recherche {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-3);
+}
+
+.fusion-recherche__titre {
+  font-size: var(--texte-s);
+  font-weight: 700;
+  color: var(--encre);
+}
+
+.fusion-recherche__etat {
+  font-size: var(--texte-s);
+  color: var(--encre-douce);
+}
+
+/* Filets fins entre les dossiers, façon registre. */
+.fusion-recherche__liste {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.fusion-recherche__ligne {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--esp-2) var(--esp-3);
+  padding: var(--esp-3) 0;
+  border-bottom: 1px solid var(--doux);
+}
+
+.fusion-recherche__patient {
+  display: flex;
+  flex: 1 1 14rem;
+  flex-direction: column;
+  gap: var(--esp-1);
+  min-width: 0;
+}
+
+.fusion-recherche__raison {
+  font-size: var(--texte-xs);
+  font-weight: 700;
+  color: var(--encre);
+}

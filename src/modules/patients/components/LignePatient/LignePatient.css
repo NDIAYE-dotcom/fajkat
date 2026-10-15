@@ -28,3 +28,10 @@
   font-size: var(--texte-s);
   color: var(--encre-douce);
 }
+
+/* Trouvé par le numéro d'un dossier fusionné : la mention ne doit pas passer inaperçue. */
+.ligne-patient__fusion {
+  font-size: var(--texte-s);
+  font-weight: 700;
+  color: var(--encre);
+}

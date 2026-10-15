@@ -37,6 +37,7 @@ export default function JournalIdentite({ patientId }) {
               {e.auteur ?? 'Compte supprimé ou import'}
             </p>
             {e.lu.resume && <p>{e.lu.resume}</p>}
+            {e.lu.motif && <p className="journal-identite__motif">Motif : {e.lu.motif}</p>}
             {e.lu.changements.length > 0 && (
               <ul className="journal-identite__changements">
                 {e.lu.changements.map((c) => (

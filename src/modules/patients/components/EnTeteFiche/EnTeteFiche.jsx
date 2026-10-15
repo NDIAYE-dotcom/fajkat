@@ -1,16 +1,19 @@
-import { IdCard } from 'lucide-react'
+import { IdCard, Merge } from 'lucide-react'
 import { useState } from 'react'
 import Button from '../../../../components/ui/Button/Button.jsx'
 import Icone from '../../../../components/ui/Icone/Icone.jsx'
 import { formatTelephone } from '../../../../lib/format.js'
 import { libelleAge, libelleNaissance, libelleTitulaire, nomComplet } from '../../utils.js'
 import ModaleCarte from '../ModaleCarte/ModaleCarte.jsx'
+import ModaleFusion from '../ModaleFusion/ModaleFusion.jsx'
 import PhotoPatient from '../PhotoPatient/PhotoPatient.jsx'
 import './EnTeteFiche.css'
 
-// En-tête de la fiche : photo, nom, numéro, âge, téléphone ; carte patient à imprimer.
-export default function EnTeteFiche({ patient, cle, ecrire }) {
+// En-tête de la fiche : photo, nom, numéro, âge, téléphone ; carte patient à imprimer ;
+// fusion avec un autre dossier (owner et admin : fusionner).
+export default function EnTeteFiche({ patient, cle, ecrire, fusionner }) {
   const [carte, setCarte] = useState(false)
+  const [fusion, setFusion] = useState(false)
   const age = [
     patient.sex === 'F' ? 'Féminin' : 'Masculin',
     libelleAge(patient),
@@ -41,8 +44,18 @@ export default function EnTeteFiche({ patient, cle, ecrire }) {
         >
           Carte patient
         </Button>
+        {fusionner && (
+          <Button
+            variante="secondaire"
+            iconeDebut={<Icone icone={Merge} />}
+            onClick={() => setFusion(true)}
+          >
+            Fusionner avec un autre dossier
+          </Button>
+        )}
       </div>
       {carte && <ModaleCarte patient={patient} onFermer={() => setCarte(false)} />}
+      {fusion && <ModaleFusion patient={patient} onFermer={() => setFusion(false)} />}
     </header>
   )
 }

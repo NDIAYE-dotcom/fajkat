@@ -1,0 +1,123 @@
+.fusion-comparaison {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-4);
+}
+
+.fusion-comparaison__choix {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-2);
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.fusion-comparaison__legende {
+  padding: 0;
+  font-family: var(--police-titre);
+  font-size: var(--texte-l);
+  font-weight: 600;
+  color: var(--encre);
+}
+
+.fusion-comparaison__aide {
+  font-size: var(--texte-s);
+  color: var(--encre-douce);
+}
+
+.fusion-comparaison__options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--esp-2) var(--esp-5);
+}
+
+/* Tableau façon registre : marge colorée, filets horizontaux fins. */
+.fusion-comparaison__cadre {
+  overflow-x: auto;
+  border: 1px solid var(--doux);
+  border-left: 4px solid var(--accent);
+  border-radius: var(--rayon-panneau);
+  background: var(--fond);
+}
+
+.fusion-comparaison__table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--texte-s);
+}
+
+.fusion-comparaison__titre-table {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.fusion-comparaison__table th,
+.fusion-comparaison__table td {
+  padding: var(--esp-2);
+  border-bottom: 1px solid var(--doux);
+  text-align: left;
+  vertical-align: top;
+}
+
+.fusion-comparaison__entete {
+  width: 36%;
+  background: var(--surface);
+  color: var(--encre);
+}
+
+.fusion-comparaison__entete--garde {
+  box-shadow: inset 0 -3px 0 var(--primaire);
+}
+
+.fusion-comparaison__garde {
+  display: inline-block;
+  margin-left: var(--esp-2);
+  padding: 0 var(--esp-1);
+  border: 2px solid var(--primaire);
+  border-radius: var(--rayon-champ);
+  font-size: var(--texte-xs);
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--primaire);
+}
+
+.fusion-comparaison__libelle {
+  font-weight: 400;
+  color: var(--encre-douce);
+}
+
+.fusion-comparaison__ligne--differe {
+  background: var(--surface);
+}
+
+.fusion-comparaison__ligne--differe .fusion-comparaison__libelle {
+  font-weight: 700;
+  color: var(--encre);
+}
+
+.fusion-comparaison__mot {
+  display: block;
+  font-size: var(--texte-xs);
+  font-weight: 700;
+  color: var(--tampon);
+}
+
+.fusion-comparaison__valeur {
+  overflow-wrap: anywhere;
+  color: var(--encre);
+}
+
+.fusion-comparaison__valeur--mono {
+  font-family: var(--police-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+.fusion-comparaison__valeur--vide {
+  font-style: italic;
+  color: var(--encre-douce);
+}

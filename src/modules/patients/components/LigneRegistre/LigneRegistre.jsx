@@ -1,13 +1,20 @@
 import { Trash2 } from 'lucide-react'
 import BoutonIcone from '../../../../components/ui/BoutonIcone/BoutonIcone.jsx'
+import { useSuggestionsQuartier } from '../../hooks/useSuggestionsQuartier.js'
 import { COLONNES_REGISTRE } from '../../import/registre.js'
+import SuggestionsQuartier from '../SuggestionsQuartier/SuggestionsQuartier.jsx'
 import './LigneRegistre.css'
 
 // Une ligne de la page recopiée = un patient. Chaque case a son libellé (visible sous
 // 640 px, où la ligne devient une fiche ; lu par les lecteurs d'écran au-delà).
 // Les cases portent data-id et data-col : la grille s'en sert pour la navigation au clavier.
+// Quartier : quartiers déjà saisis proposés ; flèches et Entrée servent la liste quand
+// elle est affichée, la grille sinon.
 export default function LigneRegistre({ ligne, numero, erreurs, onModifier, onSupprimer }) {
   const idErreurs = erreurs ? `ligne-registre-${ligne.id}-erreurs` : undefined
+  const quartier = useSuggestionsQuartier(ligne.quartier, (v) =>
+    onModifier(ligne.id, 'quartier', v),
+  )
 
   return (
     <>
@@ -38,8 +45,10 @@ export default function LigneRegistre({ ligne, numero, erreurs, onModifier, onSu
                 spellCheck={false}
                 aria-invalid={erreurs ? true : undefined}
                 aria-describedby={idErreurs}
+                {...(c.cle === 'quartier' ? quartier.champ : {})}
               />
             </label>
+            {c.cle === 'quartier' && <SuggestionsQuartier {...quartier.liste} />}
           </td>
         ))}
         <td className="ligne-registre__action">

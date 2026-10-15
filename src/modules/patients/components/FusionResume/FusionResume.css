@@ -1,0 +1,90 @@
+.fusion-resume {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-4);
+}
+
+.fusion-resume__liste {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-2);
+  margin: 0;
+  padding-left: var(--esp-5);
+  color: var(--encre);
+}
+
+.fusion-resume__numero {
+  font-family: var(--police-mono);
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+}
+
+/* Panneau à marge colorée, filets fins entre les champs. */
+.fusion-resume__bloc {
+  padding: var(--esp-3) var(--esp-4);
+  border: 1px solid var(--doux);
+  border-left: 4px solid var(--accent);
+  border-radius: var(--rayon-panneau);
+  background: var(--fond);
+}
+
+.fusion-resume__titre {
+  margin-bottom: var(--esp-2);
+  font-family: var(--police-titre);
+  font-size: var(--texte-m);
+  font-weight: 600;
+  color: var(--encre);
+}
+
+.fusion-resume__champs {
+  margin: 0;
+}
+
+.fusion-resume__champ {
+  display: grid;
+  grid-template-columns: minmax(8rem, 1fr) 2fr;
+  gap: var(--esp-2);
+  padding: var(--esp-2) 0;
+  border-top: 1px solid var(--doux);
+  font-size: var(--texte-s);
+}
+
+.fusion-resume__champ dt {
+  color: var(--encre-douce);
+}
+
+.fusion-resume__champ dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+  color: var(--encre);
+}
+
+.fusion-resume__ecartee {
+  color: var(--encre-douce);
+}
+
+.fusion-resume__definitif {
+  display: flex;
+  gap: var(--esp-2);
+  padding: var(--esp-3);
+  border: 2px solid var(--tampon);
+  border-radius: var(--rayon-panneau);
+  background: var(--fond);
+  color: var(--encre);
+}
+
+.fusion-resume__definitif strong {
+  color: var(--tampon);
+}
+
+.fusion-resume__icone {
+  flex-shrink: 0;
+  color: var(--tampon);
+}
+
+@media (max-width: 30rem) {
+  .fusion-resume__champ {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+}

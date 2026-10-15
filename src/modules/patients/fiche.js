@@ -184,9 +184,19 @@ function valeurLisible(cle, valeur) {
 }
 
 // Une entrée du journal en lignes lisibles : [{ libelle, avant, apres }], ou un résumé
-// (« Dossier créé », « Nouvelle photo », « Dossier fusionné »).
+// (« Dossier créé », « Nouvelle photo », « Dossier fusionné », « Dossier … fusionné dans
+// ce dossier » avec son motif).
 export function lireEntreeJournal(entree) {
   if (entree.action === 'INSERT') return { resume: 'Dossier créé', changements: [] }
+  if (entree.action === 'FUSION') {
+    const f = entree.fusion
+    const nom = `${f.last_name.toLocaleUpperCase('fr')} ${f.first_name}`.trim()
+    return {
+      resume: `Dossier ${f.file_number} (${nom}) fusionné dans ce dossier`,
+      motif: f.motif,
+      changements: [],
+    }
+  }
   const avant = entree.old_data ?? {}
   const apres = entree.new_data ?? {}
   if (!avant.merged_into_id && apres.merged_into_id) {

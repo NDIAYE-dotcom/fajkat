@@ -28,6 +28,13 @@ export default function ListePatients({ lignes, chargement, legende, vide, onOuv
               ancien n° <span className="liste-patients__chiffres">{p.legacy_file_number}</span>
             </span>
           )}
+          {/* Trouvé par le numéro d'un dossier fusionné dans celui-ci. */}
+          {p.merged_file_numbers && (
+            <span className="liste-patients__fusion">
+              ancien dossier{' '}
+              <span className="liste-patients__chiffres">{p.merged_file_numbers}</span>, fusionné
+            </span>
+          )}
         </span>
       ),
     },

@@ -38,3 +38,10 @@
   font-size: var(--texte-s);
   color: var(--encre-douce);
 }
+
+/* Trouvé par le numéro d'un dossier fusionné dans celui-ci. */
+.liste-patients__fusion {
+  font-size: var(--texte-s);
+  font-weight: 700;
+  color: var(--encre);
+}

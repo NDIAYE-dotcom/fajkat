@@ -127,7 +127,12 @@ function Fiche({ patient, cle }) {
           <p>Le dossier demandé a été fusionné dans celui-ci, qui est le dossier conservé.</p>
         </Message>
       )}
-      <EnTeteFiche patient={patient} cle={cle} ecrire={droits.ecrire} />
+      <EnTeteFiche
+        patient={patient}
+        cle={cle}
+        ecrire={droits.ecrire}
+        fusionner={droits.fusionner && droits.ecrire}
+      />
       <Tabs
         libelle="Rubriques du dossier"
         actif={actif}

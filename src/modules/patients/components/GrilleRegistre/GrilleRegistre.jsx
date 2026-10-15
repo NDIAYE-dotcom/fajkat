@@ -47,6 +47,8 @@ export default function GrilleRegistre({
     const champ = e.target
     if (champ.tagName !== 'INPUT' || !champ.dataset.id) return
     if (e.altKey || e.ctrlKey || e.metaKey || e.nativeEvent.isComposing) return
+    // Touche déjà servie par le champ (liste des quartiers proposés).
+    if (e.defaultPrevented) return
     const index = lignes.findIndex((l) => String(l.id) === champ.dataset.id)
     const col = Number(champ.dataset.col)
 

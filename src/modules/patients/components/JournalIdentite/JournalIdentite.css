@@ -48,3 +48,8 @@
 .journal-identite__champ {
   font-weight: 700;
 }
+
+.journal-identite__motif {
+  font-size: var(--texte-s);
+  color: var(--encre-douce);
+}
