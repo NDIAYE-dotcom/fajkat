@@ -1,0 +1,57 @@
+.apercu-patient,
+.apercu-patient__chargement {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-4);
+}
+
+.apercu-patient__entete {
+  padding-left: var(--esp-3);
+  border-left: 3px solid var(--accent);
+}
+
+.apercu-patient__nom {
+  font-family: var(--police-titre);
+  font-size: var(--titre-3);
+  font-weight: 600;
+  color: var(--primaire);
+}
+
+.apercu-patient__numero,
+.apercu-patient__chiffres {
+  font-family: var(--police-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+.apercu-patient__numero {
+  color: var(--encre-douce);
+}
+
+/* Liste façon registre : filets horizontaux fins. */
+.apercu-patient__liste {
+  margin: 0;
+}
+
+.apercu-patient__ligne {
+  display: grid;
+  grid-template-columns: minmax(8rem, 40%) 1fr;
+  gap: var(--esp-3);
+  padding: var(--esp-2) 0;
+  border-bottom: 1px solid var(--doux);
+}
+
+.apercu-patient__terme {
+  font-size: var(--texte-s);
+  color: var(--encre-douce);
+}
+
+.apercu-patient__valeur {
+  margin: 0;
+  color: var(--encre);
+  overflow-wrap: anywhere;
+}
+
+.apercu-patient__note {
+  font-size: var(--texte-s);
+  color: var(--encre-douce);
+}

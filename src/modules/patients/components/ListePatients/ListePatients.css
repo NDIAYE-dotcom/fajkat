@@ -1,0 +1,40 @@
+/* Le nom ouvre le dossier : bouton à l'allure de lien, cible tactile de 44 px. */
+.liste-patients__nom {
+  min-height: 44px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--primaire);
+  font: inherit;
+  font-weight: 700;
+  text-align: left;
+  text-decoration: underline;
+  text-decoration-color: var(--doux);
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+
+.liste-patients__nom:hover {
+  text-decoration-color: currentColor;
+}
+
+.liste-patients__nom:focus-visible {
+  outline: 2px solid var(--primaire);
+  outline-offset: 2px;
+}
+
+.liste-patients__chiffres {
+  font-family: var(--police-mono);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.liste-patients__age {
+  display: inline-flex;
+  flex-direction: column;
+}
+
+.liste-patients__doux {
+  font-size: var(--texte-s);
+  color: var(--encre-douce);
+}

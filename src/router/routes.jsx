@@ -92,6 +92,10 @@ export const router = createBrowserRouter([
                 lazy: composant(() => import('../modules/personnel/pages/Personnel/Personnel.jsx')),
               },
               {
+                path: 'patients',
+                lazy: composant(() => import('../modules/patients/pages/Patients/Patients.jsx')),
+              },
+              {
                 path: 'mon-espace',
                 lazy: composant(() => import('../modules/personnel/pages/MonEspace/MonEspace.jsx')),
               },

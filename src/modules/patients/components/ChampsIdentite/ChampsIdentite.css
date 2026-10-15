@@ -1,0 +1,13 @@
+/* Deux champs côte à côte sur grand écran, l'un sous l'autre sur téléphone. */
+.champs-identite__ligne {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+  gap: var(--esp-4) var(--esp-3);
+  align-items: start;
+}
+
+.champs-identite__choix {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--esp-1) var(--esp-5);
+}

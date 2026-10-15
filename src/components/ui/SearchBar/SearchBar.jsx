@@ -8,6 +8,7 @@ import './SearchBar.css'
 
 // Barre de recherche : libellé lu par les lecteurs d'écran, bouton d'effacement,
 // indicateur pendant la recherche. Entrée lance onRechercher (utile hors ligne ou sur réseau lent).
+// champ : attributs supplémentaires du <input> (role="combobox", aria-*, onKeyDown…).
 export default function SearchBar({
   valeur = '',
   onChange,
@@ -16,14 +17,15 @@ export default function SearchBar({
   placeholder,
   chargement = false,
   disabled = false,
+  champ: attributsChamp,
   className = '',
 }) {
   const id = `recherche-${useId()}`
-  const champ = useRef(null)
+  const refChamp = useRef(null)
 
   function effacer() {
     onChange?.('')
-    champ.current?.focus()
+    refChamp.current?.focus()
   }
 
   function surEnvoi(evenement) {
@@ -43,7 +45,8 @@ export default function SearchBar({
         {libelle}
       </label>
       <Input
-        ref={champ}
+        {...attributsChamp}
+        ref={refChamp}
         id={id}
         type="search"
         enterKeyHint="search"

@@ -1,0 +1,66 @@
+.alerte-doublons {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-3);
+  padding: var(--esp-3) var(--esp-4);
+  border: var(--trait);
+  border-left: 4px solid var(--attention);
+  border-radius: var(--rayon-panneau);
+  background: var(--fond);
+}
+
+.alerte-doublons:focus-visible {
+  outline: 2px solid var(--primaire);
+  outline-offset: 2px;
+}
+
+.alerte-doublons__titre {
+  display: flex;
+  align-items: center;
+  gap: var(--esp-2);
+  font-family: var(--police-titre);
+  font-size: var(--texte-l);
+  color: var(--encre);
+}
+
+.alerte-doublons__icone {
+  flex-shrink: 0;
+  color: var(--attention);
+}
+
+.alerte-doublons__texte {
+  font-size: var(--texte-s);
+  color: var(--encre-douce);
+}
+
+.alerte-doublons__liste {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.alerte-doublons__candidat {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--esp-2) var(--esp-3);
+  padding: var(--esp-3) 0;
+  border-bottom: 1px solid var(--doux);
+}
+
+.alerte-doublons__identite {
+  display: flex;
+  flex: 1 1 14rem;
+  flex-direction: column;
+  gap: var(--esp-1);
+  min-width: 0;
+}
+
+.alerte-doublons__raison {
+  font-size: var(--texte-xs);
+  font-weight: 700;
+  color: var(--encre);
+}

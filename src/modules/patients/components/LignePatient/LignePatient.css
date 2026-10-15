@@ -1,0 +1,30 @@
+.ligne-patient {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.ligne-patient__haut {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0 var(--esp-2);
+}
+
+.ligne-patient__nom {
+  font-weight: 700;
+  color: var(--encre);
+}
+
+.ligne-patient__numero {
+  font-family: var(--police-mono);
+  font-size: var(--texte-xs);
+  font-variant-numeric: tabular-nums;
+  color: var(--encre-douce);
+}
+
+.ligne-patient__details {
+  font-size: var(--texte-s);
+  color: var(--encre-douce);
+}

@@ -1,0 +1,35 @@
+.patients {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-5);
+}
+
+.patients__entete {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--esp-4);
+}
+
+.patients__surtitre {
+  font-size: var(--texte-s);
+  color: var(--encre-douce);
+}
+
+.patients__titre {
+  font-size: var(--titre-2);
+  color: var(--primaire);
+}
+
+.patients__recherche {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-2);
+  max-width: 40rem;
+}
+
+.patients__resume {
+  font-size: var(--texte-s);
+  color: var(--encre-douce);
+}
