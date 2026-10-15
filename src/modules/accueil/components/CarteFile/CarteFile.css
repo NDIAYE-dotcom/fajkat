@@ -1,0 +1,65 @@
+/* Fiche cartonnée du tableau : filets fins, marge colorée à gauche. */
+.carte-file {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-1);
+  padding: var(--esp-3);
+  border: var(--trait);
+  border-left: 4px solid var(--accent);
+  border-radius: var(--rayon-panneau);
+  background: var(--fond);
+}
+
+.carte-file[draggable='true'] {
+  cursor: grab;
+}
+
+.carte-file--urgence {
+  border-left-color: var(--tampon);
+}
+
+.carte-file__haut {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--esp-2);
+}
+
+.carte-file__ticket {
+  font-family: var(--police-mono);
+  font-size: var(--texte-l);
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  color: var(--primaire);
+}
+
+.carte-file__priorite {
+  font-size: var(--texte-s);
+  font-weight: 700;
+  color: var(--encre);
+}
+
+.carte-file__nom {
+  font-weight: 700;
+  color: var(--encre);
+}
+
+.carte-file__details,
+.carte-file__temps,
+.carte-file__constantes {
+  font-size: var(--texte-s);
+  color: var(--encre-douce);
+}
+
+.carte-file__motif {
+  font-size: var(--texte-s);
+  color: var(--encre);
+}
+
+.carte-file__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--esp-2);
+  margin-top: var(--esp-2);
+}

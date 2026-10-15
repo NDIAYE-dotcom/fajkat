@@ -27,6 +27,7 @@ export const cles = {
   motifsGratuite: (orgId) => ['accueil', 'motifs-gratuite', orgId],
   tickets: (orgId) => ['accueil', 'tickets', orgId],
   bilan: (orgId) => ['accueil', 'bilan', orgId],
+  salles: (orgId) => ['accueil', 'salles', orgId],
 }
 
 // Refus métier des fonctions de la file (22023, ou 42501 levé par elles) : message en
@@ -206,4 +207,75 @@ export async function chargerBilanTickets(orgId) {
   const { data, error } = await client().rpc('consultation_tickets_summary', { p_org_id: orgId })
   if (error) throw erreurFile(error, 'Le bilan des tickets n’a pas pu être chargé.')
   return data
+}
+
+// --- Tableau de la salle d'attente -----------------------------------------------
+
+export async function chargerSalles(orgId) {
+  const { data, error } = await client()
+    .from('rooms')
+    .select('id, label, sort_order')
+    .eq('org_id', orgId)
+    .eq('is_active', true)
+    .is('deleted_at', null)
+    .order('sort_order')
+    .order('label')
+  if (error) throw traduireErreur(error, 'Les salles n’ont pas pu être chargées.')
+  return data ?? []
+}
+
+// Déplacement sur le tableau (bouton ou glisser-déposer), sans appel à l'écran.
+// statut : waiting | vitals | consultation | done | left.
+export async function deplacerPassage(visitId, statut, salleId = null) {
+  const { data, error } = await client().rpc('move_visit', {
+    p_visit_id: visitId,
+    p_status: statut,
+    p_room_id: salleId,
+  })
+  if (error) throw erreurFile(error, 'Le patient n’a pas été déplacé. Réessayez.')
+  return data
+}
+
+// Appel d'un patient précis vers les constantes ou la consultation (ou rappel) : son
+// numéro s'affiche sur l'écran de la salle d'attente.
+export async function appelerPassage(visitId, cible, salleId = null) {
+  const { data, error } = await client().rpc('call_visit', {
+    p_visit_id: visitId,
+    p_target: cible,
+    p_room_id: salleId,
+  })
+  if (error) throw erreurFile(error, 'L’appel n’a pas abouti. Réessayez.')
+  return data
+}
+
+// « Appeler le suivant » : priorité, puis heure d'arrivée. null si personne n'attend.
+export async function appelerSuivant(orgId, cible, salleId = null, serviceIds = null) {
+  const { data, error } = await client().rpc('call_next', {
+    p_org_id: orgId,
+    p_target: cible,
+    p_room_id: salleId,
+    p_queue_service_ids: serviceIds?.length ? serviceIds : null,
+  })
+  if (error) throw erreurFile(error, 'L’appel n’a pas abouti. Réessayez.')
+  return data?.id ? data : null
+}
+
+// Changements de la file (arrivée, déplacement, appel) faits sur n'importe quel appareil
+// de la structure. La table visits ne porte ni motif ni constantes. surConnexion : après
+// chaque (re)connexion du canal, pour rattraper ce qui a pu être manqué.
+export function ecouterFile(orgId, { surChangement, surConnexion }) {
+  if (!supabase) return () => {}
+  const canal = supabase
+    .channel(`file:${orgId}:${Math.random().toString(36).slice(2)}`)
+    .on(
+      'postgres_changes',
+      { event: '*', schema: 'public', table: 'visits', filter: `org_id=eq.${orgId}` },
+      surChangement,
+    )
+    .subscribe((statut) => {
+      if (statut === 'SUBSCRIBED') surConnexion()
+    })
+  return () => {
+    supabase.removeChannel(canal)
+  }
 }

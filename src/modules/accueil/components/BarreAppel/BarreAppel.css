@@ -1,0 +1,16 @@
+/* Réglages de l'appelant : panneau de registre au-dessus du tableau. */
+.barre-appel {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr));
+  align-items: end;
+  gap: var(--esp-3) var(--esp-4);
+  padding: var(--esp-4);
+  border: var(--trait);
+  border-left: 4px solid var(--accent);
+  border-radius: var(--rayon-panneau);
+  background: var(--fond);
+}
+
+.barre-appel__bouton {
+  justify-self: start;
+}

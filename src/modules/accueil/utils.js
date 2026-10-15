@@ -109,3 +109,47 @@ export function validerVente(saisie, prestation) {
   }
   return erreurs
 }
+
+// --- Tableau de la salle d'attente -----------------------------------------------
+
+// Colonnes du tableau. « Parti sans être vu » est rangé avec les passages terminés.
+export const COLONNES = [
+  { id: 'waiting', titre: 'En attente', statuts: ['waiting'] },
+  { id: 'vitals', titre: 'Constantes', statuts: ['vitals'] },
+  { id: 'consultation', titre: 'En consultation', statuts: ['consultation'] },
+  { id: 'done', titre: 'Terminé', statuts: ['done', 'left'] },
+]
+
+// Actions proposées sur une carte, selon son étape. appel : appel à l'écran (call_visit)
+// vers cette cible ; vers : simple déplacement (move_visit).
+export const ACTIONS = {
+  waiting: [
+    { id: 'appel-consultation', libelle: 'Appeler', appel: 'consultation', principale: true },
+    { id: 'appel-constantes', libelle: 'Appeler aux constantes', appel: 'vitals' },
+    { id: 'parti', libelle: 'Parti sans être vu', vers: 'left' },
+  ],
+  vitals: [
+    {
+      id: 'appel-consultation',
+      libelle: 'Appeler en consultation',
+      appel: 'consultation',
+      principale: true,
+    },
+    { id: 'attente', libelle: 'Remettre en attente', vers: 'waiting' },
+    { id: 'parti', libelle: 'Parti sans être vu', vers: 'left' },
+  ],
+  consultation: [
+    { id: 'termine', libelle: 'Terminé', vers: 'done', principale: true },
+    { id: 'rappel', libelle: 'Rappeler', appel: 'consultation' },
+    { id: 'attente', libelle: 'Remettre en attente', vers: 'waiting' },
+  ],
+  done: [{ id: 'attente', libelle: 'Remettre en attente', vers: 'waiting' }],
+  left: [{ id: 'attente', libelle: 'Remettre en attente', vers: 'waiting' }],
+}
+
+// « 8 min », « 1 h 05 »
+export function duree(depuis, maintenant) {
+  const minutes = Math.max(0, Math.floor((maintenant - new Date(depuis).getTime()) / 60000))
+  if (minutes < 60) return `${minutes} min`
+  return `${Math.floor(minutes / 60)} h ${String(minutes % 60).padStart(2, '0')}`
+}

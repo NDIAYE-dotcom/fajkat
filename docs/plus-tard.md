@@ -6,6 +6,7 @@ Pendant une étape, on corrige seulement les bugs. Toute idée d'amélioration e
 
 - **Table d'équivalences de prénoms** (Cheikh / Sheikh / Seikh, Abdou / Abdoulaye, Mame / Maam…) pour rapprocher les doublons au-delà de la clé de prononciation. Repoussée à l'étape 11 (partie F).
 - **Lecture automatique des registres photographiés** : photographier une page du registre papier et pré-remplir la grille de saisie. Repoussée à l'étape 11 (partie E).
+- **Nom et prénom inversés dans les doublons** : rapprocher « Mousa Diouf » (saisi à l'envers) de « Diouf Moussa ».
 
 ## Accueil et file d'attente (étape 12)
 

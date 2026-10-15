@@ -4,6 +4,7 @@ import Button from '../../../../components/ui/Button/Button.jsx'
 import EmptyState from '../../../../components/ui/EmptyState/EmptyState.jsx'
 import Icone from '../../../../components/ui/Icone/Icone.jsx'
 import Message from '../../../../components/ui/Message/Message.jsx'
+import Tabs from '../../../../components/ui/Tabs/Tabs.jsx'
 import { useOrganization } from '../../../../hooks/useOrganization.js'
 import { useToast } from '../../../../hooks/useToast.js'
 import FeatureRoute from '../../../../router/guards/FeatureRoute/FeatureRoute.jsx'
@@ -13,7 +14,9 @@ import { usePermissionsPatients } from '../../../patients/hooks/usePermissionsPa
 import { chargerJetonTicket } from '../../api.js'
 import ArriveesDuJour from '../../components/ArriveesDuJour/ArriveesDuJour.jsx'
 import FenetresAccueil from '../../components/FenetresAccueil/FenetresAccueil.jsx'
+import TableauFile from '../../components/TableauFile/TableauFile.jsx'
 import { usePermissionsFile, useTableau } from '../../hooks/useFile.js'
+import { useFileTempsReel } from '../../hooks/useTableauFile.js'
 import './FileAttente.css'
 
 const ENTREE = entreeDepuisChemin('/app/file-attente')
@@ -33,7 +36,8 @@ export default function FileAttente() {
 }
 
 // Accueil du jour : enregistrer une arrivée (ou vendre un ticket de consultation dans un
-// poste de santé), imprimer le ticket, voir les arrivées.
+// poste de santé), imprimer le ticket ; tableau de la salle d'attente (mis à jour en temps
+// réel depuis tous les appareils) et registre des arrivées du jour.
 function AccueilDuJour() {
   const { structure } = useOrganization()
   const orgId = structure.id
@@ -41,6 +45,7 @@ function AccueilDuJour() {
   const droits = usePermissionsFile(orgId)
   const droitsPatients = usePermissionsPatients(orgId)
   const tableau = useTableau(orgId)
+  useFileTempsReel(orgId)
   const [fenetre, setFenetre] = useState(null)
   const [preparation, setPreparation] = useState(null)
 
@@ -106,17 +111,41 @@ function AccueilDuJour() {
         </Message>
       )}
 
-      <ArriveesDuJour
-        lignes={tableau.data ?? []}
-        chargement={tableau.isPending}
-        onReimprimer={(l) => preparation || reimprimer(l)}
-        vide={
-          <EmptyState
-            icone={ListOrdered}
-            titre="Aucune arrivée aujourd’hui"
-            texte="Chaque patient enregistré reçoit un ticket numéroté par service : A-001, B-001…"
-          />
-        }
+      <Tabs
+        libelle="Affichage de la file"
+        onglets={[
+          {
+            id: 'tableau',
+            libelle: 'Tableau',
+            contenu: (
+              <TableauFile
+                orgId={orgId}
+                lignes={tableau.data ?? []}
+                chargement={tableau.isPending}
+                ecrire={droits.ecrire}
+              />
+            ),
+          },
+          {
+            id: 'arrivees',
+            libelle: 'Arrivées du jour',
+            compteur: tableau.data?.length,
+            contenu: (
+              <ArriveesDuJour
+                lignes={tableau.data ?? []}
+                chargement={tableau.isPending}
+                onReimprimer={(l) => preparation || reimprimer(l)}
+                vide={
+                  <EmptyState
+                    icone={ListOrdered}
+                    titre="Aucune arrivée aujourd’hui"
+                    texte="Chaque patient enregistré reçoit un ticket numéroté par service : A-001, B-001…"
+                  />
+                }
+              />
+            ),
+          },
+        ]}
       />
 
       <FenetresAccueil

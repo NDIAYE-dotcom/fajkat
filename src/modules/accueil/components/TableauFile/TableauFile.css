@@ -1,0 +1,63 @@
+.tableau-file {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-4);
+}
+
+.tableau-file__colonnes {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  align-items: start;
+  gap: var(--esp-3);
+}
+
+@media (max-width: 64rem) {
+  .tableau-file__colonnes {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* Choix de la colonne : téléphone seulement (une colonne à la fois). */
+.tableau-file__onglets {
+  display: none;
+}
+
+@media (max-width: 40rem) {
+  .tableau-file__colonnes {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .tableau-file__onglets {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--esp-2);
+  }
+}
+
+.tableau-file__onglet {
+  min-height: 44px;
+  padding: var(--esp-2) var(--esp-3);
+  border: 1px solid var(--encre-douce);
+  border-radius: var(--rayon-champ);
+  background: var(--fond);
+  color: var(--encre);
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.tableau-file__onglet[aria-pressed='true'] {
+  border-color: var(--primaire);
+  background: var(--primaire);
+  color: var(--fond);
+}
+
+.tableau-file__onglet:focus-visible {
+  outline: 3px solid var(--primaire);
+  outline-offset: 2px;
+}
+
+.tableau-file__compte {
+  font-family: var(--police-mono);
+  font-variant-numeric: tabular-nums;
+}

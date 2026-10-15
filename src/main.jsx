@@ -13,8 +13,14 @@ import './styles/print.css'
 
 // Cache des données serveur. Une seule nouvelle tentative : sur une connexion instable,
 // mieux vaut afficher vite un message clair que faire patienter.
+// Écritures (mutations) : jamais mises en pause hors ligne puis rejouées seules au retour
+// du réseau (une vente ou un encaissement rejoué serait payé deux fois), jamais retentées :
+// elles partent tout de suite, et un échec s'affiche.
 const queryClient = new QueryClient({
-  defaultOptions: { queries: { retry: 1, refetchOnWindowFocus: false } },
+  defaultOptions: {
+    queries: { retry: 1, refetchOnWindowFocus: false },
+    mutations: { networkMode: 'always', retry: false },
+  },
 })
 
 createRoot(document.getElementById('root')).render(
