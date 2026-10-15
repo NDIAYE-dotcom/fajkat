@@ -1,0 +1,24 @@
+.formulaire-seuil {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 12rem), 1fr));
+  align-items: start;
+  gap: var(--esp-3) var(--esp-4);
+  flex-basis: 100%;
+}
+
+.formulaire-seuil__erreur,
+.formulaire-seuil__boutons {
+  grid-column: 1 / -1;
+}
+
+.formulaire-seuil__erreur {
+  font-size: var(--texte-s);
+  font-weight: 700;
+  color: var(--tampon);
+}
+
+.formulaire-seuil__boutons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--esp-2);
+}

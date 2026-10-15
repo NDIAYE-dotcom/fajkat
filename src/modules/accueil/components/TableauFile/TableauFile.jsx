@@ -11,12 +11,14 @@ import { useDeplacement, useMaintenant, useSalles } from '../../hooks/useTableau
 import { COLONNES } from '../../utils.js'
 import BarreAppel from '../BarreAppel/BarreAppel.jsx'
 import ColonneFile from '../ColonneFile/ColonneFile.jsx'
+import ModaleConstantes from '../ModaleConstantes/ModaleConstantes.jsx'
 import './TableauFile.css'
 
 // Tableau de la salle d'attente : En attente / Constantes / En consultation / Terminé.
 // Chaque carte se déplace par un bouton (téléphone) ou par glisser-déposer (souris).
 // lignes : passages du jour (get_queue_board), déjà triés par priorité puis arrivée.
-export default function TableauFile({ orgId, lignes, chargement, ecrire }) {
+// medical : soignant (bouton « Constantes » sur les cartes).
+export default function TableauFile({ orgId, lignes, chargement, ecrire, medical }) {
   const queryClient = useQueryClient()
   const toast = useToast()
   const maintenant = useMaintenant()
@@ -30,6 +32,7 @@ export default function TableauFile({ orgId, lignes, chargement, ecrire }) {
   const [colonneMobile, setColonneMobile] = useState('waiting')
   const [occupation, setOccupation] = useState(null) // { visitId, action }
   const [appel, setAppel] = useState(false)
+  const [constantes, setConstantes] = useState(null) // ligne du passage
 
   // Une salle ou une file retirée entre-temps n'est plus proposée.
   const salleValide = (salles.data ?? []).some((s) => s.id === salle) ? salle : ''
@@ -44,6 +47,10 @@ export default function TableauFile({ orgId, lignes, chargement, ecrire }) {
   }
 
   async function agir(ligne, action) {
+    if (action.constantes) {
+      setConstantes(ligne)
+      return
+    }
     if (action.vers) {
       deplacement.mutate({ visitId: ligne.visit_id, statut: action.vers })
       return
@@ -146,6 +153,7 @@ export default function TableauFile({ orgId, lignes, chargement, ecrire }) {
               active={colonneMobile === c.id}
               maintenant={maintenant}
               ecrire={ecrire}
+              medical={medical}
               horsLigne={!enLigne}
               occupation={occupation}
               onAction={agir}
@@ -153,6 +161,9 @@ export default function TableauFile({ orgId, lignes, chargement, ecrire }) {
             />
           ))}
         </div>
+      )}
+      {constantes && (
+        <ModaleConstantes orgId={orgId} ligne={constantes} onFermer={() => setConstantes(null)} />
       )}
     </div>
   )

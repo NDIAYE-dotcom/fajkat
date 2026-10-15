@@ -1,0 +1,59 @@
+.historique-constantes {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-2);
+}
+
+.historique-constantes__titre {
+  font-family: var(--police-texte);
+  font-size: var(--texte-m);
+  font-weight: 700;
+  color: var(--encre);
+}
+
+.historique-constantes__liste {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: var(--trait);
+}
+
+.historique-constantes__ligne {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--esp-2) var(--esp-3);
+  padding-block: var(--esp-2);
+  border-bottom: var(--trait);
+}
+
+.historique-constantes__ligne--annulee .historique-constantes__valeurs {
+  color: var(--encre-douce);
+  text-decoration: line-through;
+}
+
+.historique-constantes__heure,
+.historique-constantes__valeurs {
+  font-family: var(--police-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+.historique-constantes__heure,
+.historique-constantes__motif {
+  font-size: var(--texte-s);
+  color: var(--encre-douce);
+}
+
+.historique-constantes__annulation {
+  display: flex;
+  flex-basis: 100%;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: var(--esp-2);
+}
+
+.historique-constantes__annulation > :first-child {
+  flex: 1 1 14rem;
+}

@@ -11,6 +11,7 @@
 
 import { MESSAGE_INDISPONIBLE, traduireErreur } from '../../lib/erreursAuth.js'
 import { supabase } from '../../lib/supabase.js'
+import { erreurContrainte } from './constantes.js'
 
 function client() {
   if (!supabase) throw new Error(MESSAGE_INDISPONIBLE)
@@ -29,6 +30,9 @@ export const cles = {
   bilan: (orgId) => ['accueil', 'bilan', orgId],
   salles: (orgId) => ['accueil', 'salles', orgId],
   ecrans: (orgId) => ['accueil', 'ecrans', orgId],
+  seuils: (orgId) => ['accueil', 'seuils', orgId],
+  constantes: (visitId) => ['accueil', 'constantes', visitId],
+  bornes: () => ['accueil', 'bornes-constantes'],
 }
 
 // Refus métier des fonctions de la file (22023, ou 42501 levé par elles) : message en
@@ -335,5 +339,116 @@ export function ecouterEcran(topic, { surAppel, surRetrait, surEtat }) {
     .subscribe((statut) => surEtat(statut))
   return () => {
     supabase.removeChannel(canal)
+  }
+}
+
+// --- Constantes (soignants seulement) ---------------------------------------------
+// Mesures en ajout seul, liées au passage du jour (reprises à la consultation, étape 14).
+// Alertes calculées par la base d'après vital_thresholds, les seuils de la structure.
+
+const COLONNES_CONSTANTES =
+  'id, visit_id, patient_id, weight_kg, height_cm, temperature_c, systolic, diastolic, ' +
+  'pulse, spo2, glucose_g_l, muac_mm, note, alerts, measured_at, created_by, deleted_at, ' +
+  'void_reason'
+
+// Mesures d'un passage, la plus récente d'abord (annulées comprises, marquées).
+export async function chargerConstantesPassage(visitId) {
+  const { data, error } = await client()
+    .from('vital_signs')
+    .select(COLONNES_CONSTANTES)
+    .eq('visit_id', visitId)
+    .order('measured_at', { ascending: false })
+  if (error) throw traduireErreur(error, 'Les constantes n’ont pas pu être chargées.')
+  return data ?? []
+}
+
+// Bornes de vraisemblance { mesure: { min, max } }, lues dans les contraintes de la base.
+export async function chargerBornes() {
+  const { data, error } = await client().rpc('vital_sign_bounds')
+  if (error) throw traduireErreur(error, 'Les bornes des constantes n’ont pas pu être lues.')
+  return data ?? {}
+}
+
+// Aperçu des alertes pendant la saisie (même calcul que l'enregistrement).
+export async function apercuAlertes(patientId, valeurs) {
+  const { data, error } = await client().rpc('vital_alerts', {
+    p_patient_id: patientId,
+    p_values: valeurs,
+  })
+  if (error) throw traduireErreur(error, 'Les alertes n’ont pas pu être calculées.')
+  return data ?? []
+}
+
+// Une erreur de contrainte porte le champ en cause (erreur.champ).
+function erreurConstantes(error, repli) {
+  const contrainte = erreurContrainte(error?.message)
+  if (contrainte) {
+    const traduite = new Error(contrainte.message, { cause: error })
+    traduite.champ = contrainte.champ
+    return traduite
+  }
+  return erreurFile(error, repli)
+}
+
+export async function enregistrerConstantes(visitId, valeurs) {
+  const { data, error } = await client().rpc('save_vitals', {
+    p_visit_id: visitId,
+    p_values: valeurs,
+  })
+  if (error) throw erreurConstantes(error, 'Les constantes n’ont pas été enregistrées. Réessayez.')
+  return data
+}
+
+// Une mesure fausse n'est jamais effacée : elle est annulée avec son motif.
+export async function annulerConstantes(id, motif) {
+  const { error } = await client().rpc('void_vitals', { p_vital_id: id, p_reason: motif })
+  if (error) throw erreurFile(error, 'La mesure n’a pas été annulée. Réessayez.')
+}
+
+// Seuils d'alerte de la structure (soignants : lecture ; owner et admin : modification).
+export async function chargerSeuils(orgId) {
+  const { data, error } = await client()
+    .from('vital_thresholds')
+    .select(
+      'id, measure, min_age_months, max_age_months, below, at_or_above, level, label, ' +
+        'is_active, sort_order',
+    )
+    .eq('org_id', orgId)
+    .is('deleted_at', null)
+    .order('sort_order')
+  if (error) throw traduireErreur(error, 'Les seuils n’ont pas pu être chargés.')
+  return data ?? []
+}
+
+function erreurSeuil(error, repli) {
+  if (error?.code === '23514') {
+    return new Error(
+      'Seuil incomplet : une seule valeur (« sous » ou « à partir de »), un libellé.',
+    )
+  }
+  if (error?.code === '42501') {
+    return new Error('Seuls le propriétaire et les administrateurs modifient les seuils.')
+  }
+  return traduireErreur(error, repli)
+}
+
+export async function ajouterSeuil(orgId, seuil) {
+  const { error } = await client()
+    .from('vital_thresholds')
+    .insert({ ...seuil, org_id: orgId })
+  if (error) throw erreurSeuil(error, 'Le seuil n’a pas été ajouté. Réessayez.')
+}
+
+// champs : label, below, at_or_above, level, min_age_months, max_age_months, is_active.
+// Jamais de suppression : un seuil retiré reste dans les alertes déjà enregistrées.
+export async function modifierSeuil(id, champs) {
+  const { data, error } = await client()
+    .from('vital_thresholds')
+    .update(champs)
+    .eq('id', id)
+    .select('id')
+  if (error) throw erreurSeuil(error, 'Le seuil n’a pas été modifié. Réessayez.')
+  if (!data?.length) {
+    throw new Error('Seuls le propriétaire et les administrateurs modifient les seuils.')
   }
 }

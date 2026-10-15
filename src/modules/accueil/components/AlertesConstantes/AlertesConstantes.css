@@ -1,0 +1,5 @@
+.alertes-constantes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--esp-2);
+}

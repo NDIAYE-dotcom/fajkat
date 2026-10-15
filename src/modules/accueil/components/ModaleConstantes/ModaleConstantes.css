@@ -1,0 +1,50 @@
+.constantes,
+.constantes__formulaire {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-4);
+}
+
+.constantes__grille {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 13rem), 1fr));
+  gap: var(--esp-3) var(--esp-4);
+}
+
+.constantes__champ {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-2);
+}
+
+/* Tension : les deux chiffres côte à côte, dans un panneau à marge colorée. */
+.constantes__tension {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-2);
+  margin: 0;
+  padding: var(--esp-3) var(--esp-4);
+  border: var(--trait);
+  border-left: 4px solid var(--accent);
+  border-radius: var(--rayon-panneau);
+}
+
+.constantes__legende {
+  padding-inline: var(--esp-1);
+  font-weight: 700;
+  color: var(--encre);
+}
+
+.constantes__paire {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--esp-3);
+}
+
+/* Tension saisie en cmHg (18/11) : la conversion est montrée pour être vérifiée. */
+.constantes__conversion {
+  font-family: var(--police-mono);
+  font-size: var(--texte-s);
+  font-weight: 500;
+  color: var(--encre);
+}

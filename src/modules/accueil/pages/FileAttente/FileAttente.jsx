@@ -1,4 +1,4 @@
-import { ListOrdered, MonitorPlay, Ticket, UserCheck } from 'lucide-react'
+import { Activity, ListOrdered, MonitorPlay, Ticket, UserCheck } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import Button from '../../../../components/ui/Button/Button.jsx'
 import EmptyState from '../../../../components/ui/EmptyState/EmptyState.jsx'
@@ -15,6 +15,7 @@ import { chargerJetonTicket } from '../../api.js'
 import ArriveesDuJour from '../../components/ArriveesDuJour/ArriveesDuJour.jsx'
 import FenetresAccueil from '../../components/FenetresAccueil/FenetresAccueil.jsx'
 import ModaleEcrans from '../../components/ModaleEcrans/ModaleEcrans.jsx'
+import ModaleSeuils from '../../components/ModaleSeuils/ModaleSeuils.jsx'
 import TableauFile from '../../components/TableauFile/TableauFile.jsx'
 import { usePermissionsFile, useTableau } from '../../hooks/useFile.js'
 import { useFileTempsReel } from '../../hooks/useTableauFile.js'
@@ -50,6 +51,7 @@ function AccueilDuJour() {
   const [fenetre, setFenetre] = useState(null)
   const [preparation, setPreparation] = useState(null)
   const [ecrans, setEcrans] = useState(false)
+  const [seuils, setSeuils] = useState(false)
 
   useEffect(() => {
     document.title = `File d’attente — ${structure.name} — Fajkat`
@@ -102,6 +104,15 @@ function AccueilDuJour() {
           Écrans d’appel
         </Button>
       )}
+      {droits.gerer && (
+        <Button
+          variante="discret"
+          iconeDebut={<Icone icone={Activity} />}
+          onClick={() => setSeuils(true)}
+        >
+          Seuils des constantes
+        </Button>
+      )}
     </>
   )
   const peutAgir = droits.ecrire || droits.vendreTicket || droits.gerer
@@ -134,6 +145,7 @@ function AccueilDuJour() {
                 lignes={tableau.data ?? []}
                 chargement={tableau.isPending}
                 ecrire={droits.ecrire}
+                medical={droits.medical}
               />
             ),
           },
@@ -167,6 +179,7 @@ function AccueilDuJour() {
         setFenetre={setFenetre}
       />
       {ecrans && <ModaleEcrans orgId={orgId} onFermer={() => setEcrans(false)} />}
+      {seuils && <ModaleSeuils orgId={orgId} onFermer={() => setSeuils(false)} />}
     </div>
   )
 }

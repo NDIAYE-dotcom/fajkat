@@ -237,11 +237,15 @@ end $$;
 reset role;
 do $$
 begin
+  -- Lignes de ce test seulement : fajkat-dev contient aussi des données réelles.
   if exists (select 1 from public.audit_logs
-             where table_name = 'visit_reasons' and coalesce(new_data::text, '') ~* 'dépistage') then
+             where org_id = current_setting('test.org_a')::uuid
+               and table_name = 'visit_reasons' and coalesce(new_data::text, '') ~* 'dépistage') then
     raise exception 'ÉCHEC : motif recopié dans audit_logs';
   end if;
-  if not exists (select 1 from public.audit_logs where table_name = 'visit_reasons') then
+  if not exists (select 1 from public.audit_logs
+                 where org_id = current_setting('test.org_a')::uuid
+                   and table_name = 'visit_reasons') then
     raise exception 'ÉCHEC : motif non journalisé';
   end if;
   raise notice 'OK : motif journalisé sans sa valeur';
@@ -300,6 +304,18 @@ begin
      <> 'Saturation très basse' then
     raise exception 'ÉCHEC : aperçu des alertes';
   end if;
+  -- Aucune alerte sur une valeur impossible ni sur une tension incomplète.
+  if public.vital_alerts(current_setting('test.p1')::uuid, '{"systolic": 1200, "diastolic": 80}') <> '[]'::jsonb
+     or public.vital_alerts(current_setting('test.p1')::uuid, '{"systolic": 200}') <> '[]'::jsonb
+     or public.vital_alerts(current_setting('test.p1')::uuid, '{"temperature_c": 375}') <> '[]'::jsonb then
+    raise exception 'ÉCHEC : alerte calculée sur une valeur impossible ou une tension incomplète';
+  end if;
+  if (select count(*) from jsonb_object_keys(public.vital_sign_bounds())) <> 9
+     or (public.vital_sign_bounds() -> 'systolic' ->> 'max')::numeric <> 300
+     or (public.vital_sign_bounds() -> 'weight_kg' ->> 'min')::numeric <> 0.3 then
+    raise exception 'ÉCHEC : bornes de vraisemblance : %', public.vital_sign_bounds();
+  end if;
+  raise notice 'OK : bornes lues dans la base ; pas d''alerte sur une valeur impossible ou incomplète';
 
   begin
     update public.vital_signs set systolic = 120 where id = current_setting('test.vs1')::uuid;
@@ -385,11 +401,14 @@ end $$;
 reset role;
 do $$
 begin
-  if exists (select 1 from public.audit_logs where table_name = 'vital_signs'
-             and (new_data ? 'systolic' or old_data is not null)) then
+  -- Lignes de ce test seulement : fajkat-dev contient aussi des données réelles.
+  if exists (select 1 from public.audit_logs
+             where org_id = current_setting('test.org_a')::uuid and table_name = 'vital_signs'
+               and (new_data ? 'systolic' or old_data is not null)) then
     raise exception 'ÉCHEC : valeurs de constantes recopiées dans audit_logs';
   end if;
-  if (select count(*) from public.vital_signs where deleted_at is not null) <> 1 then
+  if (select count(*) from public.vital_signs
+      where org_id = current_setting('test.org_a')::uuid and deleted_at is not null) <> 1 then
     raise exception 'ÉCHEC : mesure annulée effacée';
   end if;
   raise notice 'OK : constantes journalisées sans valeurs, mesure annulée conservée';
@@ -482,10 +501,12 @@ begin
     raise notice 'OK : (Realtime absent : envoi Broadcast non vérifié ici)';
     return;
   end if;
+  -- Le rappel d'A-002 (2e appel) : tous les messages d'une transaction ont la même heure,
+  -- on cherche donc le message attendu plutôt que « le dernier ».
   select payload into v_msg from realtime.messages
    where topic = current_setting('test.topic') and event = 'call'
-   order by inserted_at desc, id desc limit 1;
-  if v_msg is null or v_msg ->> 'ticket_number' <> 'A-002' or v_msg ->> 'initials' <> 'A. S.'
+     and payload ->> 'ticket_number' = 'A-002' and (payload ->> 'call_count')::int = 2;
+  if v_msg is null or v_msg ->> 'initials' <> 'A. S.'
      or v_msg ->> 'room' <> 'Salle de consultation' then
     raise exception 'ÉCHEC : appel non poussé vers l''écran : %', v_msg;
   end if;
@@ -609,8 +630,9 @@ reset role;
 do $$
 begin
   if exists (select 1 from public.visits
-             where public_code !~ '^[0-9a-f]{32}$'
-                or public_code = replace(id::text, '-', '')) then
+             where org_id = current_setting('test.org_a')::uuid
+               and (public_code !~ '^[0-9a-f]{32}$'
+                    or public_code = replace(id::text, '-', ''))) then
     raise exception 'ÉCHEC : jeton du QR trop court ou tiré de l''id du passage';
   end if;
 end $$;

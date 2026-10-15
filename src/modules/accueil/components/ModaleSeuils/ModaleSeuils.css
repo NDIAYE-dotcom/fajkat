@@ -1,0 +1,62 @@
+.modale-seuils {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-5);
+}
+
+.modale-seuils__groupe {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-2);
+}
+
+.modale-seuils__titre {
+  font-family: var(--police-texte);
+  font-size: var(--texte-m);
+  font-weight: 700;
+  color: var(--encre);
+}
+
+.modale-seuils__liste {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: var(--trait);
+}
+
+.modale-seuils__ligne {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--esp-2) var(--esp-4);
+  padding-block: var(--esp-2);
+  border-bottom: var(--trait);
+}
+
+.modale-seuils__ligne--retire .modale-seuils__condition {
+  text-decoration: line-through;
+}
+
+.modale-seuils__texte {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--esp-2) var(--esp-3);
+}
+
+.modale-seuils__condition {
+  font-size: var(--texte-s);
+  color: var(--encre-douce);
+}
+
+.modale-seuils__boutons {
+  display: flex;
+  gap: var(--esp-2);
+}
+
+.modale-seuils__ajout {
+  align-self: flex-start;
+}

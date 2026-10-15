@@ -27,12 +27,18 @@ export default function CarteFile({
   ligne,
   maintenant,
   ecrire,
+  medical,
   horsLigne,
   occupe,
   onAction,
   onGlisser,
 }) {
-  const actions = ecrire ? (ACTIONS[ligne.status] ?? []) : []
+  // Constantes : soignants seulement, tant que le passage n'est pas clos.
+  const constantes =
+    medical && ['waiting', 'vitals', 'consultation'].includes(ligne.status)
+      ? [{ id: 'constantes', libelle: 'Constantes', constantes: true }]
+      : []
+  const actions = [...(ecrire ? (ACTIONS[ligne.status] ?? []) : []), ...constantes]
   const urgence = ligne.priority === 'emergency'
 
   return (
