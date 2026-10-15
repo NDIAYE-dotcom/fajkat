@@ -1,0 +1,5 @@
+.table-import {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-3);
+}

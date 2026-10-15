@@ -1,0 +1,119 @@
+.import-apercu {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-5);
+}
+
+/* Résumé façon fiche, marge colorée à gauche. */
+.import-apercu__resume {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-2);
+  padding: var(--esp-4) var(--esp-5);
+  border: 1px solid var(--doux);
+  border-left: 4px solid var(--accent);
+  border-radius: var(--rayon-panneau);
+  background: var(--fond);
+}
+
+.import-apercu__fichier {
+  overflow-wrap: anywhere;
+}
+
+.import-apercu__compteurs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--esp-1) var(--esp-5);
+  padding: 0;
+  list-style: none;
+  font-size: var(--texte-s);
+  color: var(--encre-douce);
+}
+
+.import-apercu__onglet {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-3);
+}
+
+.import-apercu__barre {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--esp-3);
+}
+
+.import-apercu__boutons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--esp-3);
+}
+
+.import-apercu__doux {
+  font-size: var(--texte-s);
+  color: var(--encre-douce);
+}
+
+.import-apercu__chiffres {
+  font-family: var(--police-mono);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.import-apercu__patient,
+.import-apercu__candidats li {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-1);
+}
+
+.import-apercu__candidats,
+.import-apercu__raisons {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.import-apercu__raisons li::before {
+  content: '— ';
+  color: var(--tampon);
+}
+
+/* Lien vers le dossier existant : cible tactile de 44 px. */
+.import-apercu__lien {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--esp-1);
+  min-height: 44px;
+  color: var(--primaire);
+  font-weight: 700;
+}
+
+.import-apercu__lien:focus-visible {
+  outline: 2px solid var(--primaire);
+  outline-offset: 2px;
+}
+
+.import-apercu__decision {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-1);
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+/* Confirmation : un filet la sépare de l'aperçu, comme le bas d'une page de registre. */
+.import-apercu__confirmation {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--esp-4);
+  padding-top: var(--esp-4);
+  border-top: 1px solid var(--doux);
+}

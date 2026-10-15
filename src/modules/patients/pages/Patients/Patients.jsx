@@ -1,4 +1,4 @@
-import { SearchX, UserPlus } from 'lucide-react'
+import { FileUp, SearchX, UserPlus } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { Navigate, useNavigate, useSearchParams } from 'react-router-dom'
 import Button from '../../../../components/ui/Button/Button.jsx'
@@ -116,7 +116,18 @@ function RegistrePatients() {
           <p className="patients__surtitre">{structure.name}</p>
           <h1 className="patients__titre">Patients</h1>
         </div>
-        {boutonNouveau}
+        <div className="patients__actions">
+          {droits.importer && (
+            <Button
+              variante="secondaire"
+              to="/app/patients/import"
+              iconeDebut={<Icone icone={FileUp} />}
+            >
+              Importer une liste
+            </Button>
+          )}
+          {boutonNouveau}
+        </div>
       </header>
 
       <div className="patients__recherche">

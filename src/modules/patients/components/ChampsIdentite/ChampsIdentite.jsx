@@ -9,7 +9,7 @@ import './ChampsIdentite.css'
 
 // Champs d'identité d'un patient : nom, prénom, sexe, naissance (date exacte, âge déclaré
 // en ans ou en mois ; date estimée avant 5 ans), téléphone et son titulaire, quartier, mère,
-// accord WhatsApp. Les ids des champs sont « {id}-{champ} » (focus sur la première erreur).
+// ancien n° de dossier (registre papier ou carnet), accord WhatsApp. Les ids des champs sont « {id}-{champ} » (focus sur la première erreur).
 export default function ChampsIdentite({ id, saisie, erreurs, onChange }) {
   const telephoneSaisi = Boolean(saisie.telephone)
 
@@ -124,6 +124,21 @@ export default function ChampsIdentite({ id, saisie, erreurs, onChange }) {
           />
         </Field>
       </div>
+
+      <Field
+        id={`${id}-ancienNumero`}
+        label="Ancien n° de dossier (registre ou carnet)"
+        facultatif
+        aide="Le numéro de l’ancien registre papier ou du carnet de santé : il reste cherchable."
+      >
+        <Input
+          autoComplete="off"
+          mono
+          maxLength={40}
+          value={saisie.ancienNumero ?? ''}
+          onChange={(e) => onChange('ancienNumero', e.target.value)}
+        />
+      </Field>
 
       {telephoneSaisi && (
         <Field

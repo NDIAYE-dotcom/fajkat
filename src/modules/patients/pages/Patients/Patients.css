@@ -12,6 +12,12 @@
   gap: var(--esp-4);
 }
 
+.patients__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--esp-3);
+}
+
 .patients__surtitre {
   font-size: var(--texte-s);
   color: var(--encre-douce);

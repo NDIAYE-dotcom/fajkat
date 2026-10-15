@@ -95,6 +95,13 @@ export const router = createBrowserRouter([
                 path: 'patients',
                 lazy: composant(() => import('../modules/patients/pages/Patients/Patients.jsx')),
               },
+              // Import d'une liste de patients (Excel ou CSV) : owner et admin.
+              {
+                path: 'patients/import',
+                lazy: composant(
+                  () => import('../modules/patients/pages/ImportPatients/ImportPatients.jsx'),
+                ),
+              },
               // Fiche d'un patient : lien du registre, de la recherche et du QR de la carte.
               {
                 path: 'patients/:id',

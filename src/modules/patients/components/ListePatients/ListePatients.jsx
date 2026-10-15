@@ -20,7 +20,16 @@ export default function ListePatients({ lignes, chargement, legende, vide, onOuv
     {
       cle: 'file_number',
       titre: 'N° de dossier',
-      rendu: (p) => <span className="liste-patients__chiffres">{p.file_number}</span>,
+      rendu: (p) => (
+        <span className="liste-patients__age">
+          <span className="liste-patients__chiffres">{p.file_number}</span>
+          {p.legacy_file_number && (
+            <span className="liste-patients__doux">
+              ancien n° <span className="liste-patients__chiffres">{p.legacy_file_number}</span>
+            </span>
+          )}
+        </span>
+      ),
     },
     {
       cle: 'age',

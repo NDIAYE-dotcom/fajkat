@@ -69,7 +69,7 @@ export default function OngletIdentite({ patient: p, cle, ecrire }) {
       ),
     ],
     ['Langue préférée', libelleDe(LANGUES, p.preferred_language)],
-    ['Ancien numéro', chiffres(p.legacy_file_number)],
+    ['Ancien n° de dossier', chiffres(p.legacy_file_number)],
     ['Dossier ouvert le', formatDate(p.created_at)],
   ]
 

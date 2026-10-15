@@ -82,6 +82,7 @@ export function patientVersSaisie(p) {
     titulaire: p.phone_owner ?? '',
     quartier: p.neighborhood ?? '',
     mere: p.mother_first_name ?? '',
+    ancienNumero: p.legacy_file_number ?? '',
     consentement: p.whatsapp_consent === null ? '' : p.whatsapp_consent ? 'oui' : 'non',
     telephone2: p.phone_secondary ?? '',
     commune: p.commune ?? '',
@@ -173,7 +174,7 @@ const CHAMPS_JOURNAL = {
     libelle: 'Rappels WhatsApp',
     format: (v) => (v ? 'accepte' : 'refuse'),
   },
-  legacy_file_number: { libelle: 'Ancien numéro' },
+  legacy_file_number: { libelle: 'Ancien n° de dossier' },
 }
 
 function valeurLisible(cle, valeur) {

@@ -49,6 +49,7 @@ export const SAISIE_VIDE = {
   quartier: '',
   mere: '',
   consentement: '',
+  ancienNumero: '',
 }
 
 // --- Affichage ---------------------------------------------------------------
@@ -152,6 +153,7 @@ export function saisieVersPatient(saisie) {
     phone_owner: telephone ? saisie.titulaire : null,
     neighborhood: texte(saisie.quartier),
     mother_first_name: texte(saisie.mere),
+    legacy_file_number: texte(saisie.ancienNumero),
     whatsapp_consent: telephone && saisie.consentement ? saisie.consentement === 'oui' : null,
   }
 }
@@ -200,6 +202,7 @@ const MESSAGES_CONTRAINTES = {
   patients_declared_age_check: 'Âge déclaré invalide (0 à 130 ans).',
   patients_birth_date_check: 'Date de naissance invalide.',
   patients_birth_estimated_check: 'Date de naissance estimée invalide.',
+  patients_legacy_file_number_check: 'Ancien n° de dossier trop long (40 caractères au plus).',
   patients_phone_check: 'Téléphone invalide. Vérifiez le numéro.',
   patients_phone_owner_check: 'Indiquez à qui appartient ce numéro.',
 }

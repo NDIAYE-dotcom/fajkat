@@ -1,0 +1,50 @@
+.import-resultat {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-4);
+  padding: var(--esp-5);
+  border: 1px solid var(--doux);
+  border-left: 4px solid var(--accent);
+  border-radius: var(--rayon-panneau);
+  background: var(--fond);
+}
+
+.import-resultat__bilan {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--esp-4);
+}
+
+.import-resultat__titre {
+  font-size: var(--titre-3);
+  color: var(--primaire);
+}
+
+.import-resultat__progression {
+  width: 100%;
+  height: var(--esp-3);
+  accent-color: var(--primaire);
+}
+
+.import-resultat__compteurs {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-1);
+  padding-left: var(--esp-5);
+  color: var(--encre-douce);
+}
+
+.import-resultat__refus {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-3);
+  padding-top: var(--esp-4);
+  border-top: 1px solid var(--doux);
+}
+
+.import-resultat__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--esp-3);
+}

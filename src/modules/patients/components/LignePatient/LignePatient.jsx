@@ -12,6 +12,7 @@ export default function LignePatient({ patient, className = '' }) {
       `${formatTelephone(patient.phone)}${patient.phone_owner ? ` (${libelleTitulaire(patient.phone_owner)})` : ''}`,
     patient.neighborhood,
     patient.mother_first_name && `mère : ${patient.mother_first_name}`,
+    patient.legacy_file_number && `ancien n° ${patient.legacy_file_number}`,
   ].filter(Boolean)
 
   return (
