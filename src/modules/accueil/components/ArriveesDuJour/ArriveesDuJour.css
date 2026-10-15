@@ -1,0 +1,23 @@
+.arrivees__ticket {
+  font-family: var(--police-mono);
+  font-size: var(--texte-l);
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  color: var(--primaire);
+}
+
+.arrivees__patient {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.arrivees__doux {
+  font-size: var(--texte-s);
+  color: var(--encre-douce);
+}
+
+.arrivees__chiffres {
+  font-family: var(--police-mono);
+  font-variant-numeric: tabular-nums;
+}

@@ -1,0 +1,29 @@
+.ticket-file {
+  display: flex;
+  flex-direction: column;
+  gap: 1mm;
+}
+
+.ticket-file__devant {
+  margin-top: 1mm;
+  text-align: center;
+}
+
+.ticket-file__suivi {
+  display: flex;
+  align-items: center;
+  gap: 3mm;
+}
+
+/* 24 mm : lisible par un téléphone d'entrée de gamme, même sur papier thermique pâli. */
+.ticket-file__qr {
+  flex-shrink: 0;
+  width: 24mm;
+  height: 24mm;
+}
+
+.ticket-file__qr svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}

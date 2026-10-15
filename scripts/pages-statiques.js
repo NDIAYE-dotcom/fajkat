@@ -71,6 +71,7 @@ await writeFile(`${DIST}sitemap.xml`, sitemap)
 const robots = `User-agent: *
 Allow: /
 Disallow: /app
+Disallow: /ticket/
 
 Sitemap: ${new URL('/sitemap.xml', SITE.url).href}
 `

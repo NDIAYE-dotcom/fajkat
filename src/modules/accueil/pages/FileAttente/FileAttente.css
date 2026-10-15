@@ -1,0 +1,23 @@
+.file-attente {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-5);
+}
+
+.file-attente__entete {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--esp-4);
+}
+
+.file-attente__surtitre {
+  font-size: var(--texte-s);
+  color: var(--encre-douce);
+}
+
+.file-attente__titre {
+  font-size: var(--titre-2);
+  color: var(--primaire);
+}

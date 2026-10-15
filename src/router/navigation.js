@@ -120,7 +120,8 @@ export const ENTREES = [
     libelleCourt: 'File',
     icone: ListOrdered,
     feature: 'file_attente',
-    roles: ACCUEIL,
+    // Le caissier enregistre aussi les arrivées : dans un poste, c'est souvent lui qui accueille.
+    roles: [...ACCUEIL, 'caissier'],
     famille: 'parcours_patient',
     mobile: 3,
   },

@@ -1,0 +1,46 @@
+.arrivee {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-5);
+}
+
+.arrivee__bloc {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-3);
+}
+
+.arrivee__titre {
+  font-family: var(--police-texte);
+  font-size: var(--texte-m);
+  font-weight: 700;
+  color: var(--encre);
+}
+
+/* Patient choisi : fiche cartonnée avec la marge colorée des panneaux importants. */
+.arrivee__patient {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--esp-2) var(--esp-4);
+  padding: var(--esp-3) var(--esp-4);
+  border: var(--trait);
+  border-left: 4px solid var(--accent);
+  border-radius: var(--rayon-panneau);
+  background: var(--fond);
+}
+
+.arrivee__choix {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 14rem), 1fr));
+  gap: var(--esp-2) var(--esp-4);
+}
+
+.arrivee__lettre {
+  display: inline-block;
+  min-width: 1.6em;
+  font-family: var(--police-mono);
+  font-weight: 500;
+  color: var(--primaire);
+}

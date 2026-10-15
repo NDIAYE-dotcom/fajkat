@@ -1,0 +1,59 @@
+.choix-patient {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-3);
+}
+
+.choix-patient__aide {
+  font-size: var(--texte-s);
+  color: var(--encre-douce);
+}
+
+.choix-patient__erreur {
+  font-size: var(--texte-s);
+  font-weight: 700;
+  color: var(--tampon);
+}
+
+.choix-patient__liste {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: var(--trait);
+}
+
+.choix-patient__resultat {
+  display: flex;
+  width: 100%;
+  min-height: 44px;
+  padding: var(--esp-3) var(--esp-2);
+  border: 0;
+  border-bottom: var(--trait);
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color var(--duree) var(--courbe);
+}
+
+.choix-patient__resultat:hover {
+  background: var(--surface);
+}
+
+.choix-patient__resultat:focus-visible {
+  outline: 3px solid var(--primaire);
+  outline-offset: -3px;
+}
+
+.choix-patient__nouveau {
+  align-self: flex-start;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .choix-patient__resultat {
+    transition: none;
+  }
+}

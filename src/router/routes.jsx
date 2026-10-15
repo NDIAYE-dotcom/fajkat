@@ -116,6 +116,13 @@ export const router = createBrowserRouter([
                   () => import('../modules/patients/pages/FichePatient/FichePatient.jsx'),
                 ),
               },
+              // Accueil du jour : arrivées, tickets de file.
+              {
+                path: 'file-attente',
+                lazy: composant(
+                  () => import('../modules/accueil/pages/FileAttente/FileAttente.jsx'),
+                ),
+              },
               {
                 path: 'mon-espace',
                 lazy: composant(() => import('../modules/personnel/pages/MonEspace/MonEspace.jsx')),
@@ -128,6 +135,11 @@ export const router = createBrowserRouter([
         ],
       },
     ],
+  },
+  // Suivi d'un ticket de file, ouvert par le QR imprimé : sans connexion, non indexé.
+  {
+    path: '/ticket/:code',
+    lazy: composant(() => import('../pages/public/SuiviTicket/SuiviTicket.jsx')),
   },
   // Vitrine du design system de l'application : accessible, non indexée (noindex, hors sitemap).
   { path: '/atelier', lazy: composant(() => import('../pages/Atelier/Atelier.jsx')) },

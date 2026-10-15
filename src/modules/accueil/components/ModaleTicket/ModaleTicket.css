@@ -1,0 +1,14 @@
+/* Aperçu : le ticket posé sur la table, tel qu'il sortira de l'imprimante. */
+.modale-ticket {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--esp-4);
+  padding: var(--esp-4);
+  border-radius: var(--rayon-panneau);
+  background: var(--surface);
+}
+
+.modale-ticket .ticket-80 {
+  border: var(--trait);
+}

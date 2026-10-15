@@ -16,6 +16,7 @@ Pendant une étape, on corrige seulement les bugs. Toute idée d'amélioration e
 - **Clôture des passages restés ouverts** en fin de journée (patient parti sans être marqué).
 - **Temps d'attente estimé** sur la page de suivi du ticket (QR).
 - **Annonce vocale du numéro** sur l'écran d'appel, en français et en wolof.
+- **Priorité proposée d'après le dossier** à l'arrivée (« Enfant de moins de 5 ans » pré-cochée selon l'âge), avec une règle d'âge paramétrable.
 
 ## Hébergement
 

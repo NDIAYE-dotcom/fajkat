@@ -9,19 +9,11 @@ import Modal from '../../../../components/ui/Modal/Modal.jsx'
 import Skeleton from '../../../../components/ui/Skeleton/Skeleton.jsx'
 import { useOrganization } from '../../../../hooks/useOrganization.js'
 import { imprimer } from '../../../../lib/impression.js'
+import { dessinerQr } from '../../../../lib/qr.js'
 import { chargerStructureCarte, cles } from '../../api.js'
 import { adresseDossier } from '../../fiche.js'
 import CartePatient from '../CartePatient/CartePatient.jsx'
 import './ModaleCarte.css'
-
-// Encre et fond d'impression (tokens) : un QR noir sur blanc se lit partout.
-function couleursQr() {
-  const style = getComputedStyle(document.documentElement)
-  return {
-    dark: style.getPropertyValue('--impression-encre').trim() || undefined,
-    light: style.getPropertyValue('--impression-fond').trim() || undefined,
-  }
-}
 
 // Aperçu de la carte et impression sur une feuille A4. La copie imprimée est rendue hors
 // de la fenêtre (portail) : un <dialog> ne s'imprime pas proprement.
@@ -36,15 +28,7 @@ export default function ModaleCarte({ patient, onFermer }) {
   const qr = useQuery({
     queryKey: ['patients', 'qr', adresse],
     // Bibliothèque chargée à l'ouverture de la carte seulement : la fiche reste légère.
-    queryFn: async () => {
-      const { default: QRCode } = await import('qrcode')
-      return QRCode.toString(adresse, {
-        type: 'svg',
-        margin: 0,
-        errorCorrectionLevel: 'M',
-        color: couleursQr(),
-      })
-    },
+    queryFn: () => dessinerQr(adresse),
     staleTime: Infinity,
   })
 
