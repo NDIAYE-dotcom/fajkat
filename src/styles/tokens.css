@@ -88,6 +88,12 @@
   --impression-fond: #ffffff;
   --impression-filet: 0.5pt solid var(--impression-encre);
   --impression-pointilles: 1pt dashed var(--impression-encre);
+  /* Marges des documents imprimés, posées À L'INTÉRIEUR de la page (print.css) : les
+     marges de @page restent à 0 pour que le navigateur n'imprime ni titre, ni date, ni
+     adresse dans les en-têtes et pieds de page. Haut, côtés, bas. */
+  --impression-marge-a4: 15mm 14mm 16mm;
+  --impression-marge-a5: 10mm 9mm 11mm;
+  --impression-marge-a4-paysage: 10mm 10mm 12mm;
   --ticket-largeur: 72mm; /* zone imprimable d'un rouleau de 80 mm */
 
   /* Mouvement */

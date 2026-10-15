@@ -1,11 +1,11 @@
 import { useEffect, useRef, useState } from 'react'
-import Button from '../../../../components/ui/Button/Button.jsx'
-import Field from '../../../../components/ui/Field/Field.jsx'
-import Message from '../../../../components/ui/Message/Message.jsx'
-import Modal from '../../../../components/ui/Modal/Modal.jsx'
-import Spinner from '../../../../components/ui/Spinner/Spinner.jsx'
+import Button from '../Button/Button.jsx'
+import Field from '../Field/Field.jsx'
+import Message from '../Message/Message.jsx'
+import Modal from '../Modal/Modal.jsx'
+import Spinner from '../Spinner/Spinner.jsx'
 import { chargerImage, dessiner, exporter, geometrie, TAILLE_LOGO } from './image.js'
-import './RecadrageLogo.css'
+import './RecadrageImage.css'
 
 const PAS_CLAVIER = 16
 
@@ -14,9 +14,20 @@ function couleurFond() {
 }
 
 // Recadrage carré simple : glisser l'image (doigt, souris ou flèches du clavier) et zoomer.
-// onValider(blob) envoie le logo ; la fenêtre reste ouverte tant que l'envoi n'a pas réussi.
+// Logo de la structure, photo d'un patient. onValider(blob) envoie l'image ; la fenêtre
+// reste ouverte tant que l'envoi n'a pas réussi.
 // Montée pour un seul fichier (le parent change sa « key ») : l'état repart de zéro.
-export default function RecadrageLogo({ fichier, onFermer, onValider, envoi, erreurEnvoi }) {
+export default function RecadrageImage({
+  fichier,
+  onFermer,
+  onValider,
+  envoi,
+  erreurEnvoi,
+  titre = 'Recadrer le logo',
+  description = 'Le logo est carré. Faites glisser l’image pour la placer, puis ajustez le zoom.',
+  libelleValider = 'Utiliser ce logo',
+  libelleApercu = 'Aperçu du logo',
+}) {
   const refCanvas = useRef(null)
   const glisser = useRef(null)
   const [image, setImage] = useState(null)
@@ -102,31 +113,31 @@ export default function RecadrageLogo({ fichier, onFermer, onValider, envoi, err
       ouvert
       onFermer={onFermer}
       fermerSurVoile={false}
-      titre="Recadrer le logo"
-      description="Le logo est carré. Faites glisser l’image pour la placer, puis ajustez le zoom."
+      titre={titre}
+      description={description}
       actions={
         <>
           <Button variante="secondaire" onClick={onFermer} disabled={envoi || preparation}>
             Annuler
           </Button>
           <Button onClick={surValider} disabled={!image} chargement={envoi || preparation}>
-            Utiliser ce logo
+            {libelleValider}
           </Button>
         </>
       }
     >
-      <div className="recadrage-logo">
-        <div className="recadrage-logo__cadre">
+      <div className="recadrage-image">
+        <div className="recadrage-image__cadre">
           {!image && !erreur && <Spinner libelle="Ouverture de l’image…" taille={28} />}
           <canvas
             ref={refCanvas}
             width={TAILLE_LOGO}
             height={TAILLE_LOGO}
             hidden={!image}
-            className="recadrage-logo__apercu"
+            className="recadrage-image__apercu"
             tabIndex={0}
             role="img"
-            aria-label="Aperçu du logo. Utilisez les flèches du clavier pour déplacer l’image."
+            aria-label={`${libelleApercu}. Utilisez les flèches du clavier pour déplacer l’image.`}
             onPointerDown={surPointeurBas}
             onPointerMove={surPointeurMouvement}
             onPointerUp={() => (glisser.current = null)}
@@ -144,7 +155,7 @@ export default function RecadrageLogo({ fichier, onFermer, onValider, envoi, err
               step="0.05"
               value={zoom}
               onChange={surZoom}
-              className="recadrage-logo__zoom"
+              className="recadrage-image__zoom"
             />
           </Field>
         )}

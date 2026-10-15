@@ -7,11 +7,12 @@ import { useToast } from '../../../../hooks/useToast.js'
 import { chargerFiche, cles } from '../../api.js'
 import { libelleRole } from '../../utils.js'
 import FormulaireFiche from '../FormulaireFiche/FormulaireFiche.jsx'
+import IndicateurSoignant from '../IndicateurSoignant/IndicateurSoignant.jsx'
 import PiecesJointes from '../PiecesJointes/PiecesJointes.jsx'
 import './FicheMembre.css'
 
 // Fiche complète d'un membre, ouverte depuis le registre du personnel (owner et admin).
-export default function FicheMembre({ orgId, membre, onFermer, onModifie }) {
+export default function FicheMembre({ orgId, membre, roleUtilisateur, onFermer, onModifie }) {
   const queryClient = useQueryClient()
   const toast = useToast()
   const cle = cles.fiche(orgId, membre.id)
@@ -28,6 +29,9 @@ export default function FicheMembre({ orgId, membre, onFermer, onModifie }) {
     <Drawer ouvert onFermer={onFermer} titre={`Fiche — ${nom}`}>
       <div className="fiche-membre">
         <p className="fiche-membre__role">{libelleRole(membre.role)}</p>
+        {roleUtilisateur === 'owner' && ['owner', 'admin'].includes(membre.role) && (
+          <IndicateurSoignant orgId={orgId} membre={membre} onModifie={onModifie} />
+        )}
         {fiche.isPending && <Spinner libelle="Chargement de la fiche…" />}
         {fiche.error && (
           <Message ton="erreur" titre="La fiche n’a pas pu être chargée">

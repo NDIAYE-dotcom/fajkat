@@ -1,0 +1,13 @@
+.formulaire-identite {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-4);
+  max-width: 48rem;
+}
+
+.formulaire-identite__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: var(--esp-2);
+}

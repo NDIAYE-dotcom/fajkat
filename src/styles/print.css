@@ -84,20 +84,24 @@
 
 @media print {
   /* Formats de page. A4 par défaut ; A5 et ticket par pages nommées. */
+  /* Marges de page à 0 : sans place pour eux, Chrome et Edge n'impriment plus leurs
+     en-têtes et pieds de page (titre de l'onglet, date, adresse localhost/app/patients/…).
+     Les marges sont posées à l'intérieur, sur l'élément imprimé (voir « Marges
+     intérieures » en fin de fichier), avec les tokens --impression-marge-*. */
   @page {
     size: A4 portrait;
-    margin: 15mm 14mm 16mm;
+    margin: 0;
   }
 
   @page a5 {
     size: A5 portrait;
-    margin: 10mm 9mm 11mm;
+    margin: 0;
   }
 
   /* Planning des gardes, affiché au mur. */
   @page a4-paysage {
     size: A4 landscape;
-    margin: 10mm 10mm 12mm;
+    margin: 0;
   }
 
   /* Ticket : rouleau de 80 mm, sans marges. La hauteur réelle du ticket est fixée au moment
@@ -305,5 +309,27 @@
     margin: 0 !important;
     padding: 0 !important;
     border: 0 !important;
+  }
+
+  /* Marges intérieures. box-decoration-break: clone répète le retrait en haut et en bas
+     de CHAQUE page d'un document long (Chrome 130 et plus, Firefox, Safari), et pas
+     seulement au début et à la fin. Le ticket 80 mm garde ses propres retraits (.ticket-80). */
+  html[data-impression='a4'] [data-imprime],
+  html:not([data-impression]) body {
+    padding: var(--impression-marge-a4);
+    -webkit-box-decoration-break: clone;
+    box-decoration-break: clone;
+  }
+
+  html[data-impression='a5'] [data-imprime] {
+    padding: var(--impression-marge-a5);
+    -webkit-box-decoration-break: clone;
+    box-decoration-break: clone;
+  }
+
+  html[data-impression='a4-paysage'] [data-imprime] {
+    padding: var(--impression-marge-a4-paysage);
+    -webkit-box-decoration-break: clone;
+    box-decoration-break: clone;
   }
 }

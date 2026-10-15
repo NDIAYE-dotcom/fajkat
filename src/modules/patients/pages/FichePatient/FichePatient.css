@@ -1,0 +1,5 @@
+.fiche-patient {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-5);
+}

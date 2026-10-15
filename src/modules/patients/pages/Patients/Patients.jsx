@@ -1,6 +1,6 @@
 import { SearchX, UserPlus } from 'lucide-react'
 import { useEffect, useState } from 'react'
-import { useSearchParams } from 'react-router-dom'
+import { Navigate, useNavigate, useSearchParams } from 'react-router-dom'
 import Button from '../../../../components/ui/Button/Button.jsx'
 import EmptyState from '../../../../components/ui/EmptyState/EmptyState.jsx'
 import Icone from '../../../../components/ui/Icone/Icone.jsx'
@@ -13,7 +13,6 @@ import FeatureRoute from '../../../../router/guards/FeatureRoute/FeatureRoute.js
 import RoleRoute from '../../../../router/guards/RoleRoute/RoleRoute.jsx'
 import { entreeDepuisChemin, offresDeLEntree } from '../../../../router/navigation.js'
 import { PAR_PAGE } from '../../api.js'
-import ApercuPatient from '../../components/ApercuPatient/ApercuPatient.jsx'
 import ListePatients from '../../components/ListePatients/ListePatients.jsx'
 import ModaleNouveauPatient from '../../components/ModaleNouveauPatient/ModaleNouveauPatient.jsx'
 import { usePermissionsPatients } from '../../hooks/usePermissionsPatients.js'
@@ -44,17 +43,19 @@ function pluriel(n, mot) {
   return `${n} ${mot}${n > 1 ? 's' : ''}`
 }
 
-// Registre des patients. L'adresse porte l'état : ?q= (recherche), ?page=, ?patient=<id>
-// (aperçu ouvert), ?nouveau=1 (création) — la recherche de l'en-tête y mène.
+// Registre des patients. L'adresse porte l'état : ?q= (recherche), ?page=, ?nouveau=1
+// (création) — la recherche de l'en-tête y mène. Un patient s'ouvre dans sa fiche
+// (/app/patients/<id>) ; l'ancien ?patient=<id> y redirige.
 function RegistrePatients() {
   const { structure } = useOrganization()
   const toast = useToast()
   const orgId = structure.id
   const droits = usePermissionsPatients(orgId)
+  const naviguer = useNavigate()
   const [parametres, setParametres] = useSearchParams()
   const [saisie, setSaisie] = useState(() => parametres.get('q') ?? '')
   const page = Math.max(1, Number(parametres.get('page')) || 1)
-  const patientOuvert = parametres.get('patient')
+  const ancienLien = parametres.get('patient')
   const creation = parametres.get('nouveau') === '1' && droits.ecrire
 
   const recherche = useRecherchePatients(orgId, saisie, { page })
@@ -91,6 +92,8 @@ function RegistrePatients() {
     setQVu(valeur.trim())
     changer({ q: valeur.trim(), page: null })
   }
+
+  if (ancienLien) return <Navigate to={`/app/patients/${ancienLien}`} replace />
 
   const enRecherche = requeteSuffisante(saisie)
   let resume = 'Derniers dossiers ouverts'
@@ -144,7 +147,7 @@ function RegistrePatients() {
             lignes={recherche.lignes}
             chargement={recherche.chargement}
             legende={resume}
-            onOuvrir={(id) => changer({ patient: id })}
+            onOuvrir={(id) => naviguer(`/app/patients/${id}`)}
             vide={
               <EmptyState
                 icone={SearchX}
@@ -174,22 +177,13 @@ function RegistrePatients() {
           orgId={orgId}
           ouvert
           onFermer={() => changer({ nouveau: null })}
-          onOuvrir={(id) => changer({ nouveau: null, patient: id })}
+          onOuvrir={(id) => naviguer(`/app/patients/${id}`)}
           onCree={(patient) => {
             toast.succes(`Dossier ${patient.file_number} créé`, {
               message: `${patient.first_name} ${patient.last_name} est inscrit au registre.`,
             })
-            changer({ nouveau: null, patient: patient.id })
+            naviguer(`/app/patients/${patient.id}`)
           }}
-        />
-      )}
-
-      {patientOuvert && (
-        <ApercuPatient
-          key={patientOuvert}
-          orgId={orgId}
-          patientId={patientOuvert}
-          onFermer={() => changer({ patient: null })}
         />
       )}
     </div>

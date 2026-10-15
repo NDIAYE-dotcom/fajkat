@@ -1,0 +1,55 @@
+.onglet-couvertures {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-4);
+  max-width: 48rem;
+}
+
+.onglet-couvertures__liste {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.onglet-couvertures__ligne {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--esp-2) var(--esp-3);
+  padding: var(--esp-3) 0;
+  border-bottom: 1px solid var(--doux);
+}
+
+.onglet-couvertures__texte {
+  display: flex;
+  flex: 1 1 16rem;
+  flex-direction: column;
+  gap: var(--esp-1);
+  min-width: 0;
+}
+
+.onglet-couvertures__titre {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--esp-2);
+  font-weight: 700;
+  color: var(--encre);
+}
+
+.onglet-couvertures__details {
+  font-size: var(--texte-s);
+  color: var(--encre-douce);
+}
+
+.onglet-couvertures__chiffres {
+  font-family: var(--police-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+.onglet-couvertures__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--esp-2);
+}

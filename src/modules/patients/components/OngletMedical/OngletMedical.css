@@ -1,0 +1,60 @@
+.onglet-medical {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-4);
+  max-width: 48rem;
+}
+
+.onglet-medical__entete {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--esp-3);
+}
+
+.onglet-medical__maj {
+  font-size: var(--texte-s);
+  color: var(--encre-douce);
+}
+
+.onglet-medical__liste {
+  margin: 0;
+}
+
+.onglet-medical__ligne {
+  display: grid;
+  grid-template-columns: minmax(8rem, 35%) 1fr;
+  gap: var(--esp-3);
+  padding: var(--esp-2) 0;
+  border-bottom: 1px solid var(--doux);
+}
+
+.onglet-medical__terme {
+  font-size: var(--texte-s);
+  color: var(--encre-douce);
+}
+
+.onglet-medical__valeur {
+  margin: 0;
+  color: var(--encre);
+  white-space: pre-line;
+  overflow-wrap: anywhere;
+}
+
+.onglet-medical__vide {
+  color: var(--encre-douce);
+}
+
+.onglet-medical__masque {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--esp-2);
+  color: var(--encre-douce);
+}
+
+.onglet-medical__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: var(--esp-2);
+}

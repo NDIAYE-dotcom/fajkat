@@ -15,6 +15,7 @@ export function usePermissionsPatients(orgId) {
     lire: Boolean(droits.read),
     ecrire: Boolean(droits.write),
     medical: Boolean(droits.medical),
+    sensible: Boolean(droits.sensitive),
     fusionner: Boolean(droits.merge),
     importer: Boolean(droits.import),
     chargement: requete.isPending,

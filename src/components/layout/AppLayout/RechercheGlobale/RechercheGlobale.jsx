@@ -88,7 +88,7 @@ export default function RechercheGlobale() {
 
   function choisir(option) {
     const q = valeur.trim()
-    if (option.type === 'patient') naviguer(`/app/patients?patient=${option.patient.id}`)
+    if (option.type === 'patient') naviguer(`/app/patients/${option.patient.id}`)
     else if (option.type === 'tous') naviguer(`/app/patients?q=${encodeURIComponent(q)}`)
     else naviguer('/app/patients?nouveau=1')
     setValeur('')

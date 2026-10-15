@@ -1,0 +1,39 @@
+.onglet-identite {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-5);
+}
+
+/* Liste façon registre : filets horizontaux fins. */
+.onglet-identite__liste {
+  margin: 0;
+  max-width: 48rem;
+}
+
+.onglet-identite__ligne {
+  display: grid;
+  grid-template-columns: minmax(8rem, 35%) 1fr;
+  gap: var(--esp-3);
+  padding: var(--esp-2) 0;
+  border-bottom: 1px solid var(--doux);
+}
+
+.onglet-identite__terme {
+  font-size: var(--texte-s);
+  color: var(--encre-douce);
+}
+
+.onglet-identite__valeur {
+  margin: 0;
+  color: var(--encre);
+  overflow-wrap: anywhere;
+}
+
+.onglet-identite__vide {
+  color: var(--encre-douce);
+}
+
+.onglet-identite__chiffres {
+  font-family: var(--police-mono);
+  font-variant-numeric: tabular-nums;
+}

@@ -95,6 +95,13 @@ export const router = createBrowserRouter([
                 path: 'patients',
                 lazy: composant(() => import('../modules/patients/pages/Patients/Patients.jsx')),
               },
+              // Fiche d'un patient : lien du registre, de la recherche et du QR de la carte.
+              {
+                path: 'patients/:id',
+                lazy: composant(
+                  () => import('../modules/patients/pages/FichePatient/FichePatient.jsx'),
+                ),
+              },
               {
                 path: 'mon-espace',
                 lazy: composant(() => import('../modules/personnel/pages/MonEspace/MonEspace.jsx')),

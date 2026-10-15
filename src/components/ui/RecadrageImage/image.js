@@ -1,4 +1,4 @@
-// Recadrage carré et compression du logo, sans bibliothèque : un <canvas> suffit.
+// Recadrage carré et compression d’une image (logo, photo d’identité), sans bibliothèque : un <canvas> suffit.
 
 export const TAILLE_LOGO = 512 // pixels : net à l'impression d'un en-tête A4, léger à envoyer
 const QUALITE = 0.85

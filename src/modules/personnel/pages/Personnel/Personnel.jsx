@@ -194,6 +194,7 @@ function PagePersonnel() {
           key={ficheOuverte.id}
           orgId={orgId}
           membre={ficheOuverte}
+          roleUtilisateur={role}
           onFermer={() => setFicheOuverte(null)}
           onModifie={() => queryClient.invalidateQueries({ queryKey: cles.membres(orgId) })}
         />

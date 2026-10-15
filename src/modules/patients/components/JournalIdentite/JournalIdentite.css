@@ -1,0 +1,50 @@
+.journal-identite {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-2);
+  max-width: 48rem;
+}
+
+.journal-identite__titre {
+  font-size: var(--titre-3);
+  color: var(--primaire);
+}
+
+.journal-identite__aide {
+  font-size: var(--texte-s);
+  color: var(--encre-douce);
+}
+
+.journal-identite__liste {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.journal-identite__entree {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-1);
+  padding: var(--esp-3) 0;
+  border-bottom: 1px solid var(--doux);
+}
+
+.journal-identite__quand {
+  font-size: var(--texte-s);
+  color: var(--encre-douce);
+}
+
+.journal-identite__date {
+  font-family: var(--police-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+.journal-identite__changements {
+  margin: 0;
+  padding-left: var(--esp-4);
+  overflow-wrap: anywhere;
+}
+
+.journal-identite__champ {
+  font-weight: 700;
+}

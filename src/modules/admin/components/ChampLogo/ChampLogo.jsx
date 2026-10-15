@@ -3,7 +3,7 @@ import { useId, useRef, useState } from 'react'
 import Button from '../../../../components/ui/Button/Button.jsx'
 import Icone from '../../../../components/ui/Icone/Icone.jsx'
 import { envoyerLogo } from '../../api.js'
-import RecadrageLogo from '../RecadrageLogo/RecadrageLogo.jsx'
+import RecadrageImage from '../../../../components/ui/RecadrageImage/RecadrageImage.jsx'
 import './ChampLogo.css'
 
 // Au-delà, la photo est sans doute mal choisie (et lourde à ouvrir sur un petit téléphone).
@@ -91,7 +91,7 @@ export default function ChampLogo({ orgId, value, onChange }) {
         </p>
       )}
       {fichier && (
-        <RecadrageLogo
+        <RecadrageImage
           key={numero}
           fichier={fichier}
           onFermer={() => !envoi && setFichier(null)}

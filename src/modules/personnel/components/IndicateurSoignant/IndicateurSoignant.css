@@ -1,0 +1,12 @@
+.indicateur-soignant {
+  padding: var(--esp-3) var(--esp-4);
+  border: var(--trait);
+  border-radius: var(--rayon-panneau);
+  background: var(--surface);
+}
+
+.indicateur-soignant__confirmation {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-3);
+}

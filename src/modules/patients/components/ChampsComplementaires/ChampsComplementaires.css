@@ -1,0 +1,24 @@
+.champs-complementaires__ligne {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+  gap: var(--esp-4) var(--esp-3);
+  align-items: start;
+}
+
+.champs-complementaires__groupe {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-4);
+  margin: 0;
+  padding: var(--esp-4) 0 0;
+  border: 0;
+  border-top: var(--trait);
+}
+
+.champs-complementaires__legende {
+  padding: 0;
+  font-family: var(--police-titre);
+  font-size: var(--texte-l);
+  font-weight: 600;
+  color: var(--encre);
+}

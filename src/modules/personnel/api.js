@@ -52,12 +52,12 @@ async function erreurFonction(error, repli) {
 
 // --- Membres -----------------------------------------------------------------
 
-// [{ id, user_id, role, is_active, created_at, invited_by, profil, inviteur }]
+// [{ id, user_id, role, is_active, is_clinician, created_at, invited_by, profil, inviteur }]
 export async function chargerMembres(orgId) {
   const { data, error } = await client()
     .from('memberships')
     .select(
-      'id, user_id, role, is_active, created_at, invited_by, ' +
+      'id, user_id, role, is_active, is_clinician, created_at, invited_by, ' +
         'profil:profiles!memberships_user_id_fkey (full_name, phone, title), ' +
         'inviteur:profiles!memberships_invited_by_fkey (full_name), ' +
         'fiches:staff_files (job_title, phone, deleted_at)',
@@ -84,6 +84,17 @@ export async function modifierMembre(membreId, champs) {
   if (!data?.length) {
     throw new Error('Vous n’avez pas les droits nécessaires pour modifier ce membre.')
   }
+}
+
+// Indicateur « exerce une profession soignante » d'un owner ou d'un admin : accès aux
+// données médicales des patients. Réservé au propriétaire ; journalisé par la base.
+export async function definirSoignant(membreId, valeur) {
+  const { data, error } = await client().rpc('set_member_clinician', {
+    p_membership_id: membreId,
+    p_value: valeur,
+  })
+  if (error) throw traduireErreur(error, 'Le réglage n’a pas pu être enregistré. Réessayez.')
+  return data
 }
 
 // { max_users (null = illimité), active_members, valid_invitations }

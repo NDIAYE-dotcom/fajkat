@@ -1,0 +1,12 @@
+.modale-couverture {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-4);
+}
+
+.modale-couverture__ligne {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));
+  gap: var(--esp-4) var(--esp-3);
+  align-items: start;
+}
