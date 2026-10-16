@@ -1,0 +1,25 @@
+.grille-formulaire {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 12rem), 1fr));
+  align-items: start;
+  gap: var(--esp-3) var(--esp-4);
+  flex-basis: 100%;
+}
+
+.grille-formulaire__large,
+.grille-formulaire__erreur,
+.grille-formulaire__boutons {
+  grid-column: 1 / -1;
+}
+
+.grille-formulaire__erreur {
+  font-size: var(--texte-s);
+  font-weight: 700;
+  color: var(--tampon);
+}
+
+.grille-formulaire__boutons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--esp-2);
+}

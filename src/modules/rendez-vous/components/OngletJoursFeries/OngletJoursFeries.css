@@ -1,0 +1,18 @@
+.onglet-jours-feries__annee {
+  display: flex;
+  align-items: center;
+  gap: var(--esp-3);
+}
+
+.onglet-jours-feries__titre-annee {
+  min-width: 4ch;
+  font-family: var(--police-mono);
+  font-size: var(--texte-l);
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+  color: var(--primaire);
+}
+
+.onglet-jours-feries__fixes {
+  align-self: flex-start;
+}

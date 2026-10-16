@@ -1,0 +1,27 @@
+.panneau-reglages {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-4);
+}
+
+.panneau-reglages__intro {
+  max-width: var(--largeur-texte);
+  color: var(--encre-douce);
+}
+
+.panneau-reglages__nouveau {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-3);
+}
+
+.panneau-reglages__titre {
+  font-family: var(--police-texte);
+  font-size: var(--texte-m);
+  font-weight: 700;
+  color: var(--encre);
+}
+
+.panneau-reglages__ajout {
+  align-self: flex-start;
+}

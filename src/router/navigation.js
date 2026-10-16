@@ -140,7 +140,8 @@ export const ENTREES = [
     libelle: 'Rendez-vous',
     icone: CalendarClock,
     feature: 'rendez_vous',
-    roles: ACCUEIL,
+    // Le caissier organise aussi l'agenda (il accueille souvent) ; la note reste aux soignants.
+    roles: [...ACCUEIL, 'caissier'],
     famille: 'parcours_patient',
   },
   {

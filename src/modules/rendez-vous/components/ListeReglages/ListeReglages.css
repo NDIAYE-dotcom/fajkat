@@ -1,0 +1,63 @@
+.liste-reglages {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-2);
+}
+
+.liste-reglages__titre {
+  font-family: var(--police-texte);
+  font-size: var(--texte-m);
+  font-weight: 700;
+  color: var(--encre);
+}
+
+.liste-reglages__liste {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: var(--trait);
+}
+
+.liste-reglages__ligne {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--esp-2) var(--esp-4);
+  padding-block: var(--esp-2);
+  border-bottom: var(--trait);
+}
+
+.liste-reglages__texte {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-1);
+  min-width: 0;
+}
+
+.liste-reglages__principal {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--esp-2) var(--esp-3);
+  font-weight: 700;
+  color: var(--encre);
+}
+
+.liste-reglages__detail {
+  font-size: var(--texte-s);
+  color: var(--encre-douce);
+}
+
+.liste-reglages__ligne--retire .liste-reglages__principal,
+.liste-reglages__ligne--retire .liste-reglages__detail {
+  text-decoration: line-through;
+}
+
+.liste-reglages__boutons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--esp-2);
+}
