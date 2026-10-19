@@ -27,6 +27,13 @@ Pendant une étape, on corrige seulement les bugs. Toute idée d'amélioration e
 - **Prestation « Planification familiale » dans Paramètres → Services** (étape 7) : son nom pourra apparaître à la caisse et sur les reçus. À traiter avec la caisse : libellé neutre sur le reçu, ou prestation marquée discrète.
 - **Série de rendez-vous** (« tous les 3 mois » pour la PF) dans la fenêtre de prise : la base la gère déjà (book_appointment, p_count) ; l'écran viendra avec la partie E.
 
+## Consultation et dossier médical (étape 14)
+
+- **À FAIRE AVANT LA MISE EN PRODUCTION : faire relire le catalogue des diagnostics par un soignant** (migration `20261020100000_etape14_catalogue.sql`, table `diagnoses_catalog`) : libellés et codes CIM-10, liste et délais des maladies à déclaration obligatoire (à comparer avec la liste nationale du ministère de la Santé), diagnostics marqués sensibles. Corrections par une nouvelle migration ; les consultations déjà validées gardent le code et le libellé du jour.
+  - **Question pour le soignant relecteur** : l'épilepsie (G40.9) et la tuberculose (A15.0, A16.2) doivent-elles être marquées sensibles, vu la forte stigmatisation au Sénégal ? Elles ne le sont pas aujourd'hui.
+- **Examens rapides et types de consultation par défaut** (TDR VIH et syphilis sensibles, test de grossesse non sensible, PF et dépistage sensibles d'office) : à faire valider par un soignant en même temps que le catalogue.
+- **Ordonnance depuis le catalogue de la pharmacie** avec le stock visible : étape 17 (clé étrangère sur `prescription_items.product_id`, contrôle du produit dans `encounter_insert_prescription`, lecture de l'ordonnance sans diagnostic par le pharmacien).
+
 ## Hébergement
 
 - **Passer à l'offre Pro de Supabase avant une mise en production à grande échelle** : l'offre gratuite limite Realtime à 200 connexions simultanées, en comptant le personnel connecté (tableau de la salle d'attente, cloche) et les écrans d'appel.
