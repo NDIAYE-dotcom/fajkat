@@ -1,0 +1,63 @@
+.jauge-seance {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-1);
+  padding: var(--esp-2) var(--esp-3);
+  border-left: 3px solid var(--accent);
+  background: var(--surface);
+  border-radius: 0 var(--rayon-champ) var(--rayon-champ) 0;
+}
+
+.jauge-seance__ligne {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--esp-1) var(--esp-3);
+}
+
+.jauge-seance__titre {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 var(--esp-2);
+  flex: 1 1 8rem;
+  min-width: 0;
+  overflow-wrap: break-word;
+  font-weight: 700;
+  color: var(--encre);
+}
+
+.jauge-seance__plage,
+.jauge-seance__compte {
+  font-family: var(--police-mono);
+  font-size: var(--texte-s);
+  font-variant-numeric: tabular-nums;
+  font-weight: 400;
+  color: var(--encre-douce);
+}
+
+.jauge-seance__compte {
+  white-space: nowrap;
+  color: var(--encre);
+}
+
+.jauge-seance__barre {
+  block-size: 6px;
+  background: var(--fond);
+  border: 1px solid var(--doux);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.jauge-seance__rempli {
+  display: block;
+  block-size: 100%;
+  background: var(--primaire);
+}
+
+.jauge-seance--pleine {
+  border-left-color: var(--tampon);
+}
+
+.jauge-seance--pleine .jauge-seance__rempli {
+  background: var(--tampon);
+}

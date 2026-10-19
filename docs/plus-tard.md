@@ -21,6 +21,10 @@ Pendant une étape, on corrige seulement les bugs. Toute idée d'amélioration e
 - **Code court d'appairage pour l'écran d'appel** (6 chiffres à saisir sur la télévision, valable quelques minutes) : taper un lien long avec une télécommande est pénible.
 - **Priorité proposée d'après le dossier** à l'arrivée (« Enfant de moins de 5 ans » pré-cochée selon l'âge), avec une règle d'âge paramétrable.
 
+## Rendez-vous et agenda (étape 13)
+
+- **Nom de la file « Planification familiale » visible à l'accueil** (étape 12 : tableau de la salle d'attente, fenêtre d'arrivée, arrivées du jour). L'agenda le masque déjà (libellé « Rendez-vous ») ; la file d'attente, non. À décider : renommer la file par défaut, ou la marquer discrète comme les types de rendez-vous.
+
 ## Hébergement
 
 - **Passer à l'offre Pro de Supabase avant une mise en production à grande échelle** : l'offre gratuite limite Realtime à 200 connexions simultanées, en comptant le personnel connecté (tableau de la salle d'attente, cloche) et les écrans d'appel.

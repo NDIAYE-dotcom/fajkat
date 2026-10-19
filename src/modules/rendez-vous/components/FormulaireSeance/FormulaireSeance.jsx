@@ -7,9 +7,10 @@ import GrilleFormulaire from '../GrilleFormulaire/GrilleFormulaire.jsx'
 
 const HEURE = /^([01]\d|2[0-3]):[0-5]\d$/
 
-function versSaisie(s, types) {
+function versSaisie(s) {
   return {
-    type: s?.appointment_type_id ?? types[0]?.id ?? '',
+    // Jamais pré-rempli : un type choisi par défaut se valide sans le voir.
+    type: s?.appointment_type_id ?? '',
     jour: String(s?.weekday ?? 1),
     debut: heureCourte(s?.start_time) || '08:00',
     fin: heureCourte(s?.end_time) || '12:00',
@@ -29,7 +30,7 @@ export default function FormulaireSeance({
   onEnregistrer,
   onAnnuler,
 }) {
-  const [s, setS] = useState(() => versSaisie(seance, types))
+  const [s, setS] = useState(() => versSaisie(seance))
   const [erreurs, setErreurs] = useState({})
   const maj = (champ) => (e) => setS((p) => ({ ...p, [champ]: e.target.value }))
 
@@ -69,6 +70,8 @@ export default function FormulaireSeance({
         <Select
           value={s.type}
           onChange={maj('type')}
+          placeholder="Choisissez un type"
+          required
           options={types.map((t) => ({ valeur: t.id, libelle: t.label }))}
         />
       </Field>

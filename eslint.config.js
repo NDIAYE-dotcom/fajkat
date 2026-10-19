@@ -7,7 +7,12 @@ import globals from 'globals'
 
 // Configuration ESLint en JavaScript pur : aucune règle TypeScript.
 export default defineConfig([
-  globalIgnores(['dist', 'supabase/functions']),
+  globalIgnores(['dist', 'supabase/functions', 'test-results', 'playwright-report']),
+  // Tests de bout en bout et leur configuration : exécutés par Node (Playwright).
+  {
+    files: ['e2e/**/*.js', 'playwright.config.js'],
+    languageOptions: { globals: { ...globals.node, ...globals.browser } },
+  },
   {
     files: ['**/*.{js,jsx}'],
     extends: [

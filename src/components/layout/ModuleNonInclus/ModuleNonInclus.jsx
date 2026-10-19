@@ -30,8 +30,9 @@ export default function ModuleNonInclus({ libelle, raison, offres = [] }) {
   let action = retour
 
   if (raison === 'role') {
-    titre = 'Accès réservé'
-    texte = `Votre rôle (${ROLES[role] ?? role}) ne donne pas accès au module « ${libelle} ». Si vous en avez besoin, demandez-le au responsable de votre structure.`
+    // « Non inclus » est réservé aux modules hors offre.
+    titre = 'Cette page n’est pas accessible avec votre rôle.'
+    texte = `Votre rôle (${ROLES[role] ?? role}) ne donne pas accès à « ${libelle} ». Si vous en avez besoin, demandez-le au responsable de votre structure.`
   } else {
     const autre = offres.find((type) => type !== structure.type)
     const offre = getOffre(autre)

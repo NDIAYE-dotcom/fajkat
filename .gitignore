@@ -28,3 +28,7 @@ dist-ssr
 .env.*
 !.env.example
 !.env.*.example
+# Tests de bout en bout (Playwright) : captures et rapports locaux
+e2e/captures/
+test-results/
+playwright-report/

@@ -1,0 +1,70 @@
+.ligne-rdv-compacte {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--esp-2);
+  border-bottom: var(--trait);
+}
+
+.ligne-rdv-compacte__lien {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-width: 0;
+  min-height: 44px;
+  padding-block: var(--esp-1);
+  color: var(--encre);
+  text-decoration: none;
+}
+
+.ligne-rdv-compacte__lien:hover .ligne-rdv-compacte__nom {
+  text-decoration: underline;
+}
+
+.ligne-rdv-compacte__lien:focus-visible {
+  outline: 2px solid var(--primaire);
+  outline-offset: 2px;
+}
+
+.ligne-rdv-compacte__ligne {
+  display: flex;
+  gap: var(--esp-2);
+  min-width: 0;
+}
+
+.ligne-rdv-compacte__heure {
+  flex: none;
+  font-family: var(--police-mono);
+  font-size: var(--texte-s);
+  font-variant-numeric: tabular-nums;
+  color: var(--encre-douce);
+}
+
+/* Tronqué proprement : jamais de mot coupé, jamais de débordement. */
+.ligne-rdv-compacte__nom,
+.ligne-rdv-compacte__detail {
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.ligne-rdv-compacte__nom {
+  font-weight: 700;
+  color: var(--primaire);
+}
+
+.ligne-rdv-compacte__detail {
+  font-size: var(--texte-xs);
+  color: var(--encre-douce);
+}
+
+.ligne-rdv-compacte__tampon {
+  font-size: var(--texte-xs);
+}
+
+.ligne-rdv-compacte--clos .ligne-rdv-compacte__nom,
+.ligne-rdv-compacte--clos .ligne-rdv-compacte__heure {
+  text-decoration: line-through;
+  color: var(--encre-douce);
+}

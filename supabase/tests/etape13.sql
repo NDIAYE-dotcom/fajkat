@@ -16,7 +16,7 @@
 --
 -- Chaque vérification affiche « OK : … ». Au premier échec, une erreur
 -- « ÉCHEC : … » interrompt le script.
--- Prérequis : migrations des étapes 3 à 13 appliquées.
+-- Prérequis : migrations des étapes 3 à 13 appliquées (dont etape13c_discretion).
 -- =============================================================================
 
 begin;
@@ -67,7 +67,8 @@ $$;
 create function pg_temp.a(p_jours integer, p_heure text) returns timestamptz language sql as $$
   select ((current_setting('test.j')::date + p_jours) + p_heure::time) at time zone 'Africa/Dakar';
 $$;
-create function pg_temp.type_a(p_code text) returns uuid language sql as $$
+-- Security definer : retrouve aussi les types discrets, cachés à l'accueil (etape13c).
+create function pg_temp.type_a(p_code text) returns uuid language sql security definer as $$
   select id from public.appointment_types
    where org_id = current_setting('test.org_a')::uuid and template_code = p_code;
 $$;
@@ -181,8 +182,11 @@ begin
     exception when insufficient_privilege then
       null;
     end;
+    -- Types discrets (PF, Dépistage, Dépistage IST) cachés à l'accueil et au caissier
+    -- (etape13c_discretion).
     if (select count(*) from public.appointment_types
-        where org_id = current_setting('test.org_a')::uuid) <> 7 then
+        where org_id = current_setting('test.org_a')::uuid)
+       <> (case when v_code = '0c' then 7 else 4 end) then
       raise exception 'ÉCHEC : le rôle % ne lit pas les types', v_code;
     end if;
   end loop;

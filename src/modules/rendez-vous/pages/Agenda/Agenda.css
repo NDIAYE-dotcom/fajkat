@@ -1,0 +1,45 @@
+.agenda {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-5);
+}
+
+.agenda__entete {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--esp-4);
+}
+
+.agenda__surtitre {
+  font-size: var(--texte-s);
+  color: var(--encre-douce);
+}
+
+.agenda__titre {
+  font-size: var(--titre-2);
+  color: var(--primaire);
+}
+
+.agenda__marques {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--esp-2);
+}
+
+.agenda__marques:empty {
+  display: none;
+}
+
+/* Période suivante en cours de chargement : l'ancienne reste lisible, atténuée. */
+.agenda__contenu--attente {
+  opacity: 0.6;
+  transition: opacity var(--duree) var(--courbe);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .agenda__contenu--attente {
+    transition: none;
+  }
+}

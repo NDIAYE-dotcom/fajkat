@@ -131,6 +131,11 @@ export const router = createBrowserRouter([
                     import('../modules/accueil/pages/TicketsConsultation/TicketsConsultation.jsx'),
                 ),
               },
+              // Agenda des rendez-vous : jour, semaine, liste.
+              {
+                path: 'rendez-vous',
+                lazy: composant(() => import('../modules/rendez-vous/pages/Agenda/Agenda.jsx')),
+              },
               // Paramètres de l'agenda (owner et admin) : types, séances, pauses, jours fériés.
               {
                 path: 'rendez-vous/parametres',

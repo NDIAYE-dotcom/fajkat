@@ -6,8 +6,10 @@ import Select from '../../../../components/ui/Select/Select.jsx'
 import { lireEntier } from '../../utils.js'
 import GrilleFormulaire from '../GrilleFormulaire/GrilleFormulaire.jsx'
 
+// Même liste que appointment_label_is_discreet() en base : un filet de sécurité, la case
+// « Type discret » reste le vrai réglage.
 const MOTS_DISCRETS =
-  /(d[ée]pistage|planification|contracep|\bpf\b|\bvih\b|\bptme\b|\bist\b|\bsida\b)/i
+  /(d[eéEÉ]pistage|planification|contracep|\bpf\b|\bvih\b|\bptme\b|\bist\b|\bsida\b|sant[eéEÉ] mentale|\bpsy|avortement|\bsaa\b|\bvbg\b|violence)/i
 
 function versSaisie(t) {
   return {

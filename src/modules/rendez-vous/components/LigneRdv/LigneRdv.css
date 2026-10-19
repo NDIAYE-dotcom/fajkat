@@ -1,0 +1,70 @@
+.ligne-rdv {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: start;
+  gap: var(--esp-1) var(--esp-3);
+  padding-block: var(--esp-2);
+  border-bottom: var(--trait);
+}
+
+.ligne-rdv__heure {
+  padding-top: 0.1em;
+  font-family: var(--police-mono);
+  font-size: var(--texte-s);
+  font-variant-numeric: tabular-nums;
+  color: var(--encre-douce);
+}
+
+.ligne-rdv__corps {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.ligne-rdv__nom {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  margin-block: calc(var(--esp-2) * -1);
+  font-weight: 700;
+  color: var(--primaire);
+  text-decoration: none;
+  overflow-wrap: break-word;
+}
+
+.ligne-rdv__nom:hover {
+  text-decoration: underline;
+}
+
+.ligne-rdv__identite {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 var(--esp-2);
+  font-size: var(--texte-s);
+  color: var(--encre);
+}
+
+.ligne-rdv__identite:empty {
+  display: none;
+}
+
+.ligne-rdv__dossier {
+  white-space: nowrap;
+  font-family: var(--police-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+.ligne-rdv__detail {
+  font-size: var(--texte-s);
+  color: var(--encre-douce);
+}
+
+.ligne-rdv__tampon {
+  align-self: center;
+}
+
+.ligne-rdv--clos .ligne-rdv__nom,
+.ligne-rdv--clos .ligne-rdv__heure {
+  text-decoration: line-through;
+  color: var(--encre-douce);
+}

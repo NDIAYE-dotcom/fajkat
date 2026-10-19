@@ -1,6 +1,8 @@
 import { useState } from 'react'
+import Button from '../../../../components/ui/Button/Button.jsx'
 import { useEnLigne } from '../../../../hooks/useEnLigne.js'
-import { ajouterSeance, cles, modifierSeance } from '../../api.js'
+import { aujourdhui } from '../../agenda.js'
+import { ajouterSeance, cles, compterRdvAVenirSeance, modifierSeance } from '../../api.js'
 import { useActionReglage } from '../../hooks/useActionReglage.js'
 import { usePraticiens, useSeances, useTypesRdv } from '../../hooks/useParametresAgenda.js'
 import { heureCourte, JOURS_SEMAINE } from '../../utils.js'
@@ -17,10 +19,24 @@ export default function OngletSeances({ orgId, multiPraticiens }) {
   const praticiens = usePraticiens(orgId, multiPraticiens)
   const { agir, occupe, erreur } = useActionReglage(cles.seances(orgId))
   const [edition, setEdition] = useState(null)
+  const [retrait, setRetrait] = useState(null) // { id, nombre } : retrait à confirmer
   const typesActifs = (types.data ?? []).filter((t) => t.is_active)
   const listePraticiens = multiPraticiens ? (praticiens.data ?? []) : null
   const nomType = (id) => types.data?.find((t) => t.id === id)?.label ?? 'Type retiré'
   const nomPraticien = (id) => praticiens.data?.find((p) => p.id === id)?.nom ?? 'Praticien inactif'
+
+  // Retirer une séance qui a des rendez-vous à venir : on prévient d'abord, avec leur
+  // nombre et ce qu'ils deviennent. Remettre une séance : la base refuse un chevauchement.
+  function basculer(cle, seance) {
+    setRetrait(null)
+    return agir(cle, async () => {
+      if (seance.is_active) {
+        const nombre = await compterRdvAVenirSeance(seance.id, aujourdhui())
+        if (nombre > 0) return setRetrait({ id: seance.id, nombre })
+      }
+      return modifierSeance(seance.id, { is_active: !seance.is_active })
+    })
+  }
 
   async function enregistrer(cle, action) {
     const { ok } = await agir(cle, action)
@@ -68,6 +84,32 @@ export default function OngletSeances({ orgId, multiPraticiens }) {
           {j.liste.map((s) =>
             edition === s.id ? (
               <LigneReglage key={s.id}>{formulaire(s)}</LigneReglage>
+            ) : retrait?.id === s.id ? (
+              <LigneReglage
+                key={s.id}
+                texte={`Retirer la séance de ${heureCourte(s.start_time)} – ${heureCourte(s.end_time)} · ${nomType(s.appointment_type_id)} ?`}
+                detail={`Elle a ${retrait.nombre} rendez-vous à venir. Ils restent prévus à la même heure, mais ne seront plus comptés dans une séance (plus de limite de places). Pour les déplacer, reportez-les depuis l’agenda.`}
+                boutons={
+                  <>
+                    <Button variante="discret" onClick={() => setRetrait(null)}>
+                      Garder la séance
+                    </Button>
+                    <Button
+                      variante="secondaire"
+                      chargement={occupe === `retrait-${s.id}`}
+                      disabled={!enLigne}
+                      onClick={async () => {
+                        const { ok } = await agir(`retrait-${s.id}`, () =>
+                          modifierSeance(s.id, { is_active: false }),
+                        )
+                        if (ok) setRetrait(null)
+                      }}
+                    >
+                      Retirer quand même
+                    </Button>
+                  </>
+                }
+              />
             ) : (
               <LigneReglage
                 key={s.id}
@@ -89,9 +131,7 @@ export default function OngletSeances({ orgId, multiPraticiens }) {
                     occupe={occupe}
                     enLigne={enLigne}
                     onModifier={() => setEdition(s.id)}
-                    onBasculer={(cle) =>
-                      agir(cle, () => modifierSeance(s.id, { is_active: !s.is_active }))
-                    }
+                    onBasculer={(cle) => basculer(cle, s)}
                   />
                 }
               />

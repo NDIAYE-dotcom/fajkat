@@ -1,6 +1,7 @@
 // Accès aux données des rendez-vous (étape 13, feature rendez_vous ; praticiens si
 // feature agenda_multi_praticiens). Partie B : paramètres de l'agenda (types et durées,
 // séances et capacités, pauses, jours fériés) et report des rendez-vous d'un jour férié.
+// Partie C : agenda d'une période (list_appointments).
 // Les contrôles (séance pleine, jour férié à confirmer…) sont faits par la base : un
 // avertissement à confirmer revient avec le hint « confirmation_required ».
 
@@ -23,6 +24,8 @@ export const cles = {
   servicesFile: (orgId) => ['rendez-vous', 'services-file', orgId],
   praticiens: (orgId) => ['rendez-vous', 'praticiens', orgId],
   rdvDuJour: (orgId, date) => ['rendez-vous', 'jour', orgId, date],
+  agenda: (orgId, du, au) => ['rendez-vous', 'agenda', orgId, du, au],
+  feriesPeriode: (orgId, du, au) => ['rendez-vous', 'feries', orgId, 'periode', du, au],
 }
 
 const MESSAGE_DROITS =
@@ -164,6 +167,21 @@ export async function modifierSeance(id, champs) {
     'La séance n’a pas été modifiée. Réessayez.',
     MESSAGES_SEANCE,
   )
+}
+
+// Rendez-vous à venir d'une séance (prévus ou confirmés, à partir d'aujourd'hui), pour
+// prévenir avant de la retirer. La base refuse elle-même de changer le type, le jour, les
+// horaires ou la capacité d'une séance qui en a (appointment_sessions_guard).
+export async function compterRdvAVenirSeance(seanceId, aujourdhui) {
+  const { count, error } = await client()
+    .from('appointments')
+    .select('id', { count: 'exact', head: true })
+    .eq('session_id', seanceId)
+    .in('status', ['scheduled', 'confirmed'])
+    .gte('local_date', aujourdhui)
+    .is('deleted_at', null)
+  if (error) throw traduireErreur(error, 'Les rendez-vous de la séance n’ont pas pu être comptés.')
+  return count ?? 0
 }
 
 // Membres actifs, pour choisir le praticien d'une séance (offre Clinique).
@@ -313,5 +331,31 @@ export async function reporterRdv(ids, nouvelleDate, confirmer = false) {
     p_confirm: confirmer,
   })
   if (error) throw erreurRdv(error, 'Les rendez-vous n’ont pas été reportés. Réessayez.')
+  return data ?? []
+}
+
+// --- Agenda -----------------------------------------------------------------------
+
+// Rendez-vous d'une période (62 jours au plus), tous statuts. La note ne revient qu'aux
+// soignants.
+export async function chargerAgenda(orgId, du, au) {
+  const { data, error } = await client().rpc('list_appointments', {
+    p_org_id: orgId,
+    p_from: du,
+    p_to: au,
+  })
+  if (error) throw erreurRdv(error, 'L’agenda n’a pas pu être chargé. Réessayez.')
+  return data ?? []
+}
+
+export async function chargerFeriesPeriode(orgId, du, au) {
+  const { data, error } = await client()
+    .from('holidays')
+    .select('id, holiday_date, label')
+    .eq('org_id', orgId)
+    .is('deleted_at', null)
+    .gte('holiday_date', du)
+    .lte('holiday_date', au)
+  if (error) throw traduireErreur(error, 'Les jours fériés n’ont pas pu être chargés.')
   return data ?? []
 }

@@ -1,0 +1,61 @@
+.vue-liste {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-4);
+}
+
+.vue-liste__filtres {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 14rem), 1fr));
+  gap: var(--esp-3) var(--esp-4);
+  max-width: 40rem;
+}
+
+.vue-liste__date {
+  font-family: var(--police-mono);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.vue-liste__patient {
+  font-weight: 700;
+  color: var(--primaire);
+}
+
+.vue-liste__identite {
+  display: flex;
+  flex-direction: column;
+}
+
+.vue-liste__precision {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 var(--esp-2);
+  font-size: var(--texte-s);
+  font-weight: 400;
+  color: var(--encre);
+}
+
+.vue-liste__precision:empty {
+  display: none;
+}
+
+.vue-liste__dossier {
+  white-space: nowrap;
+  font-family: var(--police-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+.vue-liste__quand,
+.vue-liste__type {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--esp-1);
+}
+
+.vue-liste__heure {
+  font-family: var(--police-mono);
+  font-variant-numeric: tabular-nums;
+  color: var(--encre-douce);
+}

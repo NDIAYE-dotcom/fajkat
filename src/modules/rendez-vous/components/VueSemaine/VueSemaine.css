@@ -1,0 +1,92 @@
+.vue-semaine {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 15rem), 1fr));
+  align-items: start;
+  gap: var(--esp-4) var(--esp-3);
+}
+
+/* Sept jours côte à côte seulement sur un très grand écran : en dessous, à côté du menu,
+   les noms ne seraient plus que des « … ». */
+@media (min-width: 112rem) {
+  .vue-semaine {
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+  }
+}
+
+.vue-semaine__jour {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-2);
+  min-width: 0;
+  padding-left: var(--esp-3);
+  border-left: 3px solid var(--doux);
+}
+
+.vue-semaine__jour--aujourdhui {
+  border-left-color: var(--primaire);
+}
+
+.vue-semaine__entete {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--esp-1) var(--esp-2);
+  padding-bottom: var(--esp-1);
+  border-bottom: 2px solid var(--primaire);
+}
+
+.vue-semaine__date {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  min-height: 44px;
+  padding: 0;
+  font: inherit;
+  text-align: left;
+  color: var(--primaire);
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+
+.vue-semaine__date:hover .vue-semaine__nom-jour {
+  text-decoration: underline;
+}
+
+.vue-semaine__date:focus-visible {
+  outline: 2px solid var(--primaire);
+  outline-offset: 2px;
+}
+
+.vue-semaine__nom-jour {
+  font-weight: 700;
+}
+
+.vue-semaine__numero,
+.vue-semaine__compte {
+  font-family: var(--police-mono);
+  font-size: var(--texte-s);
+  font-variant-numeric: tabular-nums;
+  color: var(--encre-douce);
+}
+
+.vue-semaine__compte {
+  margin-left: auto;
+}
+
+.vue-semaine__marques {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--esp-2);
+  flex-basis: 100%;
+}
+
+.vue-semaine__marques:empty {
+  display: none;
+}
+
+.vue-semaine__liste {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
