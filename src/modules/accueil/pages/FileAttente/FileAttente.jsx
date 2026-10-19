@@ -1,4 +1,4 @@
-import { Activity, ListOrdered, MonitorPlay, Ticket, UserCheck } from 'lucide-react'
+import { Activity, ListOrdered, MonitorPlay, Tags, Ticket, UserCheck } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import Button from '../../../../components/ui/Button/Button.jsx'
 import EmptyState from '../../../../components/ui/EmptyState/EmptyState.jsx'
@@ -15,6 +15,7 @@ import { chargerJetonTicket } from '../../api.js'
 import ArriveesDuJour from '../../components/ArriveesDuJour/ArriveesDuJour.jsx'
 import FenetresAccueil from '../../components/FenetresAccueil/FenetresAccueil.jsx'
 import ModaleEcrans from '../../components/ModaleEcrans/ModaleEcrans.jsx'
+import ModaleFiles from '../../components/ModaleFiles/ModaleFiles.jsx'
 import ModaleSeuils from '../../components/ModaleSeuils/ModaleSeuils.jsx'
 import TableauFile from '../../components/TableauFile/TableauFile.jsx'
 import { usePermissionsFile, useTableau } from '../../hooks/useFile.js'
@@ -52,6 +53,7 @@ function AccueilDuJour() {
   const [preparation, setPreparation] = useState(null)
   const [ecrans, setEcrans] = useState(false)
   const [seuils, setSeuils] = useState(false)
+  const [files, setFiles] = useState(false)
 
   useEffect(() => {
     document.title = `File d’attente — ${structure.name} — Fajkat`
@@ -111,6 +113,15 @@ function AccueilDuJour() {
           onClick={() => setSeuils(true)}
         >
           Seuils des constantes
+        </Button>
+      )}
+      {droits.gerer && (
+        <Button
+          variante="discret"
+          iconeDebut={<Icone icone={Tags} />}
+          onClick={() => setFiles(true)}
+        >
+          Noms des files
         </Button>
       )}
     </>
@@ -180,6 +191,7 @@ function AccueilDuJour() {
       />
       {ecrans && <ModaleEcrans orgId={orgId} onFermer={() => setEcrans(false)} />}
       {seuils && <ModaleSeuils orgId={orgId} onFermer={() => setSeuils(false)} />}
+      {files && <ModaleFiles orgId={orgId} onFermer={() => setFiles(false)} />}
     </div>
   )
 }

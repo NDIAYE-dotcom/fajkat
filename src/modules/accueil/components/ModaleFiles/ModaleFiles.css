@@ -1,0 +1,50 @@
+.modale-files {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-4);
+}
+
+.modale-files__liste {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: var(--trait);
+}
+
+.modale-files__ligne {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--esp-2);
+  padding-block: var(--esp-2);
+  border-bottom: var(--trait);
+}
+
+.modale-files__nom {
+  color: var(--encre);
+  overflow-wrap: break-word;
+}
+
+.modale-files__lettre {
+  display: inline-block;
+  min-width: 1.6em;
+  font-family: var(--police-mono);
+  font-weight: 500;
+  color: var(--primaire);
+}
+
+.modale-files__edition {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: var(--esp-2);
+}
+
+.modale-files__boutons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--esp-2);
+}

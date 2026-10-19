@@ -79,8 +79,9 @@ grant execute on function pg_temp.service(text), pg_temp.salle(text) to authenti
 -- -----------------------------------------------------------------------------
 do $$
 begin
+  -- 5 files au poste : la PF arrive dans la file « Sage-femme » (CPN), étape 13 D.
   if (select count(*) from public.queue_services
-      where org_id = current_setting('test.org_a')::uuid) <> 6
+      where org_id = current_setting('test.org_a')::uuid) <> 5
      or (select label from public.queue_services
          where org_id = current_setting('test.org_a')::uuid and letter = 'C') <> 'Vaccination'
      or not exists (select 1 from public.queue_services

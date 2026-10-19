@@ -2,8 +2,8 @@
 -- Tests de bout en bout : compléments à supabase/tests/donnees_agenda.sql
 -- -----------------------------------------------------------------------------
 -- Un patient au nom très long (troncature, aucun mot coupé) dans la séance de vaccination
--- du prochain mardi, et une planification familiale avec une note (jamais visible hors
--- soignants), demain.
+-- du prochain mardi, une planification familiale avec une note (jamais visible hors
+-- soignants), demain, et un jour férié à J + 6.
 -- =============================================================================
 
 begin;
@@ -44,4 +44,12 @@ begin
 end $$;
 
 reset role;
+
+-- Jour férié de test à J + 6 (prise d'un rendez-vous à confirmer), s'il n'y en a pas déjà un.
+insert into public.holidays (org_id, holiday_date, label)
+select current_setting('e2e.poste')::uuid, current_setting('e2e.auj')::date + 6, 'Fête e2e'
+ where not exists (select 1 from public.holidays
+                    where org_id = current_setting('e2e.poste')::uuid and deleted_at is null
+                      and holiday_date = current_setting('e2e.auj')::date + 6);
+
 commit;

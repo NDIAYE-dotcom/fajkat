@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import Button from '../../../../components/ui/Button/Button.jsx'
 import Tampon from '../../../../components/ui/Tampon/Tampon.jsx'
 import { formatHeure } from '../../../../lib/format.js'
 import { nomComplet } from '../../../patients/utils.js'
@@ -9,7 +10,8 @@ import './LigneRdv.css'
 // dossier et son âge (homonymes), précisions, statut.
 // « Prévu » n'a pas de tampon : seul ce qui change est marqué.
 // precisions : textes affichés sous le nom (type, praticien…), selon la vue.
-export default function LigneRdv({ rdv, precisions = [] }) {
+// onOuvrir : bouton « Détails » (report, changement de type…), si fourni.
+export default function LigneRdv({ rdv, precisions = [], onOuvrir }) {
   const statut = STATUTS_RDV[rdv.status]
   const detail = [...precisions, rdv.series_index && `Série, n° ${rdv.series_index}`]
     .filter(Boolean)
@@ -27,11 +29,19 @@ export default function LigneRdv({ rdv, precisions = [] }) {
         </span>
         {detail && <span className="ligne-rdv__detail">{detail}</span>}
       </span>
-      {statut && rdv.status !== 'scheduled' && (
-        <Tampon ton={statut.ton} className="ligne-rdv__tampon">
-          {statut.libelle}
-        </Tampon>
-      )}
+      <span className="ligne-rdv__fin">
+        {statut && rdv.status !== 'scheduled' && <Tampon ton={statut.ton}>{statut.libelle}</Tampon>}
+        {onOuvrir && (
+          <Button
+            variante="discret"
+            className="ligne-rdv__details"
+            aria-label={`Détails du rendez-vous de ${formatHeure(rdv.starts_at)}`}
+            onClick={() => onOuvrir(rdv)}
+          >
+            Détails
+          </Button>
+        )}
+      </span>
     </li>
   )
 }

@@ -98,7 +98,8 @@ declare
   v_org uuid := current_setting('test.org_a')::uuid;
   v_an  integer := extract(year from current_setting('test.auj')::date)::integer;
 begin
-  if (select count(*) from public.appointment_types where org_id = v_org) <> 6
+  -- 7 types au poste, consultation postnatale comprise (étape 13 D).
+  if (select count(*) from public.appointment_types where org_id = v_org) <> 7
      or not (select is_discreet from public.appointment_types
              where org_id = v_org and template_code = 'pf')
      or not (select is_discreet from public.appointment_types
@@ -183,10 +184,10 @@ begin
       null;
     end;
     -- Types discrets (PF, Dépistage, Dépistage IST) cachés à l'accueil et au caissier
-    -- (etape13c_discretion).
+    -- (etape13c_discretion) ; consultation postnatale en plus (étape 13 D).
     if (select count(*) from public.appointment_types
         where org_id = current_setting('test.org_a')::uuid)
-       <> (case when v_code = '0c' then 7 else 4 end) then
+       <> (case when v_code = '0c' then 8 else 5 end) then
       raise exception 'ÉCHEC : le rôle % ne lit pas les types', v_code;
     end if;
   end loop;
@@ -369,8 +370,9 @@ set local role authenticated;
 
 -- -----------------------------------------------------------------------------
 -- Série (planification familiale tous les 3 mois), « À rappeler demain »
+-- (infirmier : l'accueil ne prend pas un type discret, étape 13 D)
 -- -----------------------------------------------------------------------------
-select pg_temp.en_tant_que('09');
+select pg_temp.en_tant_que('0c');
 do $$
 declare
   v_org   uuid := current_setting('test.org_a')::uuid;

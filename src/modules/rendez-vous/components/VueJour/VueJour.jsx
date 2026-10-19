@@ -9,7 +9,8 @@ import './VueJour.css'
 // Vue jour : remplissage des séances, puis une colonne par activité (poste de santé) ou par
 // praticien (clinique). Sous 640 px, une colonne à la fois, choisie par des boutons.
 // rdv : rendez-vous affichés ce jour ; seances : séances du jour avec leurs places prises.
-export default function VueJour({ rdv, seances, types, praticiens, multiPraticiens }) {
+// onOuvrir : détail d'un rendez-vous (report, changement de type).
+export default function VueJour({ rdv, seances, types, praticiens, multiPraticiens, onOuvrir }) {
   const colonnes = colonnesDuJour({ multiPraticiens, rdv, seances, types, praticiens })
   const [choisie, setChoisie] = useState(null)
   const active = colonnes.some((c) => c.id === choisie) ? choisie : colonnes[0]?.id
@@ -81,6 +82,7 @@ export default function VueJour({ rdv, seances, types, praticiens, multiPraticie
                     key={r.id}
                     rdv={r}
                     precisions={multiPraticiens ? [r.type_label] : [r.practitioner_name]}
+                    onOuvrir={onOuvrir}
                   />
                 ))}
               </ul>

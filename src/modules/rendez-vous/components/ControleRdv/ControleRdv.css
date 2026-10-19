@@ -1,0 +1,26 @@
+.controle-rdv__propositions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-2);
+  margin-top: var(--esp-2);
+}
+
+.controle-rdv__titre {
+  font-weight: 700;
+}
+
+.controle-rdv__liste {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.controle-rdv__choix {
+  justify-content: flex-start;
+  width: 100%;
+  text-align: left;
+  white-space: normal;
+}

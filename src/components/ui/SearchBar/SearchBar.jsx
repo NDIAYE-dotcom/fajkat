@@ -9,6 +9,9 @@ import './SearchBar.css'
 // Barre de recherche : libellé lu par les lecteurs d'écran, bouton d'effacement,
 // indicateur pendant la recherche. Entrée lance onRechercher (utile hors ligne ou sur réseau lent).
 // champ : attributs supplémentaires du <input> (role="combobox", aria-*, onKeyDown…).
+// dansFormulaire : la barre est placée dans un autre <form> (fenêtre de saisie) : elle n'est
+// pas un <form> elle-même (formulaires imbriqués interdits), et Entrée y lance la recherche
+// sans jamais envoyer le formulaire qui l'entoure.
 export default function SearchBar({
   valeur = '',
   onChange,
@@ -19,6 +22,7 @@ export default function SearchBar({
   disabled = false,
   champ: attributsChamp,
   className = '',
+  dansFormulaire = false,
 }) {
   const id = `recherche-${useId()}`
   const refChamp = useRef(null)
@@ -33,14 +37,27 @@ export default function SearchBar({
     onRechercher?.(valeur)
   }
 
+  function surTouche(evenement) {
+    attributsChamp?.onKeyDown?.(evenement)
+    if (dansFormulaire && evenement.key === 'Enter' && !evenement.defaultPrevented) {
+      evenement.preventDefault()
+      onRechercher?.(valeur)
+    }
+  }
+
   let suffixe = null
   if (chargement) suffixe = <Spinner libelle="Recherche en cours" taille={18} />
   else if (valeur && !disabled) {
     suffixe = <BoutonIcone icone={X} label="Effacer la recherche" onClick={effacer} />
   }
 
+  const Enveloppe = dansFormulaire ? 'div' : 'form'
   return (
-    <form role="search" className={`search-bar ${className}`.trim()} onSubmit={surEnvoi}>
+    <Enveloppe
+      role="search"
+      className={`search-bar ${className}`.trim()}
+      onSubmit={dansFormulaire ? undefined : surEnvoi}
+    >
       <label htmlFor={id} className="sr-only">
         {libelle}
       </label>
@@ -48,6 +65,7 @@ export default function SearchBar({
         {...attributsChamp}
         ref={refChamp}
         id={id}
+        onKeyDown={surTouche}
         type="search"
         enterKeyHint="search"
         autoComplete="off"
@@ -59,6 +77,6 @@ export default function SearchBar({
         prefixe={<Icone icone={Search} className="search-bar__loupe" />}
         suffixe={suffixe}
       />
-    </form>
+    </Enveloppe>
   )
 }

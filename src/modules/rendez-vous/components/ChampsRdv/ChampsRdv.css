@@ -1,0 +1,28 @@
+.champs-rdv {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr));
+  gap: var(--esp-4);
+}
+
+/* Les séances prennent toute la largeur : chaque choix y est une ligne. */
+.champs-rdv > [data-champ='seanceId'] {
+  grid-column: 1 / -1;
+}
+
+.champs-rdv__seances {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 16rem), 1fr));
+  gap: var(--esp-2) var(--esp-4);
+}
+
+.champs-rdv__seance {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 0 var(--esp-2);
+}
+
+.champs-rdv__horaire {
+  font-family: var(--police-mono);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}

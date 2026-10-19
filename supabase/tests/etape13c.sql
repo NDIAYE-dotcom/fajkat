@@ -49,9 +49,10 @@ $$;
 grant execute on function pg_temp.en_tant_que(text), pg_temp.type_c(text) to authenticated;
 set local role authenticated;
 
--- Demain : une PF (file « Planification familiale », parlante), un dépistage (file
+-- Demain (pris par l'owner : l'accueil ne prend pas un type discret, étape 13 D) : une PF
+-- (file « Sage-femme »), un dépistage (file
 -- « Consultation »), une vaccination ; même patiente pour la PF et la vaccination.
-select pg_temp.en_tant_que('09');
+select pg_temp.en_tant_que('0a');
 do $$
 declare
   v_org uuid := current_setting('test.org')::uuid;
@@ -73,7 +74,8 @@ begin
     p_confirm => true)), 'cancelled', 'Effets secondaires de l''implant');
   perform public.book_appointment(v_org, v_q, pg_temp.type_c('depistage'),
     (current_setting('test.demain')::date + time '10:00') at time zone 'Africa/Dakar', p_confirm => true);
-  -- Contrôle : l'autre rendez-vous du jour est annoncé sans nommer la PF.
+  -- Contrôle (accueil) : l'autre rendez-vous du jour est annoncé sans nommer la PF.
+  perform pg_temp.en_tant_que('09');
   begin
     perform public.book_appointment(v_org, v_p, pg_temp.type_c('vaccination'),
       (current_setting('test.demain')::date + time '11:00') at time zone 'Africa/Dakar');
@@ -113,7 +115,7 @@ begin
     end if;
     if exists (select 1 from public.appointment_types where is_discreet)
        or (select count(*) from public.appointment_types
-           where org_id = current_setting('test.org')::uuid) <> 4 then
+           where org_id = current_setting('test.org')::uuid) <> 5 then
       raise exception 'ÉCHEC : le rôle % lit les types discrets', v_code;
     end if;
   end loop;

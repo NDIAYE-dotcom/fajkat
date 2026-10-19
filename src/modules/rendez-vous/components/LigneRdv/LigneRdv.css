@@ -59,8 +59,17 @@
   color: var(--encre-douce);
 }
 
-.ligne-rdv__tampon {
+.ligne-rdv__fin {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--esp-1) var(--esp-2);
   align-self: center;
+}
+
+.ligne-rdv__fin:empty {
+  display: none;
 }
 
 .ligne-rdv--clos .ligne-rdv__nom,

@@ -1,6 +1,7 @@
 import { CalendarX } from 'lucide-react'
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
+import Button from '../../../../components/ui/Button/Button.jsx'
 import EmptyState from '../../../../components/ui/EmptyState/EmptyState.jsx'
 import Field from '../../../../components/ui/Field/Field.jsx'
 import Select from '../../../../components/ui/Select/Select.jsx'
@@ -13,8 +14,15 @@ import { dateFr } from '../../utils.js'
 import './VueListe.css'
 
 // Vue liste : deux semaines de rendez-vous dans un tableau registre (cartes sous 640 px),
-// avec un filtre par type, et par praticien en clinique.
-export default function VueListe({ rdv, types, praticiens, multiPraticiens, chargement }) {
+// avec un filtre par type, et par praticien en clinique. onOuvrir : détail d'un rendez-vous.
+export default function VueListe({
+  rdv,
+  types,
+  praticiens,
+  multiPraticiens,
+  chargement,
+  onOuvrir,
+}) {
   const [type, setType] = useState('')
   const [praticien, setPraticien] = useState('')
   // Libellés renvoyés par la base (neutres pour un type discret que le rôle ne voit pas),
@@ -71,6 +79,15 @@ export default function VueListe({ rdv, types, praticiens, multiPraticiens, char
           <span className="vue-liste__type">
             <span>{r.type_label ?? '—'}</span>
             {s && <Tampon ton={s.ton}>{s.libelle}</Tampon>}
+            {onOuvrir && (
+              <Button
+                variante="discret"
+                aria-label={`Détails du rendez-vous du ${dateFr(r.local_date)} à ${formatHeure(r.starts_at)}`}
+                onClick={() => onOuvrir(r)}
+              >
+                Détails
+              </Button>
+            )}
           </span>
         )
       },

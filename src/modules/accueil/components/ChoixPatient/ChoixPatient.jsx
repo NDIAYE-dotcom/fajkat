@@ -30,6 +30,7 @@ export default function ChoixPatient({ orgId, peutCreer, erreur, onChoisir, onNo
         libelle="Patient"
         placeholder="Nom, prénom, téléphone, quartier ou n° de dossier"
         chargement={recherche.enCours}
+        dansFormulaire
       />
       {erreur && (
         <p className="choix-patient__erreur" role="alert">

@@ -1,0 +1,42 @@
+.modale-rdv {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--esp-4);
+}
+
+.modale-rdv__identite {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--esp-2) var(--esp-3);
+}
+
+.modale-rdv__dossier {
+  white-space: nowrap;
+  font-family: var(--police-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Fiche façon registre : filets horizontaux fins. */
+.modale-rdv__details {
+  width: 100%;
+  margin: 0;
+}
+
+.modale-rdv__ligne {
+  display: grid;
+  grid-template-columns: minmax(6rem, auto) minmax(0, 1fr);
+  gap: var(--esp-3);
+  padding-block: var(--esp-2);
+  border-bottom: var(--trait);
+}
+
+.modale-rdv__ligne dt {
+  color: var(--encre-douce);
+}
+
+.modale-rdv__ligne dd {
+  margin: 0;
+  overflow-wrap: break-word;
+}

@@ -1,4 +1,4 @@
-import { Settings } from 'lucide-react'
+import { CalendarPlus, Settings } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import Button from '../../../../components/ui/Button/Button.jsx'
@@ -24,13 +24,20 @@ import {
   seancesDuJour,
   VUES,
 } from '../../agenda.js'
+import { usePermissionsPatients } from '../../../patients/hooks/usePermissionsPatients.js'
 import BarreAgenda from '../../components/BarreAgenda/BarreAgenda.jsx'
+import FenetresAgenda from '../../components/FenetresAgenda/FenetresAgenda.jsx'
 import MarquesJour from '../../components/MarquesJour/MarquesJour.jsx'
 import VueJour from '../../components/VueJour/VueJour.jsx'
 import VueListe from '../../components/VueListe/VueListe.jsx'
 import VueSemaine from '../../components/VueSemaine/VueSemaine.jsx'
 import { useAgenda, useFeriesPeriode } from '../../hooks/useAgenda.js'
-import { usePraticiens, useSeances, useTypesRdv } from '../../hooks/useParametresAgenda.js'
+import {
+  usePermissionsAgenda,
+  usePraticiens,
+  useSeances,
+  useTypesRdv,
+} from '../../hooks/useParametresAgenda.js'
 import './Agenda.css'
 
 const ENTREE = entreeDepuisChemin('/app/rendez-vous')
@@ -57,6 +64,9 @@ function PageAgenda() {
   const multiPraticiens = useFeature('agenda_multi_praticiens').actif
   const [parametres, setParametres] = useSearchParams()
   const [afficherClos, setAfficherClos] = useState(false)
+  const [fenetre, setFenetre] = useState(null)
+  const droits = usePermissionsAgenda(orgId).data ?? {}
+  const droitsPatients = usePermissionsPatients(orgId)
   const aujourdhui = dateDuJour()
 
   const vue = VUES.some((v) => v.id === parametres.get('vue')) ? parametres.get('vue') : 'jour'
@@ -96,6 +106,7 @@ function PageAgenda() {
   })
 
   const erreur = [agenda, seances, types, feries].find((r) => r.error)?.error
+  const ouvrir = (rdv) => setFenetre({ type: 'rdv', rdv })
   const premierChargement = agenda.isPending || seances.isPending || types.isPending
 
   return (
@@ -105,15 +116,25 @@ function PageAgenda() {
           <p className="agenda__surtitre">{structure.name}</p>
           <h1 className="agenda__titre">Agenda</h1>
         </div>
-        {ROLES_PARAMETRES.includes(role) && (
-          <Button
-            variante="secondaire"
-            to="/app/rendez-vous/parametres"
-            iconeDebut={<Icone icone={Settings} />}
-          >
-            Paramètres de l’agenda
-          </Button>
-        )}
+        <div className="agenda__actions">
+          {droits.write && (
+            <Button
+              iconeDebut={<Icone icone={CalendarPlus} />}
+              onClick={() => setFenetre({ type: 'prise' })}
+            >
+              Nouveau rendez-vous
+            </Button>
+          )}
+          {ROLES_PARAMETRES.includes(role) && (
+            <Button
+              variante="secondaire"
+              to="/app/rendez-vous/parametres"
+              iconeDebut={<Icone icone={Settings} />}
+            >
+              Paramètres de l’agenda
+            </Button>
+          )}
+        </div>
       </header>
 
       <BarreAgenda
@@ -166,6 +187,7 @@ function PageAgenda() {
                 types={listeTypes}
                 praticiens={listePraticiens}
                 multiPraticiens={multiPraticiens}
+                onOuvrir={ouvrir}
               />
             )}
             {vue === 'semaine' && (
@@ -185,11 +207,21 @@ function PageAgenda() {
                 praticiens={listePraticiens}
                 multiPraticiens={multiPraticiens}
                 chargement={agenda.isPlaceholderData}
+                onOuvrir={ouvrir}
               />
             )}
           </div>
         )
       )}
+
+      <FenetresAgenda
+        orgId={orgId}
+        droits={droits}
+        multiPraticiens={multiPraticiens}
+        peutCreerPatient={droitsPatients.ecrire}
+        fenetre={fenetre}
+        setFenetre={setFenetre}
+      />
     </div>
   )
 }

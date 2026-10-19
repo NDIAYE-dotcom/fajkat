@@ -68,6 +68,24 @@ export async function chargerServices(orgId) {
   return data ?? []
 }
 
+// Nom d'une file (owner et admin), par exemple « Sage-femme » -> « Maternité ». La lettre
+// des tickets ne change pas.
+export async function renommerService(id, libelle) {
+  const { data, error } = await client()
+    .from('queue_services')
+    .update({ label: libelle.trim() })
+    .eq('id', id)
+    .select('id')
+  if (error) {
+    if (error.code === '23505') throw new Error('Une autre file porte déjà ce nom.')
+    if (error.code === '23514') throw new Error('Le nom doit compter de 2 à 60 caractères.')
+    throw traduireErreur(error, 'La file n’a pas été renommée. Réessayez.')
+  }
+  if (!data?.length) {
+    throw new Error('Seuls le propriétaire et les administrateurs renomment les files.')
+  }
+}
+
 export async function chargerPriorites() {
   const { data, error } = await client()
     .from('queue_priorities')

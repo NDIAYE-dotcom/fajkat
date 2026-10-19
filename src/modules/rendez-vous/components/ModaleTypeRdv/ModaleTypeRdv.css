@@ -1,0 +1,5 @@
+.modale-type-rdv {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-4);
+}

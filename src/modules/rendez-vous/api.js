@@ -1,7 +1,8 @@
 // Accès aux données des rendez-vous (étape 13, feature rendez_vous ; praticiens si
 // feature agenda_multi_praticiens). Partie B : paramètres de l'agenda (types et durées,
 // séances et capacités, pauses, jours fériés) et report des rendez-vous d'un jour férié.
-// Partie C : agenda d'une période (list_appointments).
+// Partie C : agenda d'une période (list_appointments). Partie D : prise, report et
+// changement de type d'un rendez-vous, prochaines séances qui ont des places.
 // Les contrôles (séance pleine, jour férié à confirmer…) sont faits par la base : un
 // avertissement à confirmer revient avec le hint « confirmation_required ».
 
@@ -357,5 +358,83 @@ export async function chargerFeriesPeriode(orgId, du, au) {
     .gte('holiday_date', du)
     .lte('holiday_date', au)
   if (error) throw traduireErreur(error, 'Les jours fériés n’ont pas pu être chargés.')
+  return data ?? []
+}
+
+// --- Prise et modification d'un rendez-vous (partie D) -----------------------------
+// Un type discret n'est pris que par les soignants, l'owner et l'admin : la base refuse
+// les autres. Report : la base garde le vrai type du rendez-vous, jamais le libellé neutre
+// affiché à l'accueil ; le type ne change que par changerTypeRdv (soignants).
+
+// Contrôle avant l'envoi : { session_id, blocking: [{ code, message }], warnings: [...] }.
+// rdvId : rendez-vous reporté (sa place n'est pas comptée ; son vrai type est contrôlé).
+export async function verifierRdv(orgId, champs) {
+  const { data, error } = await client().rpc('check_appointment', {
+    p_org_id: orgId,
+    p_patient_id: champs.patientId,
+    p_type_id: champs.typeId,
+    p_starts_at: champs.debut,
+    p_practitioner_id: champs.praticienId || null,
+    p_session_id: champs.seanceId || null,
+    p_exclude_id: champs.rdvId ?? null,
+    p_outside_session: !champs.seanceId && !!champs.horsSeance,
+  })
+  if (error) throw erreurRdv(error, 'Le rendez-vous n’a pas pu être vérifié. Réessayez.')
+  return data?.[0] ?? { blocking: [], warnings: [] }
+}
+
+export async function prendreRdv(orgId, champs, confirmer = false) {
+  const { data, error } = await client().rpc('book_appointment', {
+    p_org_id: orgId,
+    p_patient_id: champs.patientId,
+    p_type_id: champs.typeId,
+    p_starts_at: champs.debut,
+    p_practitioner_id: champs.praticienId || null,
+    p_session_id: champs.seanceId || null,
+    p_note: champs.note?.trim() || null,
+    p_confirm: confirmer,
+    p_outside_session: !champs.seanceId && !!champs.horsSeance,
+  })
+  if (error) throw erreurRdv(error, 'Le rendez-vous n’a pas été enregistré. Réessayez.')
+  return data?.[0] ?? null
+}
+
+// Report (nouvelle date, heure, praticien) : l'ancien rendez-vous reste, au statut
+// « Reporté ». Un rendez-vous discret masqué retrouve sa séance par la base.
+export async function reporterUnRdv(rdvId, champs, confirmer = false) {
+  const { data, error } = await client().rpc('reschedule_appointment', {
+    p_appointment_id: rdvId,
+    p_starts_at: champs.debut,
+    p_practitioner_id: champs.praticienId || null,
+    p_keep_practitioner: champs.garderPraticien ?? true,
+    p_session_id: champs.seanceId || null,
+    p_confirm: confirmer,
+  })
+  if (error) throw erreurRdv(error, 'Le rendez-vous n’a pas été reporté. Réessayez.')
+  return data
+}
+
+export async function changerTypeRdv(rdvId, typeId, confirmer = false) {
+  const { data, error } = await client().rpc('set_appointment_type', {
+    p_appointment_id: rdvId,
+    p_type_id: typeId,
+    p_confirm: confirmer,
+  })
+  if (error) throw erreurRdv(error, 'Le type n’a pas été changé. Réessayez.')
+  return data
+}
+
+// Prochaines séances qui ont des places, pour un type (prise) ou un rendez-vous (report).
+// Rendez-vous discret masqué : date, heure et places seulement.
+export async function chargerProchainesSeances(orgId, { typeId, rdvId, du, praticienId }) {
+  const { data, error } = await client().rpc('next_available_sessions', {
+    p_org_id: orgId,
+    p_type_id: rdvId ? null : typeId,
+    p_appointment_id: rdvId ?? null,
+    p_from: du,
+    p_practitioner_id: praticienId || null,
+    p_limit: 3,
+  })
+  if (error) throw erreurRdv(error, 'Les prochaines séances n’ont pas pu être cherchées.')
   return data ?? []
 }

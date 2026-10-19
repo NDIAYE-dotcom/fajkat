@@ -23,7 +23,9 @@ Pendant une étape, on corrige seulement les bugs. Toute idée d'amélioration e
 
 ## Rendez-vous et agenda (étape 13)
 
-- **Nom de la file « Planification familiale » visible à l'accueil** (étape 12 : tableau de la salle d'attente, fenêtre d'arrivée, arrivées du jour). L'agenda le masque déjà (libellé « Rendez-vous ») ; la file d'attente, non. À décider : renommer la file par défaut, ou la marquer discrète comme les types de rendez-vous.
+- ~~Nom de la file « Planification familiale » visible à l'accueil~~ — **réglé à l'étape 13 (partie D)** : au poste de santé, la CPN, la planification familiale et la consultation postnatale arrivent dans une seule file, « Sage-femme » (nouveaux postes, et postes existants dont l'owner n'avait changé ni les noms des files ni la file de ces types ; sinon, la file « Planification familiale » a seulement été renommée « Sage-femme »). L'owner et l'admin la renomment depuis la file d'attente (« Noms des files »). Les cliniques n'ont pas changé : la PF y arrive déjà en « Consultation ».
+- **Prestation « Planification familiale » dans Paramètres → Services** (étape 7) : son nom pourra apparaître à la caisse et sur les reçus. À traiter avec la caisse : libellé neutre sur le reçu, ou prestation marquée discrète.
+- **Série de rendez-vous** (« tous les 3 mois » pour la PF) dans la fenêtre de prise : la base la gère déjà (book_appointment, p_count) ; l'écran viendra avec la partie E.
 
 ## Hébergement
 

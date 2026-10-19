@@ -12,6 +12,12 @@
   gap: var(--esp-4);
 }
 
+.agenda__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--esp-2) var(--esp-3);
+}
+
 .agenda__surtitre {
   font-size: var(--texte-s);
   color: var(--encre-douce);
