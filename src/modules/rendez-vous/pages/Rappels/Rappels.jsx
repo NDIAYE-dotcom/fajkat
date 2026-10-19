@@ -52,8 +52,8 @@ function PageRappels() {
     document.title = `À rappeler demain — ${structure.name} — Fajkat`
   }, [structure.name])
 
-  const groupes = grouperParTelephone(rappels.data ?? [])
-  const aAppeler = groupes.filter((g) => g.telephone && !g.fait).length
+  const { avecTelephone, sansTelephone } = grouperParTelephone(rappels.data ?? [])
+  const aAppeler = avecTelephone.filter((g) => !g.fait).length
 
   // Écriture, puis relecture de la liste ; un échec s'affiche sous le téléphone concerné.
   async function envoyer(cle, groupe, action) {
@@ -69,6 +69,31 @@ function PageRappels() {
       setEnCours(null)
     }
   }
+
+  // Un téléphone (ou le groupe « Sans téléphone ») ; l'échec s'affiche sous ce groupe.
+  const rendreGroupe = (g) => (
+    <GroupeRappel
+      key={g.cle}
+      groupe={g}
+      nomStructure={structure.name}
+      desactive={!enLigne || Boolean(enCours)}
+      enCours={enCours}
+      echec={echecs[g.cle]}
+      onRappel={(groupe, fait) =>
+        envoyer(`rappel:${groupe.cle}`, groupe, () =>
+          marquerRappel(
+            groupe.rdv.map((r) => r.appointment_id),
+            fait,
+          ),
+        )
+      }
+      onConfirme={(r, oui) =>
+        envoyer(`confirme:${r.appointment_id}`, g, () =>
+          changerStatutRdv(r.appointment_id, oui ? 'confirmed' : 'scheduled'),
+        )
+      }
+    />
+  )
 
   return (
     <div className="rappels">
@@ -94,7 +119,7 @@ function PageRappels() {
 
       {rappels.isPending && !rappels.error && <Skeleton forme="bloc" hauteur="12rem" />}
 
-      {rappels.data && groupes.length === 0 && (
+      {rappels.data && rappels.data.length === 0 && (
         <EmptyState
           icone={BellOff}
           titre="Aucun rendez-vous à rappeler demain"
@@ -102,40 +127,35 @@ function PageRappels() {
         />
       )}
 
-      {groupes.length > 0 && (
+      {rappels.data?.length > 0 && (
         <>
           <p className="rappels__bilan">
-            {aAppeler === 0
-              ? 'Tous les téléphones ont été rappelés.'
-              : `${aAppeler} téléphone${aAppeler > 1 ? 's' : ''} à appeler · ${rappels.data.length} rendez-vous`}
+            {bilan(avecTelephone.length, aAppeler, rappels.data.length)}
           </p>
-          <ul className="rappels__liste">
-            {groupes.map((g) => (
-              <GroupeRappel
-                key={g.cle}
-                groupe={g}
-                nomStructure={structure.name}
-                desactive={!enLigne || Boolean(enCours)}
-                enCours={enCours}
-                echec={echecs[g.cle]}
-                onRappel={(groupe, fait) =>
-                  envoyer(`rappel:${groupe.cle}`, groupe, () =>
-                    marquerRappel(
-                      groupe.rdv.map((r) => r.appointment_id),
-                      fait,
-                    ),
-                  )
-                }
-                onConfirme={(r, oui) =>
-                  envoyer(`confirme:${r.appointment_id}`, g, () =>
-                    changerStatutRdv(r.appointment_id, oui ? 'confirmed' : 'scheduled'),
-                  )
-                }
-              />
-            ))}
-          </ul>
+          {avecTelephone.length > 0 && (
+            <ul className="rappels__liste">{avecTelephone.map(rendreGroupe)}</ul>
+          )}
+          {sansTelephone && (
+            <section className="rappels__sans" aria-labelledby="rappels-sans-titre">
+              <h2 id="rappels-sans-titre" className="rappels__sous-titre">
+                Sans téléphone
+              </h2>
+              <p className="rappels__aide">
+                Aucun numéro au dossier : ces patients ne peuvent pas être rappelés.
+              </p>
+              <ul className="rappels__liste">{rendreGroupe(sansTelephone)}</ul>
+            </section>
+          )}
         </>
       )}
     </div>
   )
+}
+
+// « 3 téléphones à appeler · 5 rendez-vous » ; sans aucun numéro, seulement le nombre.
+function bilan(telephones, aAppeler, total) {
+  const rdv = `${total} rendez-vous`
+  if (telephones === 0) return `Aucun téléphone à appeler · ${rdv}`
+  if (aAppeler === 0) return 'Tous les téléphones ont été rappelés.'
+  return `${aAppeler} téléphone${aAppeler > 1 ? 's' : ''} à appeler · ${rdv}`
 }

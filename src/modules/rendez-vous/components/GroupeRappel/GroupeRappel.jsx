@@ -10,7 +10,8 @@ import './GroupeRappel.css'
 
 // Un téléphone à appeler la veille, avec les rendez-vous de ceux qui le partagent (souvent
 // une famille). « Rappel fait » vaut pour tout le téléphone ; « Confirmé par le patient »
-// pour chaque rendez-vous. enCours : clé de la case en cours d'envoi.
+// pour chaque rendez-vous. Le groupe « Sans téléphone » (telephone null) n'a ni numéro,
+// ni message, ni « Rappel fait » : seulement les rendez-vous. enCours : clé de la case en cours d'envoi.
 export default function GroupeRappel({
   groupe,
   nomStructure,
@@ -24,25 +25,29 @@ export default function GroupeRappel({
   const langues = groupe.langues.map(libelleLangue).filter(Boolean)
 
   return (
-    <li className={groupe.fait ? 'groupe-rappel groupe-rappel--fait' : 'groupe-rappel'}>
-      <div className="groupe-rappel__telephone">
-        {groupe.telephone ? (
+    <li
+      className={[
+        'groupe-rappel',
+        groupe.fait && groupe.telephone && 'groupe-rappel--fait',
+        !groupe.telephone && 'groupe-rappel--sans',
+      ]
+        .filter(Boolean)
+        .join(' ')}
+    >
+      {groupe.telephone && (
+        <div className="groupe-rappel__telephone">
           <a className="groupe-rappel__numero" href={`tel:${groupe.telephone}`}>
             <Icone icone={Phone} />
             <span>{libelleTelephone(groupe)}</span>
           </a>
-        ) : (
-          <span className="groupe-rappel__numero">{libelleTelephone(groupe)}</span>
-        )}
-        {groupe.telephone && (
           <p className="groupe-rappel__infos">
             <span>{libelleTitulaires(groupe.titulaires)}</span>
             <span>{groupe.whatsapp ? 'Accepte WhatsApp' : 'Pas d’accord WhatsApp'}</span>
             {langues.length > 0 && <span>Langue : {langues.join(', ')}</span>}
           </p>
-        )}
-        {groupe.fait && <Tampon ton="primaire">Rappelé</Tampon>}
-      </div>
+          {groupe.fait && <Tampon ton="primaire">Rappelé</Tampon>}
+        </div>
+      )}
 
       <ul className="groupe-rappel__rdv">
         {groupe.rdv.map((r) => (
@@ -59,9 +64,11 @@ export default function GroupeRappel({
               <span>{r.type_label ?? 'Consultation'}</span>
               {r.practitioner_name && <span>{r.practitioner_name}</span>}
             </p>
-            <blockquote className="groupe-rappel__message">
-              {messageRappel(r, nomStructure)}
-            </blockquote>
+            {groupe.telephone && (
+              <blockquote className="groupe-rappel__message">
+                {messageRappel(r, nomStructure)}
+              </blockquote>
+            )}
             <Checkbox
               label="Confirmé par le patient"
               checked={r.status === 'confirmed'}

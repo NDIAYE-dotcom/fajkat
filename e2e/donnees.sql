@@ -59,7 +59,8 @@ commit;
 -- -----------------------------------------------------------------------------
 -- Patients « SUIVI … » (hors des séances de vaccination et de soins des autres parcours) :
 --   demain   : Mariama (PF, son téléphone), Coumba (PF, téléphone du conjoint), Modou et
---              Aïda (consultations, téléphone de la mère) ;
+--              Aïda (consultations, téléphone de la mère) ; Ndiaga et Sokhna (consultations,
+--              sans téléphone : section « Sans téléphone » unique, après les numéros) ;
 --   aujourd'hui : Rokhaya (PF, pour « Arrivé »), Absente (consultation, pour « Absent ») ;
 --   J + 5    : Annulée (consultation, pour « Annuler ») ;
 --   J + 12   : Férié 1 (consultation) et Férié 2 (PF), pour le jour férié daté après coup ;
@@ -100,6 +101,8 @@ begin
       ('Aïda',    'F', '+221770001003', 'mere',     'consultation', 1, '15:15'),
       ('Ibou',    'M', '+221770001007', 'patient',  'consultation', 1, '15:30'),
       ('Fallou',  'M', '+221770001008', 'conjoint', 'consultation', 1, '15:45'),
+      ('Ndiaga',  'M', null,            null,       'consultation', 1, '07:30'),
+      ('Sokhna',  'F', null,            null,       'consultation', 1, '16:30'),
       ('Rokhaya', 'F', '+221770001004', 'patient',  'pf',           0, '07:00'),
       ('Absente', 'F', null,            null,       'consultation', 0, '07:15'),
       ('Annulée', 'F', null,            null,       'consultation', 5, '09:00'),

@@ -48,15 +48,30 @@ export function motifAnnulation({ choix, autre }) {
 export const libelleLangue = (code) => LANGUES.find((l) => l.valeur === code)?.libelle ?? ''
 
 // Rendez-vous regroupés par téléphone : une famille est prévenue en un seul appel. Les
-// patients sans téléphone forment chacun un groupe (« Aucun téléphone »).
+// patients sans téléphone sont réunis dans un seul groupe, rendu à part, après les numéros
+// à appeler : { avecTelephone: [groupes], sansTelephone: groupe | null }.
 export function grouperParTelephone(rappels) {
   const groupes = new Map()
+  const sans = []
   for (const r of rappels) {
-    const cle = r.phone ? `tel:${r.phone}` : `sans:${r.appointment_id}`
-    if (!groupes.has(cle)) groupes.set(cle, { cle, telephone: r.phone ?? null, rdv: [] })
+    if (!r.phone) {
+      sans.push(r)
+      continue
+    }
+    const cle = `tel:${r.phone}`
+    if (!groupes.has(cle)) groupes.set(cle, { cle, telephone: r.phone, rdv: [] })
     groupes.get(cle).rdv.push(r)
   }
-  return [...groupes.values()].map((g) => ({
+  return {
+    avecTelephone: [...groupes.values()].map(completerGroupe),
+    sansTelephone: sans.length
+      ? completerGroupe({ cle: 'sans', telephone: null, rdv: sans })
+      : null,
+  }
+}
+
+function completerGroupe(g) {
+  return {
     ...g,
     // Le premier rendez-vous de la famille ordonne la liste (la base trie par heure).
     // « Téléphone de la patiente » ou « du patient » : accordé au sexe de chacun.
@@ -68,11 +83,10 @@ export function grouperParTelephone(rappels) {
     whatsapp: g.rdv.every((r) => r.whatsapp_consent),
     langues: [...new Set(g.rdv.map((r) => r.preferred_language).filter(Boolean))],
     fait: g.rdv.every((r) => r.reminder_done_at),
-  }))
+  }
 }
 
 export function libelleTelephone(groupe) {
-  if (!groupe.telephone) return 'Aucun téléphone'
   return formatTelephone(groupe.telephone)
 }
 

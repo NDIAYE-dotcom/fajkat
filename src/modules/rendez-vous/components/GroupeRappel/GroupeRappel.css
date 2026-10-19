@@ -61,6 +61,12 @@
   border-top: var(--trait);
 }
 
+/* Groupe « Sans téléphone » : pas d'en-tête au-dessus, donc pas de filet en haut. */
+.groupe-rappel--sans .groupe-rappel__ligne:first-child {
+  padding-top: 0;
+  border-top: none;
+}
+
 .groupe-rappel__qui {
   display: flex;
   flex-wrap: wrap;
