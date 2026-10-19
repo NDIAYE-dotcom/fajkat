@@ -7,16 +7,19 @@ import Button from '../../../../components/ui/Button/Button.jsx'
 import EmptyState from '../../../../components/ui/EmptyState/EmptyState.jsx'
 import Message from '../../../../components/ui/Message/Message.jsx'
 import Tabs from '../../../../components/ui/Tabs/Tabs.jsx'
+import { useFeature } from '../../../../hooks/useFeature.js'
 import { useOrganization } from '../../../../hooks/useOrganization.js'
 import FeatureRoute from '../../../../router/guards/FeatureRoute/FeatureRoute.jsx'
 import RoleRoute from '../../../../router/guards/RoleRoute/RoleRoute.jsx'
 import { entreeDepuisChemin, offresDeLEntree } from '../../../../router/navigation.js'
+import { usePermissionsAgenda } from '../../../rendez-vous/hooks/useParametresAgenda.js'
 import { chargerPatient, cles } from '../../api.js'
 import EnTeteFiche from '../../components/EnTeteFiche/EnTeteFiche.jsx'
 import OngletCouvertures from '../../components/OngletCouvertures/OngletCouvertures.jsx'
 import OngletHistorique from '../../components/OngletHistorique/OngletHistorique.jsx'
 import OngletIdentite from '../../components/OngletIdentite/OngletIdentite.jsx'
 import OngletMedical from '../../components/OngletMedical/OngletMedical.jsx'
+import OngletRendezVous from '../../components/OngletRendezVous/OngletRendezVous.jsx'
 import { usePermissionsPatients } from '../../hooks/usePermissionsPatients.js'
 import { nomComplet } from '../../utils.js'
 import './FichePatient.css'
@@ -85,14 +88,19 @@ function ChargementFiche() {
   return <Fiche patient={patient} cle={cles.patient(id)} />
 }
 
-const ONGLETS = ['identite', 'couvertures', 'medical', 'historique']
+const ONGLETS = ['identite', 'couvertures', 'rendez-vous', 'medical', 'historique']
 
 function Fiche({ patient, cle }) {
   const { structure } = useOrganization()
   const droits = usePermissionsPatients(structure.id)
+  // Rendez-vous : module inclus dans l'offre et rôle qui lit l'agenda.
+  const agendaInclus = useFeature('rendez_vous').actif
+  const agenda = usePermissionsAgenda(agendaInclus ? structure.id : null).data?.read === true
   const [parametres, setParametres] = useSearchParams()
   const demande = parametres.get('onglet')
-  const disponibles = ONGLETS.filter((o) => o !== 'medical' || droits.medical)
+  const disponibles = ONGLETS.filter(
+    (o) => (o !== 'medical' || droits.medical) && (o !== 'rendez-vous' || agenda),
+  )
   const actif = disponibles.includes(demande) ? demande : 'identite'
 
   useEffect(() => {
@@ -109,6 +117,11 @@ function Fiche({ patient, cle }) {
       id: 'couvertures',
       libelle: 'Couvertures',
       contenu: <OngletCouvertures patient={patient} ecrire={droits.ecrire} />,
+    },
+    agenda && {
+      id: 'rendez-vous',
+      libelle: 'Rendez-vous',
+      contenu: actif === 'rendez-vous' ? <OngletRendezVous patient={patient} /> : null,
     },
     // Monté seulement quand il est ouvert : chaque lecture d'antécédents sensibles est
     // journalisée, elle ne doit pas avoir lieu à la simple ouverture de la fiche.

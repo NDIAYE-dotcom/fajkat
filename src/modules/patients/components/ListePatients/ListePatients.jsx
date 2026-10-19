@@ -58,7 +58,7 @@ export default function ListePatients({ lignes, chargement, legende, vide, onOuv
           <span className="liste-patients__age">
             <span className="liste-patients__chiffres">{formatTelephone(p.phone)}</span>
             {p.phone_owner && (
-              <span className="liste-patients__doux">{libelleTitulaire(p.phone_owner)}</span>
+              <span className="liste-patients__doux">{libelleTitulaire(p.phone_owner, p.sex)}</span>
             )}
           </span>
         ) : (

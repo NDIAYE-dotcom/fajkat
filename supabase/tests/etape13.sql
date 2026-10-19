@@ -392,7 +392,9 @@ begin
   end if;
   raise notice 'OK : série de 4 rendez-vous tous les 3 mois, à la même heure';
 
-  -- Demain : un rendez-vous discret (PF) et un autre (vaccination).
+  -- Demain : un rendez-vous discret (PF) et un autre (vaccination). La PF n'est rappelée
+  -- que sur le téléphone de la patiente elle-même (étape 13 E).
+  update public.patients set phone = '+221771112233', phone_owner = 'patient' where id = v_p;
   perform public.book_appointment(v_org, v_p, pg_temp.type_a('pf'),
     ((current_setting('test.auj')::date + 1) + time '09:00') at time zone 'Africa/Dakar', p_confirm => true);
   perform public.book_appointment(v_org, v_v, pg_temp.type_a('vaccination'),
@@ -402,7 +404,7 @@ begin
       (select count(*) from public.appointments_to_remind(v_org));
   end if;
   select patient_label into v_label from public.appointments_to_remind(v_org) where patient_id = v_p;
-  if v_label <> 'votre rendez-vous au poste de santé' then
+  if v_label <> 'votre rendez-vous au poste de santé (Consultation)' then
     raise exception 'ÉCHEC : type discret nommé pour le patient : %', v_label;
   end if;
   select patient_label into v_label from public.appointments_to_remind(v_org) where patient_id = v_v;

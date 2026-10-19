@@ -78,10 +78,26 @@ export async function verifierEcran(page, nom) {
       )
     }
     const cadres = 'li, td, th, section, header, .jauge-seance, dialog, .modal__boite'
+    // Zone qui défile à l'horizontale (barre d'onglets) et tient dans l'écran : ce qui est
+    // caché par le défilement reste dans son cadre.
+    const dansZoneDefilante = (el) => {
+      for (let a = el.parentElement; a && a !== document.body; a = a.parentElement) {
+        const s = getComputedStyle(a)
+        if (
+          ['auto', 'scroll'].includes(s.overflowX) &&
+          a.scrollWidth > a.clientWidth &&
+          a.getBoundingClientRect().right <= window.innerWidth + 1
+        ) {
+          return true
+        }
+      }
+      return false
+    }
     for (const el of document.body.querySelectorAll('*')) {
       const texte = [...el.childNodes].some((n) => n.nodeType === 3 && n.textContent.trim())
       if (!texte || !visible(el) || el.closest('[aria-hidden="true"], .sr-only, .visually-hidden'))
         continue
+      if (dansZoneDefilante(el)) continue
       const r = el.getBoundingClientRect()
       const cadre = el.parentElement?.closest(cadres)
       const c = cadre?.getBoundingClientRect()

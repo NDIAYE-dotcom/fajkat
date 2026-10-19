@@ -1,0 +1,16 @@
+.modale-annulation {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-4);
+}
+
+.modale-annulation__motifs {
+  display: flex;
+  flex-direction: column;
+}
+
+.modale-annulation__aide {
+  margin: 0;
+  font-size: var(--texte-s);
+  color: var(--encre-douce);
+}

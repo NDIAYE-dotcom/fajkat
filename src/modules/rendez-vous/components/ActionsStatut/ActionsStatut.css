@@ -1,0 +1,19 @@
+.actions-statut {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-2);
+  width: 100%;
+}
+
+.actions-statut__titre {
+  margin: 0;
+  font-size: var(--texte-s);
+  font-weight: 700;
+  color: var(--encre-douce);
+}
+
+.actions-statut__boutons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--esp-2);
+}

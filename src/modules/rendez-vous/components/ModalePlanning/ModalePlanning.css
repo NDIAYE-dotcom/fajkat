@@ -1,0 +1,10 @@
+.modale-planning {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-4);
+}
+
+.modale-planning__choix {
+  display: flex;
+  flex-direction: column;
+}

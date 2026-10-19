@@ -213,7 +213,7 @@ begin
   raise notice 'OK : horaires élargis, capacité égale et retrait permis ; les rendez-vous restent prévus';
 
   -- Rendez-vous annulés : plus rien à protéger.
-  perform public.set_appointment_status(a.id, 'cancelled') from public.appointments a where a.session_id = v_s;
+  perform public.set_appointment_status(a.id, 'cancelled', 'Structure fermée') from public.appointments a where a.session_id = v_s;
   update public.appointment_sessions set appointment_type_id = pg_temp.type_d(v_org, 'soins') where id = v_s;
   raise notice 'OK : sans rendez-vous à venir, le type peut changer';
 end $$;

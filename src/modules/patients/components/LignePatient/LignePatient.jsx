@@ -9,7 +9,7 @@ export default function LignePatient({ patient, className = '' }) {
   const details = [
     [libelleAge(patient), libelleNaissance(patient)].filter(Boolean).join(', '),
     patient.phone &&
-      `${formatTelephone(patient.phone)}${patient.phone_owner ? ` (${libelleTitulaire(patient.phone_owner)})` : ''}`,
+      `${formatTelephone(patient.phone)}${patient.phone_owner ? ` (${libelleTitulaire(patient.phone_owner, patient.sex)})` : ''}`,
     patient.neighborhood,
     patient.mother_first_name && `mère : ${patient.mother_first_name}`,
     patient.legacy_file_number && `ancien n° ${patient.legacy_file_number}`,

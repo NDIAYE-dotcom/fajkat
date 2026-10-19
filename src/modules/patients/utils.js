@@ -19,12 +19,20 @@ export const TITULAIRES = [
   { valeur: 'autre', libelle: 'Une autre personne' },
 ]
 
+// Article accordé : « la patiente » pour une femme ; « du conjoint », « de la mère »,
+// « d’un proche » après « Téléphone ».
 const TITULAIRES_COURTS = {
-  patient: 'le patient',
-  mere: 'la mère',
-  pere: 'le père',
-  conjoint: 'le conjoint',
-  autre: 'un proche',
+  patient: { M: ['le', 'patient'], F: ['la', 'patiente'] },
+  mere: ['la', 'mère'],
+  pere: ['le', 'père'],
+  conjoint: ['le', 'conjoint'],
+  autre: ['un', 'proche'],
+}
+
+function titulaireAccorde(code, sexe) {
+  const t = TITULAIRES_COURTS[code]
+  if (!t) return null
+  return Array.isArray(t) ? t : t[sexe === 'F' ? 'F' : 'M']
 }
 
 export const RAISONS_DOUBLON = {
@@ -60,8 +68,19 @@ export function nomComplet(patient) {
   return `${patient.last_name.toLocaleUpperCase('fr')} ${patient.first_name}`
 }
 
-export function libelleTitulaire(code) {
-  return TITULAIRES_COURTS[code] ?? ''
+// « la mère », « le patient », « la patiente » ; vide si le titulaire est inconnu.
+export function libelleTitulaire(code, sexe) {
+  const t = titulaireAccorde(code, sexe)
+  return t ? t.join(' ') : ''
+}
+
+// « Téléphone du conjoint », « de la patiente », « d’un proche » ; vide si inconnu.
+export function libelleTelephoneDe(code, sexe) {
+  const t = titulaireAccorde(code, sexe)
+  if (!t) return ''
+  const [article, nom] = t
+  const de = { le: 'du', la: 'de la', un: 'd’un' }[article]
+  return `Téléphone ${de} ${nom}`
 }
 
 function ne(patient) {

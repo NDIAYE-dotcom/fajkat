@@ -1,0 +1,114 @@
+.onglet-rdv {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-5);
+}
+
+.onglet-rdv__bilan {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--esp-1) var(--esp-4);
+  margin: 0;
+  padding: var(--esp-3) var(--esp-4);
+  border-left: 4px solid var(--accent);
+  border-radius: var(--rayon-panneau);
+  background: var(--surface);
+}
+
+.onglet-rdv__taux {
+  color: var(--primaire);
+}
+
+.onglet-rdv__section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-2);
+}
+
+.onglet-rdv__titre {
+  margin: 0;
+  font-family: var(--police-titre);
+  font-size: var(--texte-l);
+  color: var(--primaire);
+}
+
+.onglet-rdv__nombre {
+  font-family: var(--police-mono);
+  font-size: var(--texte-s);
+  font-variant-numeric: tabular-nums;
+  color: var(--encre-douce);
+}
+
+.onglet-rdv__vide {
+  margin: 0;
+  color: var(--encre-douce);
+}
+
+/* Registre : filets horizontaux fins. */
+.onglet-rdv__liste {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: var(--trait);
+}
+
+.onglet-rdv__ligne {
+  display: grid;
+  grid-template-columns: 7rem minmax(0, 1fr) auto;
+  align-items: start;
+  gap: var(--esp-2) var(--esp-4);
+  padding-block: var(--esp-3);
+  border-bottom: var(--trait);
+}
+
+.onglet-rdv__quand {
+  display: flex;
+  flex-direction: column;
+  font-family: var(--police-mono);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.onglet-rdv__heure {
+  font-size: var(--texte-s);
+  color: var(--encre-douce);
+}
+
+.onglet-rdv__quoi {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-1);
+  min-width: 0;
+}
+
+.onglet-rdv__type {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--esp-2) var(--esp-3);
+  margin: 0;
+  font-weight: 700;
+}
+
+.onglet-rdv__details,
+.onglet-rdv__note {
+  margin: 0;
+  font-size: var(--texte-s);
+  color: var(--encre-douce);
+  overflow-wrap: break-word;
+}
+
+@media (max-width: 640px) {
+  .onglet-rdv__ligne {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .onglet-rdv__quand {
+    flex-direction: row;
+    gap: var(--esp-3);
+  }
+
+  .onglet-rdv__lien {
+    justify-self: start;
+  }
+}

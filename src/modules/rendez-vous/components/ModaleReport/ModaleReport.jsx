@@ -8,30 +8,47 @@ import Message from '../../../../components/ui/Message/Message.jsx'
 import Modal from '../../../../components/ui/Modal/Modal.jsx'
 import Skeleton from '../../../../components/ui/Skeleton/Skeleton.jsx'
 import { useEnLigne } from '../../../../hooks/useEnLigne.js'
+import { useOrganization } from '../../../../hooks/useOrganization.js'
 import { useToast } from '../../../../hooks/useToast.js'
 import { formatHeure } from '../../../../lib/format.js'
 import { nomComplet } from '../../../patients/utils.js'
+import { ajouterJours, prochainJourOuvert } from '../../agenda.js'
 import { reporterRdv } from '../../api.js'
+import { useFeriesPeriode } from '../../hooks/useAgenda.js'
 import { useRdvAReporter } from '../../hooks/useParametresAgenda.js'
 import { dateFr, dateLongue, versDateInput } from '../../utils.js'
 import './ModaleReport.css'
 
 // Rendez-vous déjà pris un jour qui devient férié (la Korité, la Tabaski ne sont souvent
 // confirmées que la veille) : liste, puis report en un geste vers un autre jour, à la même
-// heure. Tout ou rien ; un avertissement (pause, autre jour férié…) se confirme.
+// heure. Tout ou rien ; un avertissement (pause, autre jour férié…) se confirme. La date
+// proposée est le prochain jour ouvert (ni férié, ni fermé), modifiable.
 export default function ModaleReport({ orgId, date, libelle, onFermer }) {
   const queryClient = useQueryClient()
   const toast = useToast()
   const enLigne = useEnLigne()
   const rdv = useRdvAReporter(orgId, date)
   const [exclus, setExclus] = useState(() => new Set())
+  const { structure } = useOrganization()
+  const feries = useFeriesPeriode(orgId, ajouterJours(date, 1), ajouterJours(date, 61))
   const [nouvelle, setNouvelle] = useState(() => versDateInput(null))
+  const [modifiee, setModifiee] = useState(false)
   const [erreurDate, setErreurDate] = useState(null)
   const [erreur, setErreur] = useState(null)
   const [aConfirmer, setAConfirmer] = useState(null)
   const [envoi, setEnvoi] = useState(false)
 
   const liste = rdv.data ?? []
+
+  // Date proposée une fois les jours fériés lus, tant que la case n'a pas été touchée.
+  const proposee = feries.data
+    ? prochainJourOuvert(
+        structure?.settings,
+        feries.data.map((f) => f.holiday_date),
+        date,
+      )
+    : null
+  const saisie = !modifiee && proposee ? versDateInput(proposee) : nouvelle
   const choisis = liste.filter((r) => !exclus.has(r.id))
 
   function basculer(id) {
@@ -45,15 +62,15 @@ export default function ModaleReport({ orgId, date, libelle, onFermer }) {
   }
 
   async function reporter(confirmer) {
-    if (!nouvelle.date) {
+    if (!saisie.date) {
       setErreurDate(
-        nouvelle.texte
+        saisie.texte
           ? 'Cette date n’existe pas : vérifiez le jour et le mois.'
           : 'Tapez la nouvelle date (JJ/MM/AAAA).',
       )
       return
     }
-    if (nouvelle.date === date) {
+    if (saisie.date === date) {
       setErreurDate('Choisissez un autre jour que le jour férié.')
       return
     }
@@ -63,13 +80,13 @@ export default function ModaleReport({ orgId, date, libelle, onFermer }) {
     try {
       const reportes = await reporterRdv(
         choisis.map((r) => r.id),
-        nouvelle.date,
+        saisie.date,
         confirmer,
       )
       setAConfirmer(null)
       setExclus(new Set())
       toast.succes(
-        `${reportes.length} rendez-vous reporté${reportes.length > 1 ? 's' : ''} au ${dateFr(nouvelle.date)}.`,
+        `${reportes.length} rendez-vous reporté${reportes.length > 1 ? 's' : ''} au ${dateFr(saisie.date)}.`,
       )
       await queryClient.invalidateQueries({ queryKey: ['rendez-vous'] })
     } catch (e) {
@@ -132,7 +149,9 @@ export default function ModaleReport({ orgId, date, libelle, onFermer }) {
           <>
             <fieldset className="modale-report__liste">
               <legend className="modale-report__legende">
-                {`${liste.length} rendez-vous pris ce jour-là — décochez ceux à garder`}
+                <span className="modale-report__insecable">{`${liste.length} rendez-vous`}</span>{' '}
+                pris ce <span className="modale-report__insecable">jour-là</span> — décochez ceux à
+                garder
               </legend>
               {liste.map((r) => (
                 <Checkbox
@@ -148,23 +167,36 @@ export default function ModaleReport({ orgId, date, libelle, onFermer }) {
                       })}
                     </span>
                   }
-                  description={[r.type_label, r.practitioner_name, r.file_number]
-                    .filter(Boolean)
-                    .join(' · ')}
+                  description={
+                    <>
+                      {[r.type_label, r.practitioner_name].filter(Boolean).join(' · ')}
+                      {r.file_number && (
+                        <>
+                          {' · '}
+                          <span className="modale-report__insecable">{r.file_number}</span>
+                        </>
+                      )}
+                    </>
+                  }
                 />
               ))}
             </fieldset>
 
             <Field
               label="Reporter au"
-              aide="Même heure, même type ; l’ancien rendez-vous reste visible comme « reporté »."
+              aide={
+                proposee && saisie.date === proposee
+                  ? 'Prochain jour ouvert proposé, modifiable. Même heure, même type ; l’ancien reste visible comme « reporté ».'
+                  : 'Même heure, même type ; l’ancien reste visible comme « reporté ».'
+              }
               erreur={erreurDate}
               requis
             >
               <DateInput
-                value={nouvelle}
+                value={saisie}
                 onChange={(v) => {
                   setNouvelle(v)
+                  setModifiee(true)
                   setAConfirmer(null)
                 }}
               />

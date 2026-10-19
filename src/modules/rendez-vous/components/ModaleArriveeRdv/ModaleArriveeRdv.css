@@ -1,0 +1,9 @@
+.modale-arrivee-rdv {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-4);
+}
+
+.modale-arrivee-rdv__texte {
+  margin: 0;
+}

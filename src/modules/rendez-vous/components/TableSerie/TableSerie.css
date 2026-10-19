@@ -1,0 +1,84 @@
+/* Dates de la série, façon registre : numéro dans la marge, filets fins. */
+.table-serie {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: var(--trait);
+}
+
+.table-serie__ligne {
+  display: grid;
+  grid-template-columns: 2rem minmax(0, 1fr);
+  gap: var(--esp-3);
+  padding-block: var(--esp-3);
+  border-bottom: var(--trait);
+}
+
+.table-serie__ligne--refus {
+  border-left: 3px solid var(--tampon);
+  padding-left: var(--esp-2);
+}
+
+.table-serie__numero {
+  font-family: var(--police-mono);
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  color: var(--encre-douce);
+}
+
+.table-serie__contenu {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-2);
+  min-width: 0;
+}
+
+.table-serie__quand {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--esp-1) var(--esp-3);
+  margin: 0;
+}
+
+.table-serie__date {
+  font-weight: 700;
+}
+
+.table-serie__date::first-letter {
+  text-transform: uppercase;
+}
+
+.table-serie__heure {
+  font-family: var(--police-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+.table-serie__message {
+  margin: 0;
+  font-size: var(--texte-s);
+  color: var(--encre-douce);
+}
+
+.table-serie__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--esp-2);
+}
+
+.table-serie__actions:empty {
+  display: none;
+}
+
+.table-serie__propositions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-2);
+}
+
+.table-serie__choix {
+  justify-content: flex-start;
+  width: 100%;
+  text-align: left;
+  white-space: normal;
+}

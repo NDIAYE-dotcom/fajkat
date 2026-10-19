@@ -29,3 +29,8 @@
   font-family: var(--police-mono);
   font-variant-numeric: tabular-nums;
 }
+
+/* Numéro de dossier, « rendez-vous », « jour-là » : jamais coupés au trait d'union. */
+.modale-report__insecable {
+  white-space: nowrap;
+}

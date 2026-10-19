@@ -1,19 +1,44 @@
+import { useState } from 'react'
 import Button from '../../../../components/ui/Button/Button.jsx'
+import Message from '../../../../components/ui/Message/Message.jsx'
 import Modal from '../../../../components/ui/Modal/Modal.jsx'
 import Tampon from '../../../../components/ui/Tampon/Tampon.jsx'
+import { useEnLigne } from '../../../../hooks/useEnLigne.js'
 import { formatHeure } from '../../../../lib/format.js'
 import { nomComplet } from '../../../patients/utils.js'
-import { ageOuNaissance, STATUTS_RDV } from '../../agenda.js'
+import { ageOuNaissance, aujourdhui, STATUTS_RDV } from '../../agenda.js'
+import { changerStatutRdv } from '../../api.js'
+import { actionsStatut } from '../../suivi.js'
 import { dateLongue } from '../../utils.js'
+import ActionsStatut from '../ActionsStatut/ActionsStatut.jsx'
 import './ModaleRdv.css'
 
 // Statuts où le rendez-vous peut encore être reporté, ou changer de type (comme la base).
 const REPORTABLES = ['scheduled', 'confirmed', 'no_show']
 const TYPE_MODIFIABLE = ['scheduled', 'confirmed']
 
+const SUCCES = {
+  confirmed: 'Rendez-vous confirmé',
+  no_show: 'Patient noté absent',
+  scheduled: 'Rendez-vous remis à « prévu »',
+}
+
 // Détail d'un rendez-vous de l'agenda, avec ce que le rôle peut en faire. Le type affiché
 // est celui que la base renvoie (neutre pour un type discret que le rôle ne voit pas).
-export default function ModaleRdv({ rdv, droits, onFermer, onReporter, onChangerType }) {
+// onStatut(rdv, message) : statut changé d'un clic (confirmé, absent, remis à « prévu »).
+export default function ModaleRdv({
+  rdv,
+  droits,
+  onFermer,
+  onReporter,
+  onChangerType,
+  onStatut,
+  onArrivee,
+  onAnnuler,
+}) {
+  const enLigne = useEnLigne()
+  const [enCours, setEnCours] = useState(null)
+  const [echec, setEchec] = useState(null)
   const statut = STATUTS_RDV[rdv.status]
   const reportable = droits.write && REPORTABLES.includes(rdv.status)
   const typeModifiable = droits.write && droits.medical && TYPE_MODIFIABLE.includes(rdv.status)
@@ -23,8 +48,23 @@ export default function ModaleRdv({ rdv, droits, onFermer, onReporter, onChanger
     ['Type', rdv.type_label ?? 'Consultation'],
     rdv.practitioner_name && ['Praticien', rdv.practitioner_name],
     rdv.series_index && ['Série', `Rendez-vous n° ${rdv.series_index}`],
+    rdv.ticket_number && ['Ticket de file', rdv.ticket_number],
+    rdv.cancel_reason && ['Motif d’annulation', rdv.cancel_reason],
     rdv.note && ['Note', rdv.note],
   ].filter(Boolean)
+
+  async function changer(nouveau) {
+    setEnCours(nouveau)
+    setEchec(null)
+    try {
+      const ligne = await changerStatutRdv(rdv.id, nouveau)
+      onStatut({ ...rdv, status: ligne?.status ?? nouveau }, SUCCES[nouveau])
+    } catch (e) {
+      setEchec(e.message)
+    } finally {
+      setEnCours(null)
+    }
+  }
 
   return (
     <Modal
@@ -36,11 +76,15 @@ export default function ModaleRdv({ rdv, droits, onFermer, onReporter, onChanger
         (typeModifiable || reportable) && (
           <>
             {typeModifiable && (
-              <Button variante="secondaire" onClick={onChangerType}>
+              <Button variante="secondaire" onClick={onChangerType} disabled={Boolean(enCours)}>
                 Changer le type
               </Button>
             )}
-            {reportable && <Button onClick={onReporter}>Reporter</Button>}
+            {reportable && (
+              <Button onClick={onReporter} disabled={Boolean(enCours)}>
+                Reporter
+              </Button>
+            )}
           </>
         )
       }
@@ -59,7 +103,25 @@ export default function ModaleRdv({ rdv, droits, onFermer, onReporter, onChanger
             </div>
           ))}
         </dl>
-        <Button variante="discret" to={`/app/patients/${rdv.patient_id}`}>
+        <ActionsStatut
+          actions={actionsStatut(rdv, droits, aujourdhui())}
+          enCours={enCours}
+          desactive={!enLigne}
+          onStatut={changer}
+          onArrivee={onArrivee}
+          onAnnuler={onAnnuler}
+        />
+        {!enLigne && (
+          <Message ton="info" titre="Vous êtes hors ligne">
+            <p>Le statut pourra être changé dès le retour de la connexion.</p>
+          </Message>
+        )}
+        {echec && (
+          <Message ton="erreur" titre="Statut non changé">
+            <p>{echec}</p>
+          </Message>
+        )}
+        <Button variante="discret" to={`/app/patients/${rdv.patient_id}?onglet=rendez-vous`}>
           Ouvrir le dossier du patient
         </Button>
       </div>

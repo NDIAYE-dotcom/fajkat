@@ -28,6 +28,7 @@ import { usePermissionsPatients } from '../../../patients/hooks/usePermissionsPa
 import BarreAgenda from '../../components/BarreAgenda/BarreAgenda.jsx'
 import FenetresAgenda from '../../components/FenetresAgenda/FenetresAgenda.jsx'
 import MarquesJour from '../../components/MarquesJour/MarquesJour.jsx'
+import RaccourcisAgenda from '../../components/RaccourcisAgenda/RaccourcisAgenda.jsx'
 import VueJour from '../../components/VueJour/VueJour.jsx'
 import VueListe from '../../components/VueListe/VueListe.jsx'
 import VueSemaine from '../../components/VueSemaine/VueSemaine.jsx'
@@ -137,6 +138,14 @@ function PageAgenda() {
         </div>
       </header>
 
+      <RaccourcisAgenda
+        orgId={orgId}
+        aujourdhui={aujourdhui}
+        droits={droits}
+        onImprimer={() => setFenetre({ type: 'planning', date })}
+        onSerie={() => setFenetre({ type: 'serie' })}
+      />
+
       <BarreAgenda
         vue={vue}
         date={date}
@@ -216,9 +225,11 @@ function PageAgenda() {
 
       <FenetresAgenda
         orgId={orgId}
+        structure={structure}
         droits={droits}
         multiPraticiens={multiPraticiens}
         peutCreerPatient={droitsPatients.ecrire}
+        rdvDuJour={tous}
         fenetre={fenetre}
         setFenetre={setFenetre}
       />

@@ -1,0 +1,64 @@
+@media print {
+  .planning-imprime__entete {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 2mm 6mm;
+    margin-bottom: 4mm;
+  }
+
+  .planning-imprime__entete h1 {
+    margin: 0;
+    font-size: 15pt;
+  }
+
+  .planning-imprime__entete h1::first-letter {
+    text-transform: uppercase;
+  }
+
+  .planning-imprime__entete p {
+    margin: 0;
+  }
+
+  .planning-imprime__table {
+    table-layout: fixed;
+    font-size: 10pt;
+  }
+
+  .planning-imprime__heure {
+    width: 16mm;
+  }
+
+  .planning-imprime__statut {
+    width: 22mm;
+  }
+
+  .planning-imprime__case {
+    width: 16mm;
+  }
+
+  .planning-imprime__table td:last-child {
+    border-left: var(--impression-filet);
+  }
+
+  .planning-imprime__identite {
+    display: block;
+    font-family: var(--police-mono);
+    font-size: 8.5pt;
+  }
+
+  .planning-imprime__pied {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 2mm 6mm;
+    margin-top: 4mm;
+    font-size: 8.5pt;
+  }
+
+  .planning-imprime__confidentiel {
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+}

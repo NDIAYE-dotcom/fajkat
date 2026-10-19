@@ -50,7 +50,7 @@ export default function OngletIdentite({ patient: p, cle, ecrire }) {
       [libelleNaissance(p), libelleAge(p)].filter(Boolean).join(' · ') +
         (p.birth_date_estimated ? ' (date estimée d’après l’âge déclaré)' : ''),
     ],
-    ['Téléphone', telephone(p.phone, libelleTitulaire(p.phone_owner))],
+    ['Téléphone', telephone(p.phone, libelleTitulaire(p.phone_owner, p.sex))],
     ['Second téléphone', telephone(p.phone_secondary)],
     ['Rappels WhatsApp', p.phone ? accordWhatsApp(p) : null],
     ['Quartier ou village', p.neighborhood],

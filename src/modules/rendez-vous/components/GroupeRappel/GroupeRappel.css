@@ -1,0 +1,112 @@
+/* Fiche d'un téléphone, façon registre : marge colorée à gauche, filets fins. */
+.groupe-rappel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-3);
+  padding: var(--esp-4);
+  border: var(--trait);
+  border-left: 4px solid var(--accent);
+  border-radius: var(--rayon-panneau);
+  background: var(--blanc);
+}
+
+.groupe-rappel--fait {
+  border-left-color: var(--doux);
+  background: var(--fond);
+}
+
+.groupe-rappel__telephone {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--esp-2) var(--esp-4);
+}
+
+.groupe-rappel__numero {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--esp-2);
+  min-height: 44px;
+  font-family: var(--police-mono);
+  font-size: var(--texte-l);
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  color: var(--primaire);
+  white-space: nowrap;
+}
+
+.groupe-rappel__infos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--esp-1) var(--esp-3);
+  width: 100%;
+  margin: 0;
+  font-size: var(--texte-s);
+  color: var(--encre-douce);
+}
+
+.groupe-rappel__rdv {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.groupe-rappel__ligne {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-2);
+  padding-block: var(--esp-3);
+  border-top: var(--trait);
+}
+
+.groupe-rappel__qui {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--esp-1) var(--esp-3);
+  margin: 0;
+}
+
+.groupe-rappel__heure,
+.groupe-rappel__dossier {
+  font-family: var(--police-mono);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.groupe-rappel__heure {
+  font-weight: 600;
+}
+
+.groupe-rappel__nom {
+  font-weight: 700;
+  overflow-wrap: break-word;
+}
+
+.groupe-rappel__dossier {
+  font-size: var(--texte-s);
+  color: var(--encre-douce);
+}
+
+.groupe-rappel__message {
+  margin: 0;
+  padding: var(--esp-2) var(--esp-3);
+  border-left: 2px solid var(--doux);
+  font-size: var(--texte-s);
+  color: var(--encre-douce);
+  overflow-wrap: break-word;
+}
+
+.groupe-rappel__fait {
+  padding-top: var(--esp-2);
+  border-top: var(--trait);
+}
+
+.groupe-rappel__echec {
+  margin: 0;
+  font-size: var(--texte-s);
+  font-weight: 700;
+  color: var(--tampon);
+}

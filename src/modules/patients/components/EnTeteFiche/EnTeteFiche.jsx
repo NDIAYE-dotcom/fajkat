@@ -32,7 +32,7 @@ export default function EnTeteFiche({ patient, cle, ecrire, fusionner }) {
         {patient.phone && (
           <p className="en-tete-fiche__details">
             <span className="en-tete-fiche__chiffres">{formatTelephone(patient.phone)}</span>
-            {patient.phone_owner && ` (${libelleTitulaire(patient.phone_owner)})`}
+            {patient.phone_owner && ` (${libelleTitulaire(patient.phone_owner, patient.sex)})`}
           </p>
         )}
       </div>

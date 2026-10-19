@@ -1,0 +1,39 @@
+.rappels {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-5);
+  max-width: 48rem;
+}
+
+.rappels__entete {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--esp-1);
+}
+
+.rappels__titre {
+  font-size: var(--titre-2);
+  color: var(--primaire);
+}
+
+.rappels__date {
+  color: var(--encre-douce);
+}
+
+.rappels__date::first-letter {
+  text-transform: uppercase;
+}
+
+.rappels__bilan {
+  font-weight: 700;
+}
+
+.rappels__liste {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-4);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}

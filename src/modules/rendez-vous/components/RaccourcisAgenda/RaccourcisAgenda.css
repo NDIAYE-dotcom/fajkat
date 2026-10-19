@@ -1,0 +1,5 @@
+.raccourcis-agenda {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--esp-2) var(--esp-3);
+}

@@ -98,6 +98,18 @@ export function estFerme(settings, iso) {
   return settings?.opening_hours?.[CLES_JOURS[jourIso(iso) - 1]]?.statut === 'ferme'
 }
 
+// Premier jour ouvert (ni férié, ni fermé) après « apres » et pas avant aujourd'hui ;
+// null si aucun dans les « limite » jours. feries : dates « AAAA-MM-JJ ».
+export function prochainJourOuvert(settings, feries, apres, limite = 60) {
+  const ferie = new Set(feries)
+  const auj = aujourdhui()
+  let jour = ajouterJours(apres > auj ? apres : auj, apres >= auj ? 1 : 0)
+  for (let i = 0; i < limite; i += 1, jour = ajouterJours(jour, 1)) {
+    if (!ferie.has(jour) && !estFerme(settings, jour)) return jour
+  }
+  return null
+}
+
 // Séances qui ont lieu ce jour-là, avec le nombre de places prises.
 export function seancesDuJour(seances, rdv, iso) {
   const jour = jourIso(iso)

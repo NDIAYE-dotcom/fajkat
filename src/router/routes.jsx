@@ -136,6 +136,11 @@ export const router = createBrowserRouter([
                 path: 'rendez-vous',
                 lazy: composant(() => import('../modules/rendez-vous/pages/Agenda/Agenda.jsx')),
               },
+              // Rendez-vous de demain à rappeler, regroupés par téléphone.
+              {
+                path: 'rendez-vous/rappels',
+                lazy: composant(() => import('../modules/rendez-vous/pages/Rappels/Rappels.jsx')),
+              },
               // Paramètres de l'agenda (owner et admin) : types, séances, pauses, jours fériés.
               {
                 path: 'rendez-vous/parametres',

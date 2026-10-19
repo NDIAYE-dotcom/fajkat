@@ -16,7 +16,7 @@ function naissance(p) {
 
 function telephone(p) {
   if (!p.phone) return null
-  return `${formatTelephone(p.phone)}${p.phone_owner ? ` (${libelleTitulaire(p.phone_owner)})` : ''}`
+  return `${formatTelephone(p.phone)}${p.phone_owner ? ` (${libelleTitulaire(p.phone_owner, p.sex)})` : ''}`
 }
 
 function accord(p) {

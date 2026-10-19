@@ -2,7 +2,9 @@
 // feature agenda_multi_praticiens). Partie B : paramètres de l'agenda (types et durées,
 // séances et capacités, pauses, jours fériés) et report des rendez-vous d'un jour férié.
 // Partie C : agenda d'une période (list_appointments). Partie D : prise, report et
-// changement de type d'un rendez-vous, prochaines séances qui ont des places.
+// changement de type d'un rendez-vous, prochaines séances qui ont des places. Partie E :
+// statuts, arrivée vers la file, rappels de la veille, rendez-vous d'un patient, séries
+// contrôlées date par date.
 // Les contrôles (séance pleine, jour férié à confirmer…) sont faits par la base : un
 // avertissement à confirmer revient avec le hint « confirmation_required ».
 
@@ -27,6 +29,9 @@ export const cles = {
   rdvDuJour: (orgId, date) => ['rendez-vous', 'jour', orgId, date],
   agenda: (orgId, du, au) => ['rendez-vous', 'agenda', orgId, du, au],
   feriesPeriode: (orgId, du, au) => ['rendez-vous', 'feries', orgId, 'periode', du, au],
+  rappels: (orgId, date) => ['rendez-vous', 'rappels', orgId, date],
+  rdvPatient: (patientId) => ['rendez-vous', 'patient', patientId],
+  statsPatient: (patientId) => ['rendez-vous', 'patient', patientId, 'stats'],
 }
 
 const MESSAGE_DROITS =
@@ -436,5 +441,111 @@ export async function chargerProchainesSeances(orgId, { typeId, rdvId, du, prati
     p_limit: 3,
   })
   if (error) throw erreurRdv(error, 'Les prochaines séances n’ont pas pu être cherchées.')
+  return data ?? []
+}
+
+// --- Statuts et arrivée (partie E) --------------------------------------------------
+
+// statut : scheduled (remis à « prévu »), confirmed, no_show, cancelled (motif obligatoire).
+export async function changerStatutRdv(rdvId, statut, motif = null) {
+  const { data, error } = await client().rpc('set_appointment_status', {
+    p_appointment_id: rdvId,
+    p_status: statut,
+    p_reason: motif?.trim() || null,
+  })
+  if (error) throw erreurRdv(error, 'Le statut n’a pas été changé. Réessayez.')
+  return data
+}
+
+// « Arrivé » : le patient entre dans la file du type du rendez-vous (pour un rendez-vous
+// discret masqué, la base choisit la file du vrai type). Renvoie le passage (ticket).
+export async function arriverRdv(rdvId, { serviceId, priorite }) {
+  const { data, error } = await client().rpc('arrive_appointment', {
+    p_appointment_id: rdvId,
+    p_queue_service_id: serviceId || null,
+    p_priority: priorite || 'normal',
+  })
+  if (error) throw erreurRdv(error, 'L’arrivée n’a pas été enregistrée. Réessayez.')
+  return data
+}
+
+// --- Rappels de la veille ------------------------------------------------------------
+// Un rendez-vous discret n'y figure que si le téléphone est celui de la patiente (règle de
+// la base : appointment_reminder_allowed).
+
+export async function chargerRappels(orgId, date) {
+  const { data, error } = await client().rpc('appointments_to_remind', {
+    p_org_id: orgId,
+    p_date: date,
+  })
+  if (error) throw erreurRdv(error, 'La liste des rappels n’a pas pu être chargée.')
+  return data ?? []
+}
+
+// « Rappel fait » pour les rendez-vous d'un même téléphone (cochée ou décochée).
+export async function marquerRappel(ids, fait) {
+  const { data, error } = await client().rpc('set_appointment_reminder', {
+    p_appointment_ids: ids,
+    p_done: fait,
+  })
+  if (error) throw erreurRdv(error, 'Le rappel n’a pas été enregistré. Réessayez.')
+  return data ?? []
+}
+
+// --- Rendez-vous d'un patient (fiche) ----------------------------------------------
+
+export async function chargerRdvPatient(patientId) {
+  const { data, error } = await client().rpc('list_patient_appointments', {
+    p_patient_id: patientId,
+  })
+  if (error) throw erreurRdv(error, 'Les rendez-vous du patient n’ont pas pu être chargés.')
+  return data ?? []
+}
+
+// { arrived, no_show, upcoming, no_show_rate } ; no_show_rate vide sans rendez-vous passé.
+export async function chargerStatsPatient(patientId) {
+  const { data, error } = await client().rpc('patient_appointment_stats', {
+    p_patient_id: patientId,
+  })
+  if (error) throw erreurRdv(error, 'Le taux d’absence n’a pas pu être calculé.')
+  return data ?? {}
+}
+
+// --- Séries contrôlées date par date ------------------------------------------------
+// dates : [{ debut, seanceId?, horsSeance? }], dans l'ordre.
+
+function versItems(dates) {
+  return dates.map((d) => ({
+    starts_at: d.debut,
+    session_id: d.seanceId || null,
+    outside_session: !d.seanceId && !!d.horsSeance,
+  }))
+}
+
+// Un contrôle par date : { series_index, local_date, session_id, blocking, warnings }.
+export async function verifierSerie(orgId, champs, dates) {
+  const { data, error } = await client().rpc('check_appointment_series', {
+    p_org_id: orgId,
+    p_patient_id: champs.patientId,
+    p_type_id: champs.typeId,
+    p_items: versItems(dates),
+    p_practitioner_id: champs.praticienId || null,
+  })
+  if (error) throw erreurRdv(error, 'La série n’a pas pu être vérifiée. Réessayez.')
+  return data ?? []
+}
+
+// Tout ou rien : une date refusée annule toute la série.
+export async function prendreSerie(orgId, champs, dates, confirmer = false) {
+  const { data, error } = await client().rpc('book_appointment_series', {
+    p_org_id: orgId,
+    p_patient_id: champs.patientId,
+    p_type_id: champs.typeId,
+    p_items: versItems(dates),
+    p_practitioner_id: champs.praticienId || null,
+    p_note: champs.note?.trim() || null,
+    p_confirm: confirmer,
+  })
+  if (error) throw erreurRdv(error, 'La série n’a pas été enregistrée. Réessayez.')
   return data ?? []
 }
