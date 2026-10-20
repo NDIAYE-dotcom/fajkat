@@ -1,0 +1,38 @@
+.constantes-passage {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.constantes-passage__ligne {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--esp-1) var(--esp-3);
+  padding-block: var(--esp-2);
+  border-top: var(--trait);
+}
+
+.constantes-passage__ligne:first-child {
+  border-top: 0;
+}
+
+.constantes-passage__heure {
+  font-family: var(--police-mono);
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+}
+
+.constantes-passage__valeurs {
+  font-family: var(--police-mono);
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: break-word;
+  min-width: 0;
+}
+
+.constantes-passage__vide {
+  margin: 0;
+  color: var(--encre-douce);
+}

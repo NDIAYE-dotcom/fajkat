@@ -43,6 +43,18 @@ export const COMPTES = {
     nom: 'Dr Aminata Sarr',
     role: 'medecin',
   },
+  sageFemme: {
+    id: '00000000-0000-4000-e2e0-000000000008',
+    email: 'sage-femme.poste@fajkat.test',
+    nom: 'Khady Ndiaye',
+    role: 'sage_femme',
+  },
+  aideSoignant: {
+    id: '00000000-0000-4000-e2e0-000000000009',
+    email: 'aide-soignant.poste@fajkat.test',
+    nom: 'Pape Gueye',
+    role: 'aide_soignant',
+  },
 }
 
 // Clé de signature des jetons de test : locale, sans valeur ailleurs.

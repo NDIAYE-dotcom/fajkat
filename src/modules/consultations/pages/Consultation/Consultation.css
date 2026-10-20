@@ -1,0 +1,11 @@
+.consultation {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-4);
+  max-width: 56rem;
+}
+
+.consultation__aide {
+  margin: 0;
+  color: var(--encre-douce);
+}

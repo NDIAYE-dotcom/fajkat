@@ -1,0 +1,60 @@
+.examens-rapides {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-4);
+}
+
+.examens-rapides__liste {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.examens-rapides__ligne {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-3);
+  padding-block: var(--esp-3);
+  border-top: var(--trait);
+}
+
+.examens-rapides__ligne:first-child {
+  padding-top: 0;
+  border-top: 0;
+}
+
+.examens-rapides__entete {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--esp-2) var(--esp-3);
+}
+
+.examens-rapides__nom {
+  font-weight: 700;
+  overflow-wrap: break-word;
+  min-width: 0;
+}
+
+.examens-rapides__retirer {
+  margin-left: auto;
+}
+
+.examens-rapides__resultats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--esp-1) var(--esp-4);
+}
+
+.examens-rapides__ajout {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: var(--esp-3);
+}
+
+.examens-rapides__choix {
+  flex: 1 1 14rem;
+}

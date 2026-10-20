@@ -261,7 +261,7 @@ begin
   assert (v ->> 'version')::integer = v_enc.version + 1, 'version suivante';
   -- Autre appareil : version lue dépassée.
   perform pg_temp.refus(format('select public.save_encounter_draft(%L, %s, %L)',
-    v_enc.id, v_enc.version, '{"reason": "ancien"}'), '40001', 'autre appareil');
+    v_enc.id, v_enc.version, '{"reason": "ancien"}'), '22023', 'autre appareil');
   raise notice 'OK : enregistrement versionné ; version dépassée refusée (autre appareil)';
 end $$;
 

@@ -6,6 +6,8 @@ import { useAuth } from '../../../../hooks/useAuth.js'
 import { useNavigation } from '../../../../hooks/useNavigation.js'
 import { useOrganization } from '../../../../hooks/useOrganization.js'
 import { dayjs } from '../../../../lib/format.js'
+import BrouillonsEnCours from '../../../consultations/components/BrouillonsEnCours/BrouillonsEnCours.jsx'
+import { usePermissionsConsultation } from '../../../consultations/hooks/useConsultation.js'
 import CarteConfiguration from '../../components/CarteConfiguration/CarteConfiguration.jsx'
 import { doitOuvrirAssistant, peutConfigurer } from '../../utils.js'
 import './TableauDeBord.css'
@@ -49,11 +51,16 @@ function dateDuJour() {
   return texte.charAt(0).toLocaleUpperCase('fr') + texte.slice(1)
 }
 
-// Journée du jour : la date, la configuration à terminer, et les indicateurs à venir.
+// Journée du jour : la date, la configuration à terminer, les consultations non validées
+// du soignant, et les indicateurs à venir.
 export default function TableauDeBord() {
   const { prenom } = useAuth()
   const { structure, role } = useOrganization()
   const { estVisible } = useNavigation()
+  // Consultations commencées et pas encore validées : soignants qui rédigent.
+  const consultations = usePermissionsConsultation(
+    estVisible('consultations') ? structure.id : null,
+  ).ecrire
 
   useEffect(() => {
     document.title = `Journée du jour — ${structure.name} — Fajkat`
@@ -74,6 +81,8 @@ export default function TableauDeBord() {
       </header>
 
       {peutConfigurer(role) && <CarteConfiguration />}
+
+      {consultations && <BrouillonsEnCours orgId={structure.id} />}
 
       <section aria-labelledby="tdb-indicateurs">
         <h2 id="tdb-indicateurs" className="sr-only">

@@ -3,9 +3,11 @@
 //   /rest/v1/*     -> PostgREST (binaire indiqué par E2E_POSTGREST), sur la base fajkat_e2e ;
 //   /auth/v1/*     -> connexion simulée : comptes de e2e/comptes.js, jetons signés avec la
 //                     clé locale SECRET_JWT (PostgREST la vérifie) ;
-//   /realtime/v1/* -> WebSocket minimal qui accepte les abonnements sans rien envoyer.
+//   /realtime/v1/* -> WebSocket minimal qui accepte les abonnements ; il diffuse seulement
+//                     les nouvelles notifications (postgres_changes, INSERT) à leur
+//                     destinataire, lues dans la base toutes les 700 ms.
 // Local seulement : jamais fajkat-dev ni la production.
-import { spawn } from 'node:child_process'
+import { execFile, spawn } from 'node:child_process'
 import { createHash } from 'node:crypto'
 import http from 'node:http'
 import { COMPTES, MOT_DE_PASSE, PORTS, SECRET_JWT } from './comptes.js'
@@ -170,14 +172,16 @@ function websocket(req, socket) {
       const [joinRef, ref, topic, event, payload] = v2
         ? m
         : [m.join_ref, m.ref, m.topic, m.event, m.payload]
+      const changes = event === 'phx_join' ? (payload?.config?.postgres_changes ?? []) : []
+      changes.forEach((c, k) => {
+        const destinataire = /^recipient_user_id=eq\.(.+)$/.exec(c.filter ?? '')?.[1]
+        if (c.table === 'notifications' && destinataire) {
+          abonnes.push({ socket, topic, id: k + 1, destinataire, v2 })
+        }
+      })
       const reponse =
         event === 'phx_join'
-          ? {
-              postgres_changes: (payload?.config?.postgres_changes ?? []).map((c, k) => ({
-                ...c,
-                id: k + 1,
-              })),
-            }
+          ? { postgres_changes: changes.map((c, k) => ({ ...c, id: k + 1 })) }
           : {}
       const retour = { status: 'ok', response: reponse }
       socket.write(
@@ -192,7 +196,63 @@ function websocket(req, socket) {
     }
   })
   socket.on('error', () => {})
+  socket.on('close', () => {
+    for (let i = abonnes.length - 1; i >= 0; i -= 1)
+      if (abonnes[i].socket === socket) abonnes.splice(i, 1)
+  })
 }
+
+// Abonnés aux notifications : { socket, topic, id, destinataire, v2 }.
+const abonnes = []
+let repere = null // created_at de la dernière notification diffusée (horloge de la base)
+
+function lireBase(sql) {
+  return new Promise((ok) =>
+    execFile('psql', ['-U', 'postgres', '-d', 'fajkat_e2e', '-At', '-c', sql], (e, sortie) =>
+      ok(e ? null : sortie),
+    ),
+  )
+}
+
+// Nouvelles notifications depuis le dernier passage, envoyées à leur seul destinataire
+// (le vrai Realtime applique en plus les policies RLS de la table).
+async function diffuser() {
+  if (repere === null) {
+    repere = (await lireBase('select now()'))?.trim() ?? null
+    return
+  }
+  const sortie = await lireBase(
+    `select row_to_json(n) from public.notifications n where created_at > '${repere}' order by created_at`,
+  )
+  for (const ligne of (sortie ?? '').split('\n').filter(Boolean)) {
+    const n = JSON.parse(ligne)
+    repere = n.created_at
+    for (const a of abonnes.filter((x) => x.destinataire === n.recipient_user_id)) {
+      const charge = {
+        ids: [a.id],
+        data: {
+          schema: 'public',
+          table: 'notifications',
+          commit_timestamp: n.created_at,
+          type: 'INSERT',
+          columns: [],
+          record: n,
+          errors: null,
+        },
+      }
+      a.socket.write(
+        trame(
+          JSON.stringify(
+            a.v2
+              ? [null, null, a.topic, 'postgres_changes', charge]
+              : { topic: a.topic, event: 'postgres_changes', payload: charge, ref: null },
+          ),
+        ),
+      )
+    }
+  }
+}
+setInterval(diffuser, 700)
 
 // --- Lancement ----------------------------------------------------------------------------
 const binaire = process.env.E2E_POSTGREST

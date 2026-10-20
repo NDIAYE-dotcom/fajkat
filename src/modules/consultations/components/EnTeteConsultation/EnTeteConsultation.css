@@ -1,0 +1,39 @@
+.en-tete-consultation {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--esp-2);
+}
+
+.en-tete-consultation__identite {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.en-tete-consultation__numero {
+  margin: 0;
+  font-family: var(--police-mono);
+  font-variant-numeric: tabular-nums;
+  color: var(--encre-douce);
+}
+
+.en-tete-consultation__nom {
+  margin: 0;
+  font-size: var(--titre-2);
+  color: var(--primaire);
+  overflow-wrap: break-word;
+}
+
+.en-tete-consultation__details {
+  margin: 0;
+  color: var(--encre-douce);
+}
+
+.en-tete-consultation__statut {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--esp-2) var(--esp-3);
+  margin: 0;
+  overflow-wrap: break-word;
+}

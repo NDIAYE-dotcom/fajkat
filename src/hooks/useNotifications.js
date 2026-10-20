@@ -11,6 +11,9 @@ import { useAuth } from './useAuth.js'
 import { useOrganization } from './useOrganization.js'
 
 // Notifications de la structure active, mises à jour en temps réel (Supabase Realtime).
+// Repli si le temps réel tombe (réseau, limite de connexions de l'offre Supabase) :
+// relecture toutes les 60 secondes tant que le canal n'est pas abonné, et toujours au
+// retour sur l'onglet. Une alerte urgente arrive ainsi sans recharger la page.
 // derniere : la dernière notification arrivée pendant la session (animation, annonce
 // pour les lecteurs d'écran) ; null au chargement.
 export function useNotifications() {
@@ -21,16 +24,20 @@ export function useNotifications() {
   const userId = utilisateur?.id
   const actif = Boolean(orgId && userId)
   const [derniere, setDerniere] = useState(null)
+  const [tempsReel, setTempsReel] = useState(false)
+  const repli = tempsReel ? false : 60 * 1000
 
   const liste = useQuery({
     queryKey: clesNotifications.liste(orgId, userId),
     queryFn: () => chargerNotifications(orgId),
     enabled: actif,
+    refetchInterval: repli,
   })
   const nonLues = useQuery({
     queryKey: clesNotifications.nonLues(orgId, userId),
     queryFn: () => chargerNonLues(orgId),
     enabled: actif,
+    refetchInterval: repli,
   })
 
   const recharger = useCallback(() => {
@@ -47,12 +54,20 @@ export function useNotifications() {
         recharger()
       },
       surConnexion: recharger,
+      surEtat: setTempsReel,
     })
-    // Retour du réseau après une coupure : on rattrape sans attendre Realtime.
+    // Retour du réseau après une coupure, ou retour sur l'onglet (téléphone sorti de
+    // veille) : on rattrape sans attendre Realtime.
+    function surVisibilite() {
+      if (document.visibilityState === 'visible') recharger()
+    }
     window.addEventListener('online', recharger)
+    document.addEventListener('visibilitychange', surVisibilite)
     return () => {
       desabonner()
+      setTempsReel(false)
       window.removeEventListener('online', recharger)
+      document.removeEventListener('visibilitychange', surVisibilite)
     }
   }, [actif, userId, orgId, recharger])
 

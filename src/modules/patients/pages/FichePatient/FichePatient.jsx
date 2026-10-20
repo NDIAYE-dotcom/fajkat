@@ -12,6 +12,7 @@ import { useOrganization } from '../../../../hooks/useOrganization.js'
 import FeatureRoute from '../../../../router/guards/FeatureRoute/FeatureRoute.jsx'
 import RoleRoute from '../../../../router/guards/RoleRoute/RoleRoute.jsx'
 import { entreeDepuisChemin, offresDeLEntree } from '../../../../router/navigation.js'
+import { usePermissionsConsultation } from '../../../consultations/hooks/useConsultation.js'
 import { usePermissionsAgenda } from '../../../rendez-vous/hooks/useParametresAgenda.js'
 import { chargerPatient, cles } from '../../api.js'
 import EnTeteFiche from '../../components/EnTeteFiche/EnTeteFiche.jsx'
@@ -93,6 +94,7 @@ const ONGLETS = ['identite', 'couvertures', 'rendez-vous', 'medical', 'historiqu
 function Fiche({ patient, cle }) {
   const { structure } = useOrganization()
   const droits = usePermissionsPatients(structure.id)
+  const consultation = usePermissionsConsultation(droits.medical ? structure.id : null).ecrire
   // Rendez-vous : module inclus dans l'offre et rôle qui lit l'agenda.
   const agendaInclus = useFeature('rendez_vous').actif
   const agenda = usePermissionsAgenda(agendaInclus ? structure.id : null).data?.read === true
@@ -145,6 +147,7 @@ function Fiche({ patient, cle }) {
         cle={cle}
         ecrire={droits.ecrire}
         fusionner={droits.fusionner && droits.ecrire}
+        consultation={consultation}
       />
       <Tabs
         libelle="Rubriques du dossier"

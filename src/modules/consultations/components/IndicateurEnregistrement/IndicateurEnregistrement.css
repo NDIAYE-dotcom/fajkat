@@ -1,0 +1,21 @@
+.indicateur-enregistrement {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--esp-1) var(--esp-2);
+  margin: 0;
+  font-size: var(--texte-s);
+  color: var(--encre-douce);
+}
+
+.indicateur-enregistrement--erreur {
+  color: var(--tampon);
+}
+
+.indicateur-enregistrement__icone {
+  flex: none;
+}
+
+.indicateur-enregistrement--ok .indicateur-enregistrement__icone {
+  color: var(--primaire);
+}

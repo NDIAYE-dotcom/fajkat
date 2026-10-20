@@ -1,0 +1,23 @@
+.conflit-version__versions {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr));
+  gap: var(--esp-3);
+  margin: var(--esp-3) 0;
+}
+
+.conflit-version__versions dt {
+  font-size: var(--texte-s);
+  font-weight: 700;
+}
+
+.conflit-version__versions dd {
+  margin: 0;
+  overflow-wrap: break-word;
+}
+
+.conflit-version__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--esp-3);
+  margin-top: var(--esp-3);
+}

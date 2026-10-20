@@ -46,7 +46,7 @@ const MESSAGES_SQL = {
   42501: 'Vous n’avez pas les droits nécessaires pour cette action.',
 }
 
-function estErreurReseau(erreur) {
+export function estErreurReseau(erreur) {
   return (
     erreur?.name === 'AuthRetryableFetchError' ||
     erreur?.status === 0 ||

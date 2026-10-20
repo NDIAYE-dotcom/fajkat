@@ -4,6 +4,7 @@ import Message from '../../../../components/ui/Message/Message.jsx'
 import Skeleton from '../../../../components/ui/Skeleton/Skeleton.jsx'
 import { useEnLigne } from '../../../../hooks/useEnLigne.js'
 import { useToast } from '../../../../hooks/useToast.js'
+import { usePermissionsConsultation } from '../../../consultations/hooks/useConsultation.js'
 import { appelerPassage, appelerSuivant, cles } from '../../api.js'
 import { useServicesFile } from '../../hooks/useFile.js'
 import { usePreference } from '../../hooks/usePreference.js'
@@ -26,6 +27,8 @@ export default function TableauFile({ orgId, lignes, chargement, ecrire, medical
   const salles = useSalles(orgId)
   const services = useServicesFile(orgId)
   const deplacement = useDeplacement(orgId)
+  // « Commencer la consultation » : soignants qui rédigent (feature consultations).
+  const consultation = usePermissionsConsultation(medical ? orgId : null).ecrire
   const [salle, setSalle] = usePreference(`fajkat.file.salle.${orgId}`, '')
   const [file, setFile] = usePreference(`fajkat.file.service.${orgId}`, '')
   const [cible, setCible] = useState('consultation')
@@ -154,6 +157,7 @@ export default function TableauFile({ orgId, lignes, chargement, ecrire, medical
               maintenant={maintenant}
               ecrire={ecrire}
               medical={medical}
+              consultation={consultation}
               horsLigne={!enLigne}
               occupation={occupation}
               onAction={agir}

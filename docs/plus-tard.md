@@ -37,3 +37,4 @@ Pendant une étape, on corrige seulement les bugs. Toute idée d'amélioration e
 ## Hébergement
 
 - **Passer à l'offre Pro de Supabase avant une mise en production à grande échelle** : l'offre gratuite limite Realtime à 200 connexions simultanées, en comptant le personnel connecté (tableau de la salle d'attente, cloche) et les écrans d'appel.
+  - Si la limite est atteinte, la cloche des notifications ne tombe pas : sans canal Realtime, elle se relit toutes les 60 secondes et à chaque retour sur l'onglet (étape 14, partie B). Le tableau de la salle d'attente et les écrans d'appel n'ont pas encore ce repli toutes les 60 secondes : à vérifier avant la mise en production.

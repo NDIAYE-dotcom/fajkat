@@ -3,6 +3,7 @@ import { useState } from 'react'
 import Button from '../../../../components/ui/Button/Button.jsx'
 import Icone from '../../../../components/ui/Icone/Icone.jsx'
 import { formatTelephone } from '../../../../lib/format.js'
+import BoutonConsultation from '../../../consultations/components/BoutonConsultation/BoutonConsultation.jsx'
 import { libelleAge, libelleNaissance, libelleTitulaire, nomComplet } from '../../utils.js'
 import ModaleCarte from '../ModaleCarte/ModaleCarte.jsx'
 import ModaleFusion from '../ModaleFusion/ModaleFusion.jsx'
@@ -10,8 +11,9 @@ import PhotoPatient from '../PhotoPatient/PhotoPatient.jsx'
 import './EnTeteFiche.css'
 
 // En-tête de la fiche : photo, nom, numéro, âge, téléphone ; carte patient à imprimer ;
-// fusion avec un autre dossier (owner et admin : fusionner).
-export default function EnTeteFiche({ patient, cle, ecrire, fusionner }) {
+// fusion avec un autre dossier (owner et admin : fusionner) ; nouvelle consultation
+// (soignants qui rédigent : consultation).
+export default function EnTeteFiche({ patient, cle, ecrire, fusionner, consultation }) {
   const [carte, setCarte] = useState(false)
   const [fusion, setFusion] = useState(false)
   const age = [
@@ -37,6 +39,9 @@ export default function EnTeteFiche({ patient, cle, ecrire, fusionner }) {
         )}
       </div>
       <div className="en-tete-fiche__actions">
+        {consultation && (
+          <BoutonConsultation patientId={patient.id} libelle="Nouvelle consultation" />
+        )}
         <Button
           variante="secondaire"
           iconeDebut={<Icone icone={IdCard} />}

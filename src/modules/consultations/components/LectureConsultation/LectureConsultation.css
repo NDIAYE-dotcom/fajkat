@@ -1,0 +1,72 @@
+.lecture-consultation {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-4);
+}
+
+.lecture-consultation__bloc {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-2);
+  padding: var(--esp-4);
+  border: var(--trait);
+  border-left: 4px solid var(--doux);
+  border-radius: var(--rayon-panneau);
+  background: var(--blanc);
+}
+
+.lecture-consultation__titre {
+  margin: 0;
+  font-size: var(--texte-l);
+  color: var(--primaire);
+}
+
+.lecture-consultation__texte {
+  margin: 0;
+  white-space: pre-line;
+  overflow-wrap: break-word;
+}
+
+.lecture-consultation__vide,
+.lecture-consultation__note {
+  margin: 0;
+  color: var(--encre-douce);
+}
+
+.lecture-consultation__liste,
+.lecture-consultation__avenants {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  overflow-wrap: break-word;
+}
+
+.lecture-consultation__diagnostic {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--esp-1) var(--esp-3);
+}
+
+.lecture-consultation__code {
+  font-family: var(--police-mono);
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.lecture-consultation__avenant {
+  padding-left: var(--esp-3);
+  border-left: 2px solid var(--accent);
+}
+
+.lecture-consultation__signature {
+  margin: 0;
+  font-family: var(--police-mono);
+  font-size: var(--texte-s);
+  font-variant-numeric: tabular-nums;
+  color: var(--encre-douce);
+}

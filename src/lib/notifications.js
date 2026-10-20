@@ -59,8 +59,10 @@ export async function marquerLues(orgId, ids = null) {
 // Écoute les nouvelles notifications et les lectures (y compris celles faites ailleurs :
 // autre appareil, demande traitée par un collègue). Renvoie la fonction de désabonnement.
 // surChangement({ type: 'INSERT' | 'UPDATE', notification }) ; surConnexion() après
-// chaque (re)connexion du canal, pour rattraper ce qui a pu être manqué.
-export function ecouterNotifications(userId, { surChangement, surConnexion }) {
+// chaque (re)connexion du canal, pour rattraper ce qui a pu être manqué ; surEtat(actif) :
+// true quand le canal est abonné, false s'il tombe (erreur, délai dépassé, fermeture,
+// limite de connexions Realtime atteinte) — la cloche se relit alors d'elle-même.
+export function ecouterNotifications(userId, { surChangement, surConnexion, surEtat }) {
   if (!supabase) return () => {}
   const canal = supabase
     // Suffixe unique : deux abonnements (double montage en développement) ne se gênent pas.
@@ -76,7 +78,12 @@ export function ecouterNotifications(userId, { surChangement, surConnexion }) {
       (charge) => surChangement({ type: charge.eventType, notification: charge.new }),
     )
     .subscribe((statut) => {
-      if (statut === 'SUBSCRIBED') surConnexion()
+      if (statut === 'SUBSCRIBED') {
+        surEtat?.(true)
+        surConnexion()
+      } else {
+        surEtat?.(false)
+      }
     })
   return () => {
     supabase.removeChannel(canal)

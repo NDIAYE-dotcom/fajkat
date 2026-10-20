@@ -1,0 +1,17 @@
+.consultations {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-4);
+  max-width: 56rem;
+}
+
+.consultations__titre {
+  margin: 0;
+  font-size: var(--titre-2);
+  color: var(--primaire);
+}
+
+.consultations__aide {
+  margin: 0;
+  color: var(--encre-douce);
+}

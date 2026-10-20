@@ -1,0 +1,58 @@
+.brouillons-en-cours {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-3);
+  padding: var(--esp-4);
+  border: var(--trait);
+  border-left: 4px solid var(--attention);
+  border-radius: var(--rayon-panneau);
+  background: var(--blanc);
+}
+
+.brouillons-en-cours__titre {
+  margin: 0;
+  font-size: var(--texte-l);
+  color: var(--primaire);
+}
+
+.brouillons-en-cours__liste {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.brouillons-en-cours__ligne {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--esp-1) var(--esp-3);
+  padding-block: var(--esp-2);
+  border-top: var(--trait);
+}
+
+.brouillons-en-cours__ligne:first-child {
+  border-top: 0;
+}
+
+.brouillons-en-cours__nom {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  font-weight: 700;
+  overflow-wrap: break-word;
+  min-width: 0;
+}
+
+.brouillons-en-cours__dossier,
+.brouillons-en-cours__heure {
+  font-size: var(--texte-s);
+  color: var(--encre-douce);
+}
+
+.brouillons-en-cours__dossier {
+  font-family: var(--police-mono);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}

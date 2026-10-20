@@ -1,0 +1,17 @@
+.copie-locale__champs {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-2);
+  margin: var(--esp-3) 0;
+}
+
+.copie-locale__champs dt {
+  font-size: var(--texte-s);
+  font-weight: 700;
+}
+
+.copie-locale__champs dd {
+  margin: 0;
+  white-space: pre-line;
+  overflow-wrap: break-word;
+}

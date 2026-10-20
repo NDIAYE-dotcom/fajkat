@@ -1,0 +1,21 @@
+.saisie-consultation {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-4);
+  max-width: 56rem;
+}
+
+.saisie-consultation__type {
+  width: min(100%, 22rem);
+}
+
+.saisie-consultation__pied {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--esp-3);
+  padding-block: var(--esp-3);
+  background: var(--fond);
+  border-top: var(--trait);
+}

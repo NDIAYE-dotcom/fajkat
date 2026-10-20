@@ -1,0 +1,74 @@
+/* Section de la fiche de consultation, façon registre : filet fin, marge colorée. */
+.section-consultation {
+  border: var(--trait);
+  border-left: 4px solid var(--accent);
+  border-radius: var(--rayon-panneau);
+  background: var(--blanc);
+}
+
+.section-consultation--alerte {
+  border-left-color: var(--tampon);
+}
+
+.section-consultation__titre {
+  margin: 0;
+  font-size: var(--texte-l);
+}
+
+.section-consultation__bouton {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--esp-1) var(--esp-3);
+  width: 100%;
+  min-height: 44px;
+  padding: var(--esp-3) var(--esp-4);
+  border: 0;
+  background: none;
+  font: inherit;
+  color: var(--primaire);
+  text-align: left;
+  cursor: pointer;
+}
+
+.section-consultation__bouton:focus-visible {
+  outline: 2px solid var(--primaire);
+  outline-offset: -2px;
+}
+
+.section-consultation__libelle {
+  font-family: var(--police-titre);
+  font-weight: 600;
+}
+
+.section-consultation__resume {
+  flex: 1 1 12rem;
+  min-width: 0;
+  font-family: var(--police-texte);
+  font-size: var(--texte-s);
+  font-weight: 400;
+  color: var(--encre-douce);
+  overflow-wrap: break-word;
+}
+
+.section-consultation__chevron {
+  margin-left: auto;
+  transition: transform var(--duree) var(--courbe);
+}
+
+.section-consultation__bouton[aria-expanded='true'] .section-consultation__chevron {
+  transform: rotate(180deg);
+}
+
+.section-consultation__corps {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-4);
+  padding: 0 var(--esp-4) var(--esp-4);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .section-consultation__chevron {
+    transition: none;
+  }
+}

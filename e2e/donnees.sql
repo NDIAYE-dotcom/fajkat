@@ -150,3 +150,72 @@ select current_setting('e2e.poste')::uuid,
                       and holiday_date = (current_setting('e2e.auj')::date + 20 + interval '3 months')::date);
 
 commit;
+
+-- =============================================================================
+-- Étape 14, partie B : écran de consultation
+-- -----------------------------------------------------------------------------
+-- Patients « CONSULT … », arrivés aujourd'hui avec un motif, en consultation, constantes
+-- prises par l'infirmier :
+--   Fatou    : parcours complet (saisie, coupure, validation, avenant) ;
+--   Ibrahima : reprise par la sage-femme ;
+--   Aliou    : même consultation ouverte sur deux appareils (version dépassée) ;
+--   Lecture  : consultation déjà validée (lecture seule de l'aide-soignant) ;
+--   Alerte, Repli : choléra validé, notification attendue chez l'owner sans rechargement
+--              (temps réel, puis repli toutes les 60 s quand le temps réel est coupé).
+-- =============================================================================
+
+begin;
+
+select set_config('e2e.poste', id::text, true) from public.organizations where name = 'Poste de santé Test';
+select set_config('e2e.owner', '00000000-0000-4000-e2e0-000000000001', true);
+select set_config('e2e.infirmier', '00000000-0000-4000-e2e0-000000000002', true);
+
+create function pg_temp.file_consult() returns uuid language sql security definer as $$
+  select id from public.queue_services
+   where org_id = current_setting('e2e.poste')::uuid and template_code = 'consultation';
+$$;
+grant execute on function pg_temp.file_consult() to authenticated;
+
+set local role authenticated;
+
+do $$
+declare
+  v_org uuid := current_setting('e2e.poste')::uuid;
+  v_p   uuid;
+  v_v   uuid;
+  v_e   jsonb;
+  v_s   jsonb;
+  r     record;
+begin
+  for r in select * from (values
+      ('Fatou',    'F', 30, 'Toux et fièvre depuis 3 jours'),
+      ('Ibrahima', 'M', 45, 'Douleurs abdominales'),
+      ('Aliou',    'M', 52, 'Contrôle de tension'),
+      ('Lecture',  'F', 38, 'Maux de tête'),
+      ('Alerte',   'M', 23, 'Diarrhée aqueuse abondante'),
+      ('Repli',    'F', 41, 'Diarrhée aqueuse abondante'))
+    v(prenom, sexe, age, motif)
+  loop
+    perform set_config('request.jwt.claims',
+      json_build_object('sub', current_setting('e2e.owner'), 'role', 'authenticated')::text, true);
+    insert into public.patients (org_id, last_name, first_name, sex, declared_age)
+    values (v_org, 'CONSULT', r.prenom, r.sexe, r.age) returning id into v_p;
+    v_v := (public.register_arrival(v_org, v_p, pg_temp.file_consult(), 'normal', r.motif)).id;
+    perform public.move_visit(v_v, 'consultation');
+
+    perform set_config('request.jwt.claims',
+      json_build_object('sub', current_setting('e2e.infirmier'), 'role', 'authenticated')::text, true);
+    perform public.save_vitals(v_v, '{"temperature_c": 38.6, "systolic": 125, "diastolic": 80, "pulse": 96}');
+
+    if r.prenom = 'Lecture' then
+      v_e := public.start_encounter(v_p, v_v);
+      v_s := public.save_encounter_draft((v_e ->> 'id')::uuid, (v_e ->> 'version')::integer,
+        jsonb_build_object('reason', r.motif, 'examination', 'Examen neurologique normal.',
+                           'plan', 'Paracétamol, revoir si persistance.'));
+      perform public.validate_encounter((v_e ->> 'id')::uuid, (v_s ->> 'version')::integer);
+    end if;
+  end loop;
+end $$;
+
+reset role;
+commit;

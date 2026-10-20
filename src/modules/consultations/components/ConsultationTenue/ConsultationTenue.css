@@ -1,0 +1,28 @@
+.consultation-tenue {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--esp-3);
+  padding: var(--esp-5);
+  border: var(--trait);
+  border-left: 4px solid var(--accent);
+  border-radius: var(--rayon-panneau);
+  background: var(--blanc);
+}
+
+.consultation-tenue__icone {
+  color: var(--primaire);
+}
+
+.consultation-tenue__titre {
+  margin: 0;
+  font-size: var(--titre-3);
+  color: var(--primaire);
+  overflow-wrap: break-word;
+}
+
+.consultation-tenue__texte {
+  margin: 0;
+  max-width: var(--largeur-texte);
+  color: var(--encre-douce);
+}

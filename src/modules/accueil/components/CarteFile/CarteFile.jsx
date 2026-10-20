@@ -1,6 +1,7 @@
 import Button from '../../../../components/ui/Button/Button.jsx'
 import Tampon from '../../../../components/ui/Tampon/Tampon.jsx'
 import { formatHeure } from '../../../../lib/format.js'
+import BoutonConsultation from '../../../consultations/components/BoutonConsultation/BoutonConsultation.jsx'
 import { libelleAge, nomComplet } from '../../../patients/utils.js'
 import { ACTIONS, duree } from '../../utils.js'
 import './CarteFile.css'
@@ -22,12 +23,14 @@ function temps(ligne, maintenant) {
 
 // Fiche d'un patient sur le tableau. Motif et alerte des constantes : soignants seulement
 // (la base les renvoie vides pour les autres rôles). Chaque déplacement possible a son
-// bouton : glisser une carte est difficile sur un petit téléphone.
+// bouton : glisser une carte est difficile sur un petit téléphone. consultation :
+// l'utilisateur rédige des consultations (« Commencer la consultation » en consultation).
 export default function CarteFile({
   ligne,
   maintenant,
   ecrire,
   medical,
+  consultation,
   horsLigne,
   occupe,
   onAction,
@@ -79,6 +82,15 @@ export default function CarteFile({
           {ligne.vitals_level === 'warning' && <Tampon ton="encre">À surveiller</Tampon>}
           {!ligne.vitals_level && ligne.has_vitals && 'Constantes prises'}
         </p>
+      )}
+      {consultation && ligne.status === 'consultation' && (
+        <div className="carte-file__actions">
+          <BoutonConsultation
+            patientId={ligne.patient_id}
+            visiteId={ligne.visit_id}
+            ariaLabel={`Commencer la consultation : ${ligne.ticket_number}`}
+          />
+        </div>
       )}
       {actions.length > 0 && (
         <div className="carte-file__actions">

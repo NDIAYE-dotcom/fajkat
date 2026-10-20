@@ -149,6 +149,19 @@ export const router = createBrowserRouter([
                     import('../modules/rendez-vous/pages/ParametresAgenda/ParametresAgenda.jsx'),
                 ),
               },
+              // Consultations : brouillons de l'utilisateur, puis écran d'une consultation.
+              {
+                path: 'consultations',
+                lazy: composant(
+                  () => import('../modules/consultations/pages/Consultations/Consultations.jsx'),
+                ),
+              },
+              {
+                path: 'consultations/:id',
+                lazy: composant(
+                  () => import('../modules/consultations/pages/Consultation/Consultation.jsx'),
+                ),
+              },
               {
                 path: 'mon-espace',
                 lazy: composant(() => import('../modules/personnel/pages/MonEspace/MonEspace.jsx')),

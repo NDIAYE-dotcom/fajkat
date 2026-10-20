@@ -11,6 +11,7 @@ export default function ColonneFile({
   maintenant,
   ecrire,
   medical,
+  consultation,
   horsLigne,
   occupation,
   onAction,
@@ -57,6 +58,7 @@ export default function ColonneFile({
               maintenant={maintenant}
               ecrire={ecrire}
               medical={medical}
+              consultation={consultation}
               horsLigne={horsLigne}
               occupe={occupation?.visitId === l.visit_id ? occupation.action : null}
               onAction={onAction}
