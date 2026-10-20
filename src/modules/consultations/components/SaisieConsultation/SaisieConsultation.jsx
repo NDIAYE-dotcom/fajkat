@@ -7,6 +7,7 @@ import Select from '../../../../components/ui/Select/Select.jsx'
 import Textarea from '../../../../components/ui/Textarea/Textarea.jsx'
 import { useEnLigne } from '../../../../hooks/useEnLigne.js'
 import { useSauvegardeConsultation } from '../../hooks/useSauvegardeConsultation.js'
+import { avertissementsOrdonnance, ligneVide, ordonnancePourValidation } from '../../ordonnance.js'
 import { declarationsImmediates, LIMITES, verifier } from '../../utils.js'
 import ConflitVersion from '../ConflitVersion/ConflitVersion.jsx'
 import ConstantesPassage from '../ConstantesPassage/ConstantesPassage.jsx'
@@ -16,6 +17,7 @@ import ExamensRapides from '../ExamensRapides/ExamensRapides.jsx'
 import IndicateurEnregistrement from '../IndicateurEnregistrement/IndicateurEnregistrement.jsx'
 import MiseEnPageConsultation from '../MiseEnPageConsultation/MiseEnPageConsultation.jsx'
 import ModaleValidation from '../ModaleValidation/ModaleValidation.jsx'
+import Ordonnance from '../Ordonnance/Ordonnance.jsx'
 import SectionConsultation from '../SectionConsultation/SectionConsultation.jsx'
 import './SaisieConsultation.css'
 
@@ -52,6 +54,7 @@ export default function SaisieConsultation({
     c.diagnoses.some((d) => d.is_sensitive) ||
     c.tests.some((t) => examens.find((e) => e.id === t.rapid_test_type_id)?.is_sensitive)
   const sensible = sensibleAuto || c.is_sensitive
+  const medicaments = c.prescription.items.filter((l) => !ligneVide(l)).length
 
   function maj(champ, valeur) {
     s.setContenu((p) => ({ ...p, [champ]: valeur }))
@@ -59,6 +62,10 @@ export default function SaisieConsultation({
   }
 
   function demanderValidation() {
+    // Lignes d'ordonnance ajoutées puis jamais remplies : retirées avant la validation.
+    if (medicaments !== c.prescription.items.length) {
+      s.setContenu((p) => ({ ...p, prescription: ordonnancePourValidation(p.prescription) }))
+    }
     const trouvees = verifier(c, examens)
     setErreurs(trouvees)
     if (Object.keys(trouvees).length) {
@@ -210,6 +217,20 @@ export default function SaisieConsultation({
           />
         </SectionConsultation>
 
+        <SectionConsultation
+          titre="Ordonnance"
+          resume={medicaments ? pluriel(medicaments, 'médicament') : 'Aucune'}
+          alerte={Boolean(erreurs.prescription)}
+        >
+          <Ordonnance
+            orgId={orgId}
+            valeur={c.prescription}
+            erreurs={erreurs.prescription}
+            desactive={bloque}
+            onChange={(v) => maj('prescription', v)}
+          />
+        </SectionConsultation>
+
         <div className="saisie-consultation__pied">
           {Object.keys(erreurs).some((k) => erreurs[k]) && (
             <Message ton="erreur">
@@ -226,6 +247,7 @@ export default function SaisieConsultation({
         ouvert={validation}
         onFermer={() => setValidation(false)}
         declarations={declarations}
+        avertissements={validation ? avertissementsOrdonnance(c.prescription) : []}
         enLigne={enLigne}
         onValider={async () => {
           await s.valider()

@@ -1,4 +1,5 @@
 import { formatIlYa } from '../../lib/format.js'
+import { normaliserOrdonnance, ORDONNANCE_VIDE, verifierOrdonnance } from './ordonnance.js'
 
 // Consultation (sans affichage) : contenu du brouillon, contrôles avant validation,
 // libellés. Le brouillon a la forme attendue par validate_encounter (étape 14, partie A) ;
@@ -38,6 +39,7 @@ export const BROUILLON_VIDE = {
   is_sensitive: false,
   diagnoses: [],
   tests: [],
+  prescription: ORDONNANCE_VIDE,
 }
 
 // Brouillon venu du serveur ou de l'appareil, complété des champs manquants.
@@ -48,6 +50,7 @@ export function normaliser(contenu) {
     ...c,
     diagnoses: Array.isArray(c.diagnoses) ? c.diagnoses : [],
     tests: Array.isArray(c.tests) ? c.tests : [],
+    prescription: normaliserOrdonnance(c.prescription),
   }
 }
 
@@ -162,6 +165,8 @@ export function verifier(contenu, examens = []) {
     }
   })
   if (Object.keys(examensErreurs).length) erreurs.tests = examensErreurs
+  const ordonnance = verifierOrdonnance(contenu.prescription)
+  if (Object.keys(ordonnance).length) erreurs.prescription = ordonnance
   return erreurs
 }
 

@@ -1,0 +1,11 @@
+.reglages-ordonnance {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+  gap: var(--esp-4);
+}
+
+.reglages-ordonnance__prise {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--esp-2);
+}

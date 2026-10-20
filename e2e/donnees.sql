@@ -346,3 +346,87 @@ commit;
 
 update public.memberships set is_clinician = false
  where user_id = '00000000-0000-4000-e2e0-000000000001';
+
+-- =============================================================================
+-- Étape 14, partie D : ordonnance
+-- -----------------------------------------------------------------------------
+-- « ORDO Largeur »  : en consultation ; ordonnance saisie à chaque largeur (mise en page).
+-- « ORDO Mariama »  : en consultation ; parcours complet (suggestions, clavier, demi-
+--                     comprimé, ordre, retrait, coupure et rechargement, validation).
+-- « ORDO Sokhna »   : consultation validée avec une ordonnance (Paracétamol, Amoxicilline) :
+--                     suggestions, impression, confidentialité par rôle.
+-- « ORDO Ndella »   : consultation sensible (planification familiale) validée avec une
+--                     ordonnance : impression sans aucune mention qui la révèle.
+-- Téléphone et adresse du Poste de santé Test : en-tête de l'ordonnance imprimée.
+-- =============================================================================
+
+begin;
+
+update public.organizations set phone = '+221779605825', address = 'Quartier Escale, Kolda'
+ where name = 'Poste de santé Test';
+
+select set_config('e2e.poste', id::text, true) from public.organizations where name = 'Poste de santé Test';
+select set_config('e2e.owner', '00000000-0000-4000-e2e0-000000000001', true);
+select set_config('e2e.infirmier', '00000000-0000-4000-e2e0-000000000002', true);
+
+create function pg_temp.file_ordo() returns uuid language sql security definer as $$
+  select id from public.queue_services
+   where org_id = current_setting('e2e.poste')::uuid and template_code = 'consultation';
+$$;
+create function pg_temp.type_ordo(p_code text) returns uuid language sql security definer as $$
+  select id from public.encounter_types
+   where org_id = current_setting('e2e.poste')::uuid and template_code = p_code;
+$$;
+grant execute on function pg_temp.file_ordo(), pg_temp.type_ordo(text) to authenticated;
+
+set local role authenticated;
+
+do $$
+declare
+  v_org uuid := current_setting('e2e.poste')::uuid;
+  v_p   uuid;
+  v_e   jsonb;
+  v_r   jsonb;
+  r     record;
+begin
+  perform set_config('request.jwt.claims',
+    json_build_object('sub', current_setting('e2e.owner'), 'role', 'authenticated')::text, true);
+  for r in select * from (values ('Largeur', 40), ('Mariama', 29)) v(prenom, age) loop
+    insert into public.patients (org_id, last_name, first_name, sex, declared_age)
+    values (v_org, 'ORDO', r.prenom, 'F', r.age) returning id into v_p;
+    perform public.move_visit((public.register_arrival(v_org, v_p, pg_temp.file_ordo(), 'normal',
+      'Fièvre')).id, 'consultation');
+  end loop;
+
+  perform set_config('request.jwt.claims',
+    json_build_object('sub', current_setting('e2e.infirmier'), 'role', 'authenticated')::text, true);
+  insert into public.patients (org_id, last_name, first_name, sex, declared_age)
+  values (v_org, 'ORDO', 'Sokhna', 'F', 33) returning id into v_p;
+  v_e := public.start_encounter(v_p, null);
+  v_r := public.save_encounter_draft((v_e ->> 'id')::uuid, (v_e ->> 'version')::integer,
+    jsonb_build_object('reason', 'Angine', 'prescription', jsonb_build_object(
+      'note', 'Revenir si la fièvre persiste après 3 jours.',
+      'items', jsonb_build_array(
+        jsonb_build_object('product_name', 'Paracétamol', 'dosage', '500 mg', 'form', 'Comprimé',
+          'route_code', 'orale', 'dose_morning', 1, 'dose_noon', 1, 'dose_evening', 1,
+          'dose_unit', 'comprimé', 'duration_days', 3, 'quantity', 9, 'quantity_unit', 'comprimés',
+          'instructions', 'Après le repas'),
+        jsonb_build_object('product_name', 'Amoxicilline', 'dosage', '500 mg', 'form', 'Gélule',
+          'route_code', 'orale', 'dose_morning', 1, 'dose_evening', 1, 'dose_night', 0.5,
+          'dose_unit', 'gélule', 'duration_days', 7, 'quantity', 18, 'quantity_unit', 'gélules')))));
+  perform public.validate_encounter((v_e ->> 'id')::uuid, (v_r ->> 'version')::integer);
+
+  insert into public.patients (org_id, last_name, first_name, sex, declared_age)
+  values (v_org, 'ORDO', 'Ndella', 'F', 26) returning id into v_p;
+  v_e := public.start_encounter(v_p, null, pg_temp.type_ordo('pf'));
+  v_r := public.save_encounter_draft((v_e ->> 'id')::uuid, (v_e ->> 'version')::integer,
+    jsonb_build_object('reason', 'Contraception orale', 'prescription', jsonb_build_object(
+      'items', jsonb_build_array(
+        jsonb_build_object('product_name', 'Microgynon', 'form', 'Comprimé', 'route_code', 'orale',
+          'dose_evening', 1, 'dose_unit', 'comprimé', 'duration_days', 84, 'quantity', 84,
+          'quantity_unit', 'comprimés', 'instructions', 'À la même heure chaque jour')))));
+  perform public.validate_encounter((v_e ->> 'id')::uuid, (v_r ->> 'version')::integer);
+end $$;
+
+reset role;
+commit;

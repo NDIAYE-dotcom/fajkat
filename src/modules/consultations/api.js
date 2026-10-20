@@ -23,6 +23,10 @@ export const cles = {
   mesBrouillons: (orgId) => ['consultations', 'mes-brouillons', orgId],
   antecedents: (patientId) => ['consultations', 'antecedents', patientId],
   chronologie: (patientId, types) => ['consultations', 'chronologie', patientId, types],
+  formes: () => ['consultations', 'formes'],
+  voies: () => ['consultations', 'voies'],
+  medicaments: (orgId, texte) => ['consultations', 'medicaments', orgId, texte],
+  enTeteStructure: (orgId) => ['consultations', 'en-tete', orgId],
 }
 
 // Erreur d'une fonction de la base. Les refus métier (22023, 42501 levés par nos
@@ -157,6 +161,53 @@ export async function chargerExamens(orgId) {
     .order('sort_order')
   if (error) throw traduireErreur(error, 'Les examens rapides n’ont pas pu être lus.')
   return data ?? []
+}
+
+// --- Ordonnance (partie D) ----------------------------------------------------------------
+
+// Formes des médicaments (référentiel commun) : counted -> quantité calculée à l'unité.
+export async function chargerFormes() {
+  const { data, error } = await client()
+    .from('drug_forms')
+    .select('code, label, dose_unit, dose_unit_plural, counted, pack_unit, pack_unit_plural')
+    .eq('is_active', true)
+    .order('sort_order')
+  if (error) throw traduireErreur(error, 'Les formes des médicaments n’ont pas pu être lues.')
+  return data ?? []
+}
+
+export async function chargerVoies() {
+  const { data, error } = await client()
+    .from('drug_routes')
+    .select('code, label')
+    .eq('is_active', true)
+    .order('sort_order')
+  if (error) throw traduireErreur(error, 'Les voies d’administration n’ont pas pu être lues.')
+  return data ?? []
+}
+
+// Noms déjà prescrits dans la structure (soignants qui rédigent) :
+// [{ product_name, dosage, form, route_code, uses, product_id, stock }].
+// product_id et stock : catalogue de la pharmacie, étape 17 (toujours nuls).
+export async function suggererMedicaments(orgId, texte) {
+  return (
+    (await appeler(
+      'prescription_name_suggestions',
+      { p_org_id: orgId, p_query: texte, p_limit: 8 },
+      'Les suggestions de médicaments n’ont pas pu être lues.',
+    )) ?? []
+  )
+}
+
+// En-tête imprimé de l'ordonnance : nom, adresse, téléphone, logo de la structure.
+export async function chargerEnTeteStructure(orgId) {
+  const { data, error } = await client()
+    .from('organizations')
+    .select('name, address, phone, authorization_number, logo_url')
+    .eq('id', orgId)
+    .single()
+  if (error) throw traduireErreur(error, 'L’en-tête de la structure n’a pas pu être lu.')
+  return data
 }
 
 // --- Diagnostics --------------------------------------------------------------------------

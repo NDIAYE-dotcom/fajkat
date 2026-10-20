@@ -1,0 +1,61 @@
+.champ-medicament {
+  position: relative;
+}
+
+.champ-medicament__liste {
+  position: absolute;
+  z-index: 5;
+  inset-inline: 0;
+  top: calc(100% + var(--esp-1));
+  max-height: 18rem;
+  margin: 0;
+  padding: var(--esp-1) 0;
+  overflow-y: auto;
+  list-style: none;
+  border: 1px solid var(--encre-douce);
+  border-radius: var(--rayon-champ);
+  background: var(--fond);
+  box-shadow: var(--ombre-flottante);
+}
+
+.champ-medicament__liste[hidden] {
+  display: none;
+}
+
+.champ-medicament__option {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0 var(--esp-2);
+  min-height: 44px;
+  padding: var(--esp-2) var(--esp-3);
+  color: var(--encre);
+  cursor: pointer;
+}
+
+.champ-medicament__option:hover,
+.champ-medicament__option--actif {
+  background: var(--surface);
+}
+
+.champ-medicament__option--actif {
+  box-shadow: inset 3px 0 0 var(--primaire);
+}
+
+.champ-medicament__nom {
+  font-weight: 700;
+  overflow-wrap: break-word;
+  min-width: 0;
+}
+
+.champ-medicament__detail,
+.champ-medicament__stock {
+  font-size: var(--texte-s);
+  color: var(--encre-douce);
+}
+
+.champ-medicament__stock {
+  margin-left: auto;
+  font-family: var(--police-mono);
+  font-variant-numeric: tabular-nums;
+}

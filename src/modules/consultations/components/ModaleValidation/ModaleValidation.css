@@ -1,0 +1,8 @@
+.modale-validation__avertissements {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-1);
+  margin: 0 0 var(--esp-2);
+  padding-left: var(--esp-5);
+  overflow-wrap: break-word;
+}

@@ -23,6 +23,9 @@ export default function CopieLocale({ id }) {
     ['Examen clinique', c.examination],
     ['Conduite à tenir', c.plan],
   ].filter(([, v]) => v?.trim())
+  const ordonnance = c.prescription.items
+    .map((l) => [l.product_name, l.dosage].filter((x) => x?.trim()).join(' '))
+    .filter(Boolean)
   return (
     <Message ton="info" titre={`Votre saisie non envoyée (${formatHeure(copie.date)})`}>
       <p>
@@ -42,6 +45,7 @@ export default function CopieLocale({ id }) {
       {c.diagnoses.length > 0 && (
         <p>{`Diagnostics : ${c.diagnoses.map((d) => d.label).join(', ')}`}</p>
       )}
+      {ordonnance.length > 0 && <p>{`Ordonnance : ${ordonnance.join(', ')}`}</p>}
       <Button
         variante="secondaire"
         onClick={() => {

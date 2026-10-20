@@ -176,7 +176,7 @@ function VueValidee({ consultation: c, patient, ecrire, recharger, panneau }) {
           Cette consultation est validée : elle ne se modifie plus. Une correction s’ajoute en
           avenant daté.
         </p>
-        <LectureConsultation consultation={c} />
+        <LectureConsultation consultation={c} patient={patient} imprimer={ecrire} />
         {/* Sous le contenu et ses avenants, loin du panneau des antécédents. */}
         {ecrire && (
           <div>

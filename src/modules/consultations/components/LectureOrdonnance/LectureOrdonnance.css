@@ -1,0 +1,94 @@
+.lecture-ordonnance {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-4);
+}
+
+.lecture-ordonnance__vide {
+  margin: 0;
+  color: var(--encre-douce);
+}
+
+.lecture-ordonnance__entete {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--esp-2) var(--esp-3);
+}
+
+.lecture-ordonnance__signature {
+  margin: 0;
+  font-size: var(--texte-s);
+  color: var(--encre-douce);
+}
+
+.lecture-ordonnance__lignes {
+  display: flex;
+  flex-direction: column;
+  margin: var(--esp-2) 0 0;
+  padding: 0 0 0 var(--esp-5);
+}
+
+.lecture-ordonnance__ligne {
+  padding-block: var(--esp-3);
+  border-bottom: var(--trait);
+}
+
+.lecture-ordonnance__ligne::marker {
+  font-family: var(--police-mono);
+  font-weight: 600;
+  color: var(--encre-douce);
+}
+
+.lecture-ordonnance__nom {
+  margin: 0;
+  font-weight: 700;
+  overflow-wrap: break-word;
+}
+
+.lecture-ordonnance__dosage {
+  font-weight: 400;
+}
+
+.lecture-ordonnance__detail,
+.lecture-ordonnance__note {
+  margin: var(--esp-1) 0 0;
+  overflow-wrap: break-word;
+}
+
+.lecture-ordonnance__detail {
+  color: var(--encre-douce);
+}
+
+.lecture-ordonnance__prises {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--esp-2);
+  max-width: 26rem;
+  margin: var(--esp-2) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.lecture-ordonnance__prise {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--esp-1);
+  padding: var(--esp-2) var(--esp-1);
+  border: 1px solid var(--doux);
+  border-radius: var(--rayon-champ);
+}
+
+.lecture-ordonnance__moment {
+  font-size: var(--texte-xs);
+  color: var(--encre-douce);
+}
+
+.lecture-ordonnance__dose {
+  font-family: var(--police-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: var(--texte-l);
+  font-weight: 600;
+}

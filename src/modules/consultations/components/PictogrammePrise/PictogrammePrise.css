@@ -1,0 +1,7 @@
+.pictogramme-prise {
+  flex-shrink: 0;
+  width: 1.75rem;
+  height: 1.75rem;
+  color: var(--encre);
+  stroke-width: 1.75;
+}

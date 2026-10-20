@@ -2,6 +2,7 @@ import Tampon from '../../../../components/ui/Tampon/Tampon.jsx'
 import { formatDateHeure } from '../../../../lib/format.js'
 import { libelleDeclaration, resumeExamen } from '../../utils.js'
 import ConstantesPassage from '../ConstantesPassage/ConstantesPassage.jsx'
+import LectureOrdonnance from '../LectureOrdonnance/LectureOrdonnance.jsx'
 import './LectureConsultation.css'
 
 function Bloc({ titre, children }) {
@@ -21,8 +22,8 @@ const texte = (t) =>
   )
 
 // Consultation validée, en lecture seule : elle ne se modifie plus. Les avenants datés
-// suivent, avec leur auteur.
-export default function LectureConsultation({ consultation: c }) {
+// suivent, avec leur auteur. imprimer : l'utilisateur peut imprimer l'ordonnance.
+export default function LectureConsultation({ consultation: c, patient, imprimer = false }) {
   return (
     <div className="lecture-consultation">
       <Bloc titre="Motif et histoire de la maladie">
@@ -70,6 +71,9 @@ export default function LectureConsultation({ consultation: c }) {
         )}
       </Bloc>
       <Bloc titre="Conduite à tenir">{texte(c.plan)}</Bloc>
+      <Bloc titre="Ordonnance">
+        <LectureOrdonnance ordonnances={c.prescriptions} patient={patient} imprimer={imprimer} />
+      </Bloc>
       {c.addenda?.length > 0 && (
         <Bloc titre="Avenants">
           <ul className="lecture-consultation__avenants">

@@ -1,0 +1,104 @@
+/* Ligne d'ordonnance : fiche à marge colorée, comme un panneau du registre. */
+.ligne-ordonnance {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-3);
+  padding: var(--esp-3) var(--esp-3) var(--esp-4) var(--esp-4);
+  border: var(--trait);
+  border-left: 4px solid var(--accent);
+  border-radius: var(--rayon-panneau);
+  background: var(--fond);
+}
+
+.ligne-ordonnance__entete {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: var(--esp-2) var(--esp-3);
+}
+
+.ligne-ordonnance__numero {
+  flex-shrink: 0;
+  min-width: 1.75rem;
+  padding-top: 2.4rem;
+  font-family: var(--police-mono);
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  color: var(--encre-douce);
+}
+
+.ligne-ordonnance__nom {
+  flex: 1 1 14rem;
+  min-width: 0;
+}
+
+.ligne-ordonnance__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--esp-1);
+  padding-top: 1.9rem;
+}
+
+.ligne-ordonnance__produit {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(9.5rem, 1fr));
+  gap: var(--esp-3);
+}
+
+.ligne-ordonnance__posologie {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--esp-3);
+  margin: 0;
+  padding: 0;
+  border: 0;
+  min-width: 0;
+}
+
+@media (min-width: 34rem) {
+  .ligne-ordonnance__posologie {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+.ligne-ordonnance__legende {
+  grid-column: 1 / -1;
+  float: left;
+  width: 100%;
+  margin-bottom: var(--esp-1);
+  padding: 0;
+  font-weight: 700;
+  overflow-wrap: break-word;
+}
+
+.ligne-ordonnance__aide {
+  font-weight: 400;
+  font-size: var(--texte-s);
+  color: var(--encre-douce);
+}
+
+.ligne-ordonnance__prise {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--esp-2);
+}
+
+.ligne-ordonnance__dose {
+  font-size: var(--texte-l);
+}
+
+.ligne-ordonnance__alerte {
+  margin: var(--esp-1) 0 0;
+  font-size: var(--texte-s);
+  overflow-wrap: break-word;
+}
+
+/* Avertissement non bloquant : texte en encre (--attention est réservé au décor), icône
+   pour le repérer. */
+.ligne-ordonnance__alerte {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--esp-1);
+  font-weight: 700;
+  color: var(--encre);
+}
