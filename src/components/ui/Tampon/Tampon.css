@@ -13,6 +13,12 @@
   transform: rotate(-2deg);
 }
 
+.tampon--long {
+  max-width: 100%;
+  white-space: normal;
+  overflow-wrap: normal;
+}
+
 .tampon--alerte {
   color: var(--tampon);
 }

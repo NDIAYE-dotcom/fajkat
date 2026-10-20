@@ -13,10 +13,18 @@ const STATUTS = {
 // Badge façon tampon encreur : PAYÉ, URGENT, VACCINÉ, RÉFÉRÉ, ANNULÉ, EN DÉVELOPPEMENT…
 // statut : une des clés ci-dessus (libellé fourni) ; sinon ton + children.
 // Tons : alerte (rouge tampon), primaire (sarcelle), encre (texte), neutre (encre douce).
-export default function Tampon({ statut, ton, className = '', children }) {
+// long : libellé de plusieurs mots (« Non venu (automatique) ») qui peut passer à la ligne
+// entre deux mots dans une colonne étroite, jamais au milieu d'un mot.
+export default function Tampon({ statut, ton, long = false, className = '', children }) {
   const preset = STATUTS[statut]
   const tonFinal = ton ?? preset?.ton ?? 'alerte'
-  const classes = ['tampon', `tampon--${tonFinal}`, statut && `tampon--${statut}`, className]
+  const classes = [
+    'tampon',
+    `tampon--${tonFinal}`,
+    statut && `tampon--${statut}`,
+    long && 'tampon--long',
+    className,
+  ]
     .filter(Boolean)
     .join(' ')
   return <span className={classes}>{children ?? preset?.libelle}</span>

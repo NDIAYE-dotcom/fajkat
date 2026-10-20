@@ -1,6 +1,6 @@
 import { formatDateHeure, formatHeure } from '../../../../lib/format.js'
 import { nomComplet } from '../../../patients/utils.js'
-import { ageOuNaissance, STATUTS_RDV } from '../../agenda.js'
+import { ageOuNaissance, statutRdv } from '../../agenda.js'
 import { libellePlanning } from '../../suivi.js'
 import { dateLongue } from '../../utils.js'
 import './PlanningImprime.css'
@@ -53,7 +53,7 @@ export default function PlanningImprime({
               </td>
               <td>{libellePlanning(r, versionSoignant)}</td>
               {multiPraticiens && <td>{r.practitioner_name ?? '—'}</td>}
-              <td>{STATUTS_RDV[r.status]?.libelle ?? '—'}</td>
+              <td>{statutRdv(r)?.libelle ?? '—'}</td>
               <td aria-label="À cocher à l’arrivée" />
             </tr>
           ))}

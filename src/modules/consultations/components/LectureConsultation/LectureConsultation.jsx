@@ -72,7 +72,12 @@ export default function LectureConsultation({ consultation: c, patient, imprimer
       </Bloc>
       <Bloc titre="Conduite à tenir">{texte(c.plan)}</Bloc>
       <Bloc titre="Ordonnance">
-        <LectureOrdonnance ordonnances={c.prescriptions} patient={patient} imprimer={imprimer} />
+        <LectureOrdonnance
+          consultationId={c.id}
+          ordonnances={c.prescriptions}
+          patient={patient}
+          imprimer={imprimer}
+        />
       </Bloc>
       {c.addenda?.length > 0 && (
         <Bloc titre="Avenants">

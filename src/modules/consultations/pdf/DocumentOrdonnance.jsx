@@ -116,6 +116,9 @@ export default function DocumentOrdonnance({ d, s, encre }) {
             <Text style={s.gras}>Praticien : </Text>
             {ordonnance.prescriber_name}
           </Text>
+          {ordonnance.prescriber_title ? (
+            <Text style={s.qualite}>{ordonnance.prescriber_title}</Text>
+          ) : null}
         </View>
 
         {ordonnance.items.map((l, i) => (
@@ -135,6 +138,9 @@ export default function DocumentOrdonnance({ d, s, encre }) {
         <View style={s.signature} wrap={false}>
           <Text style={s.petit}>Signature et cachet</Text>
           <Text style={s.petit}>{ordonnance.prescriber_name}</Text>
+          {ordonnance.prescriber_title ? (
+            <Text style={s.petit}>{ordonnance.prescriber_title}</Text>
+          ) : null}
         </View>
 
         <Text

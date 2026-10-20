@@ -6,7 +6,7 @@ import Tampon from '../../../../components/ui/Tampon/Tampon.jsx'
 import { useEnLigne } from '../../../../hooks/useEnLigne.js'
 import { formatHeure } from '../../../../lib/format.js'
 import { nomComplet } from '../../../patients/utils.js'
-import { ageOuNaissance, aujourdhui, STATUTS_RDV } from '../../agenda.js'
+import { ageOuNaissance, aujourdhui, statutRdv } from '../../agenda.js'
 import { changerStatutRdv } from '../../api.js'
 import { actionsStatut } from '../../suivi.js'
 import { dateLongue } from '../../utils.js'
@@ -39,7 +39,7 @@ export default function ModaleRdv({
   const enLigne = useEnLigne()
   const [enCours, setEnCours] = useState(null)
   const [echec, setEchec] = useState(null)
-  const statut = STATUTS_RDV[rdv.status]
+  const statut = statutRdv(rdv)
   const reportable = droits.write && REPORTABLES.includes(rdv.status)
   // « Changer le type » : soignants habilités seulement, pour tout rendez-vous (étape 14 C).
   const typeModifiable = droits.write && droits.discreet && TYPE_MODIFIABLE.includes(rdv.status)
@@ -94,7 +94,11 @@ export default function ModaleRdv({
         <p className="modale-rdv__identite">
           {rdv.file_number && <span className="modale-rdv__dossier">{rdv.file_number}</span>}
           {ageOuNaissance(rdv) && <span>{ageOuNaissance(rdv)}</span>}
-          {statut && <Tampon ton={statut.ton}>{statut.libelle}</Tampon>}
+          {statut && (
+            <Tampon ton={statut.ton} long={statut.long}>
+              {statut.libelle}
+            </Tampon>
+          )}
         </p>
         <dl className="modale-rdv__details">
           {lignes.map(([terme, valeur]) => (

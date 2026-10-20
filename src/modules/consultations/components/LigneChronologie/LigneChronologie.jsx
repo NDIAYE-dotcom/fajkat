@@ -26,7 +26,11 @@ export default function LigneChronologie({ ligne: l }) {
           ) : (
             <span>{l.title}</span>
           )}
-          {statut && <Tampon ton={statut.ton}>{statut.libelle}</Tampon>}
+          {statut && (
+            <Tampon ton={statut.ton} long={statut.long}>
+              {statut.libelle}
+            </Tampon>
+          )}
           {l.is_sensitive && <Tampon ton="alerte">Sensible</Tampon>}
         </p>
         {precisions && <p className="ligne-chronologie__precisions">{precisions}</p>}

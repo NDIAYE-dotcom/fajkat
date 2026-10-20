@@ -27,6 +27,8 @@ export function stylesOrdonnance(encre) {
     titre: { fontFamily: 'Spectral', fontSize: 16, marginTop: 10, letterSpacing: 2 },
     personnes: { marginTop: 6, gap: 2 },
     gras: { fontWeight: 700 },
+    // Qualité du praticien, sous son nom (aligné après « Praticien : »).
+    qualite: { fontSize: 9, marginLeft: 58 },
     ligne: {
       marginTop: 10,
       paddingTop: 8,

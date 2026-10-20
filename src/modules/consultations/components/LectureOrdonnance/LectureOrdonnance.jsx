@@ -18,7 +18,7 @@ import './LectureOrdonnance.css'
 
 // Ordonnances d'une consultation validée, en lecture seule (figées). imprimer : soignants
 // qui rédigent seulement.
-export default function LectureOrdonnance({ ordonnances, patient, imprimer }) {
+export default function LectureOrdonnance({ consultationId, ordonnances, patient, imprimer }) {
   const voies = useVoies()
   const [aImprimer, setAImprimer] = useState(null)
   // Chaque ouverture repart d'une fenêtre neuve (PDF de l'ouverture précédente oublié).
@@ -90,6 +90,7 @@ export default function LectureOrdonnance({ ordonnances, patient, imprimer }) {
           key={ouvertures}
           ouvert={Boolean(aImprimer)}
           onFermer={() => setAImprimer(null)}
+          consultationId={consultationId}
           ordonnance={aImprimer ?? ordonnances[0]}
           patient={patient}
         />

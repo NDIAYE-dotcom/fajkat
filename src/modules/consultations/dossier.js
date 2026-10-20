@@ -1,7 +1,7 @@
 // Dossier médical (sans affichage) : catégories d'antécédents, contrôles de la saisie,
 // libellés de la chronologie.
 import { ETAPES } from '../accueil/utils.js'
-import { STATUTS_RDV } from '../rendez-vous/agenda.js'
+import { statutRdv } from '../rendez-vous/agenda.js'
 
 export const CATEGORIES = [
   { code: 'medical', libelle: 'Médicaux' },
@@ -108,7 +108,11 @@ export function statutLigne(l) {
     if (l.status === 'closed_auto') return { libelle: 'Clos automatiquement', ton: 'neutre' }
     return ETAPES[l.status] ? { libelle: ETAPES[l.status], ton: 'neutre' } : null
   }
-  if (l.kind === 'appointment') return STATUTS_RDV[l.status] ?? null
+  if (l.kind === 'appointment') {
+    // Clos par la base après la journée : « no_show_auto », « arrived_auto ».
+    const auto = /_auto$/.test(l.status ?? '')
+    return statutRdv({ status: l.status?.replace(/_auto$/, ''), closed_automatically: auto })
+  }
   if (l.kind === 'encounter') {
     return l.status === 'validated'
       ? { libelle: 'Validée', ton: 'primaire' }

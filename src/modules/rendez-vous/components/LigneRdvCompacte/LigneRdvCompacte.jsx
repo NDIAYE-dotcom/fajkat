@@ -2,14 +2,14 @@ import { Link } from 'react-router-dom'
 import Tampon from '../../../../components/ui/Tampon/Tampon.jsx'
 import { formatHeure } from '../../../../lib/format.js'
 import { nomComplet } from '../../../patients/utils.js'
-import { estClos, STATUTS_RDV } from '../../agenda.js'
+import { estClos, statutRdv } from '../../agenda.js'
 import './LigneRdvCompacte.css'
 
 // Rendez-vous en format compact (vue semaine, colonnes étroites) : heure et nom sur une
 // ligne, précisions (type, praticien) dessous, chacune tronquée par « … » sans jamais
 // couper un mot ni déborder. Le texte complet reste dans le lien et en infobulle.
 export default function LigneRdvCompacte({ rdv, precisions = [] }) {
-  const statut = STATUTS_RDV[rdv.status]
+  const statut = statutRdv(rdv)
   const nom = nomComplet({ last_name: rdv.patient_last_name, first_name: rdv.patient_first_name })
   const detail = precisions.filter(Boolean).join(' · ')
   const heure = formatHeure(rdv.starts_at)
@@ -27,7 +27,7 @@ export default function LigneRdvCompacte({ rdv, precisions = [] }) {
         {detail && <span className="ligne-rdv-compacte__detail">{detail}</span>}
       </Link>
       {statut && rdv.status !== 'scheduled' && (
-        <Tampon ton={statut.ton} className="ligne-rdv-compacte__tampon">
+        <Tampon ton={statut.ton} long={statut.long} className="ligne-rdv-compacte__tampon">
           {statut.libelle}
         </Tampon>
       )}

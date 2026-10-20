@@ -430,3 +430,56 @@ end $$;
 
 reset role;
 commit;
+
+-- =============================================================================
+-- Étape 14, partie D (suite) : rendez-vous d'hier encore « prévus », clos par la base à
+-- l'ouverture de l'agenda ; qualité du praticien sur l'ordonnance.
+-- « PASSE Venue »   : rendez-vous d'hier, un passage hier -> « Venu (automatique) » ;
+-- « PASSE Absente » : rendez-vous d'hier, aucun passage -> « Non venu (automatique) » ;
+-- « PASSE Ndeye »   : rendez-vous de PF d'hier, aucun passage -> « Non venu (automatique) »,
+--                     « Consultation » pour l'accueil.
+-- Écrits directement, déclencheurs coupés : la base ne prend rien dans le passé.
+-- =============================================================================
+
+begin;
+
+update public.staff_files set job_title = 'Infirmier chef de poste'
+ where membership_id = (select m.id from public.memberships m
+                          join public.organizations o on o.id = m.org_id
+                         where o.name = 'Poste de santé Test'
+                           and m.user_id = '00000000-0000-4000-e2e0-000000000002');
+
+select set_config('e2e.poste', id::text, true) from public.organizations where name = 'Poste de santé Test';
+select set_config('e2e.hier', (public.org_local_date(current_setting('e2e.poste')::uuid) - 1)::text, true);
+select set_config('request.jwt.claims',
+  '{"sub": "00000000-0000-4000-e2e0-000000000001", "role": "authenticated"}', true);
+insert into public.patients (org_id, last_name, first_name, sex, declared_age)
+select current_setting('e2e.poste')::uuid, 'PASSE', n, 'F', 28
+  from unnest(array['Venue', 'Absente', 'Ndeye']) n;
+select set_config('request.jwt.claims', '', true);
+
+set local session_replication_role = replica;
+insert into public.visits (org_id, patient_id, queue_service_id, visit_date, ticket_seq,
+                           ticket_number, status, arrived_at, finished_at)
+select current_setting('e2e.poste')::uuid, p.id,
+       (select id from public.queue_services where org_id = current_setting('e2e.poste')::uuid
+           and template_code = 'consultation'),
+       current_setting('e2e.hier')::date, 950, 'A-950', 'done',
+       (current_setting('e2e.hier')::date + time '09:40') at time zone 'Africa/Dakar',
+       (current_setting('e2e.hier')::date + time '10:10') at time zone 'Africa/Dakar'
+  from public.patients p where p.last_name = 'PASSE' and p.first_name = 'Venue';
+insert into public.appointments (org_id, patient_id, appointment_type_id, starts_at, ends_at,
+                                 local_date, status, source)
+select current_setting('e2e.poste')::uuid, p.id,
+       (select id from public.appointment_types where org_id = current_setting('e2e.poste')::uuid
+           and template_code = case when p.first_name = 'Ndeye' then 'pf' else 'consultation' end),
+       (current_setting('e2e.hier')::date + h) at time zone 'Africa/Dakar',
+       (current_setting('e2e.hier')::date + h + interval '20 minutes') at time zone 'Africa/Dakar',
+       current_setting('e2e.hier')::date, 'scheduled', 'agenda'
+  from public.patients p
+  join (values ('Venue', time '09:30'), ('Absente', time '10:30'), ('Ndeye', time '11:30')) v(n, h)
+    on v.n = p.first_name
+ where p.last_name = 'PASSE';
+set local session_replication_role = origin;
+
+commit;

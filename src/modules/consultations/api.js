@@ -27,6 +27,7 @@ export const cles = {
   voies: () => ['consultations', 'voies'],
   medicaments: (orgId, texte) => ['consultations', 'medicaments', orgId, texte],
   enTeteStructure: (orgId) => ['consultations', 'en-tete', orgId],
+  qualites: (consultationId) => ['consultations', 'qualites', consultationId],
 }
 
 // Erreur d'une fonction de la base. Les refus métier (22023, 42501 levés par nos
@@ -197,6 +198,18 @@ export async function suggererMedicaments(orgId, texte) {
       'Les suggestions de médicaments n’ont pas pu être lues.',
     )) ?? []
   )
+}
+
+// Qualité de qui a prescrit chaque ordonnance d'une consultation (« Infirmier chef de
+// poste ») : { [prescription_id]: qualité }. Soignants qui impriment seulement.
+export async function chargerQualites(consultationId) {
+  const lignes =
+    (await appeler(
+      'prescription_prescriber_titles',
+      { p_encounter_id: consultationId },
+      'La qualité du praticien n’a pas pu être lue.',
+    )) ?? []
+  return Object.fromEntries(lignes.map((l) => [l.prescription_id, l.prescriber_title]))
 }
 
 // En-tête imprimé de l'ordonnance : nom, adresse, téléphone, logo de la structure.

@@ -3,7 +3,7 @@ import Button from '../../../../components/ui/Button/Button.jsx'
 import Tampon from '../../../../components/ui/Tampon/Tampon.jsx'
 import { formatHeure } from '../../../../lib/format.js'
 import { nomComplet } from '../../../patients/utils.js'
-import { ageOuNaissance, estClos, STATUTS_RDV } from '../../agenda.js'
+import { ageOuNaissance, estClos, statutRdv } from '../../agenda.js'
 import './LigneRdv.css'
 
 // Un rendez-vous dans l'agenda : heure, patient (lien vers sa fiche) avec son numéro de
@@ -12,7 +12,7 @@ import './LigneRdv.css'
 // precisions : textes affichés sous le nom (type, praticien…), selon la vue.
 // onOuvrir : bouton « Détails » (report, changement de type…), si fourni.
 export default function LigneRdv({ rdv, precisions = [], onOuvrir }) {
-  const statut = STATUTS_RDV[rdv.status]
+  const statut = statutRdv(rdv)
   const detail = [...precisions, rdv.series_index && `Série, n° ${rdv.series_index}`]
     .filter(Boolean)
     .join(' · ')
@@ -30,7 +30,11 @@ export default function LigneRdv({ rdv, precisions = [], onOuvrir }) {
         {detail && <span className="ligne-rdv__detail">{detail}</span>}
       </span>
       <span className="ligne-rdv__fin">
-        {statut && rdv.status !== 'scheduled' && <Tampon ton={statut.ton}>{statut.libelle}</Tampon>}
+        {statut && rdv.status !== 'scheduled' && (
+          <Tampon ton={statut.ton} long={statut.long}>
+            {statut.libelle}
+          </Tampon>
+        )}
         {onOuvrir && (
           <Button
             variante="discret"

@@ -9,24 +9,31 @@ import Spinner from '../../../../components/ui/Spinner/Spinner.jsx'
 import { useOrganization } from '../../../../hooks/useOrganization.js'
 import { formatDate } from '../../../../lib/format.js'
 import { libelleAge, nomComplet } from '../../../patients/utils.js'
-import { useEnTeteStructure, useVoies } from '../../hooks/useOrdonnance.js'
+import { useEnTeteStructure, useQualites, useVoies } from '../../hooks/useOrdonnance.js'
 import { libellesPrises, LIBELLES_PRISES } from '../../ordonnance.js'
 import './ImpressionOrdonnance.css'
 
 // Impression d'une ordonnance validée (soignants qui rédigent). Le PDF A5 est préparé dès
 // l'ouverture, puis à chaque changement de langue des libellés : les boutons agissent
 // aussitôt (un onglet ouvert après une attente serait bloqué par le navigateur).
-export default function ImpressionOrdonnance({ ouvert, onFermer, ordonnance, patient }) {
+export default function ImpressionOrdonnance({
+  ouvert,
+  onFermer,
+  consultationId,
+  ordonnance,
+  patient,
+}) {
   const { structure } = useOrganization()
   const enTete = useEnTeteStructure(structure.id, ouvert)
   const voies = useVoies()
+  const qualites = useQualites(consultationId, ouvert)
   const [wolof, setWolof] = useState(false)
   const [essai, setEssai] = useState(0)
   // PDF préparé pour une demande (langue, essai) : { cle, fichier, erreur }. Un résultat
   // d'une autre demande est ignoré.
   const [resultat, setResultat] = useState({})
   const cadre = useRef(null)
-  const pret = ouvert && enTete.data && voies.data && patient
+  const pret = ouvert && enTete.data && voies.data && qualites.data && patient
   const demande = `${wolof ? 'wo' : 'fr'}-${essai}-${ordonnance?.id}`
   const fichier = resultat.cle === demande ? resultat.fichier : null
   const erreur = resultat.cle === demande ? resultat.erreur : null
@@ -41,7 +48,8 @@ export default function ImpressionOrdonnance({ ouvert, onFermer, ordonnance, pat
           structure: enTete.data,
           patient: { nom: nomComplet(patient), age: libelleAge(patient) },
           date: formatDate(ordonnance.prescribed_at),
-          ordonnance,
+          // Qualité imprimée sous le nom (fonction de la fiche du personnel, sinon titre du profil).
+          ordonnance: { ...ordonnance, prescriber_title: qualites.data[ordonnance.id] ?? null },
           voies: voies.data,
           libelles: libellesPrises(demande.startsWith('wo') ? 'wo' : 'fr', structure.settings),
         }),
@@ -64,7 +72,16 @@ export default function ImpressionOrdonnance({ ouvert, onFermer, ordonnance, pat
       annule = true
       if (adresse) URL.revokeObjectURL(adresse)
     }
-  }, [pret, demande, enTete.data, voies.data, patient, ordonnance, structure.settings])
+  }, [
+    pret,
+    demande,
+    enTete.data,
+    voies.data,
+    qualites.data,
+    patient,
+    ordonnance,
+    structure.settings,
+  ])
 
   // Le PDF est chargé dans un cadre sans taille, créé le temps de l'impression ; sans
   // lecteur PDF dans le navigateur (certains téléphones), il s'ouvre dans un onglet.
@@ -95,7 +112,7 @@ export default function ImpressionOrdonnance({ ouvert, onFermer, ordonnance, pat
     return undefined
   }, [ouvert])
 
-  const erreurChargement = enTete.error || voies.error
+  const erreurChargement = enTete.error || voies.error || qualites.error
   const wo = libellesPrises('wo', structure.settings)
   return (
     <Modal
@@ -120,6 +137,7 @@ export default function ImpressionOrdonnance({ ouvert, onFermer, ordonnance, pat
                 onClick={() => {
                   enTete.refetch()
                   voies.refetch()
+                  qualites.refetch()
                   setEssai((n) => n + 1)
                 }}
               >

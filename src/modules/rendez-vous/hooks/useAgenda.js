@@ -42,11 +42,12 @@ export function useRappels(orgId, date, actif = true) {
   })
 }
 
-// Rendez-vous d'un patient et son taux d'absence (fiche patient).
-export function useRdvPatient(patientId, actif = true) {
+// Rendez-vous d'un patient et son taux d'absence (fiche patient). orgId : structure du
+// dossier, dont les rendez-vous des jours finis sont clos avant la lecture.
+export function useRdvPatient(patientId, actif = true, orgId = null) {
   return useQuery({
     queryKey: cles.rdvPatient(patientId),
-    queryFn: () => chargerRdvPatient(patientId),
+    queryFn: () => chargerRdvPatient(patientId, orgId),
     enabled: Boolean(patientId) && actif,
   })
 }

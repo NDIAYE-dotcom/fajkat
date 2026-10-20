@@ -25,6 +25,20 @@ export const STATUTS_RDV = {
   rescheduled: { libelle: 'Reporté', ton: 'neutre' },
 }
 
+// Statut affiché d'un rendez-vous. Clos par la base après la journée (jour fini encore
+// « prévu ») : « Non venu (automatique) », ou « Venu (automatique) » si le patient a eu un
+// passage ou une consultation ce jour-là. Même libellé pour tous les rôles.
+export function statutRdv(rdv) {
+  if (rdv?.closed_automatically) {
+    if (rdv.status === 'no_show') {
+      return { libelle: 'Non venu (automatique)', ton: 'alerte', long: true }
+    }
+    if (rdv.status === 'arrived')
+      return { libelle: 'Venu (automatique)', ton: 'primaire', long: true }
+  }
+  return STATUTS_RDV[rdv?.status] ?? null
+}
+
 // Rendez-vous qui occupent une place (comme la base pour la capacité des séances).
 const STATUTS_OCCUPANTS = ['scheduled', 'confirmed', 'arrived']
 export const estOccupant = (rdv) => STATUTS_OCCUPANTS.includes(rdv.status)

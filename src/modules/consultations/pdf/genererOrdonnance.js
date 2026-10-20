@@ -31,7 +31,8 @@ async function logoEnPng(url) {
 }
 
 // d : { structure: { name, address, phone, authorization_number, logo_url },
-//       patient: { nom, age }, date, ordonnance: { items, note, prescriber_name },
+//       patient: { nom, age }, date,
+//       ordonnance: { items, note, prescriber_name, prescriber_title },
 //       voies, libelles: { matin, midi, soir, nuit } } -> Blob PDF.
 export async function genererOrdonnance(d) {
   const encre = jeton('--impression-encre')

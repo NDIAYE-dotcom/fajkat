@@ -10,6 +10,7 @@
 
 import { MESSAGE_INDISPONIBLE, traduireErreur } from '../../lib/erreursAuth.js'
 import { supabase } from '../../lib/supabase.js'
+import { aujourdhui } from './agenda.js'
 
 function client() {
   if (!supabase) throw new Error(MESSAGE_INDISPONIBLE)
@@ -345,6 +346,7 @@ export async function reporterRdv(ids, nouvelleDate, confirmer = false) {
 // Rendez-vous d'une période (62 jours au plus), tous statuts. La note ne revient qu'aux
 // soignants.
 export async function chargerAgenda(orgId, du, au) {
+  if (du < aujourdhui()) await clorePasses(orgId)
   const { data, error } = await client().rpc('list_appointments', {
     p_org_id: orgId,
     p_from: du,
@@ -492,9 +494,22 @@ export async function marquerRappel(ids, fait) {
   return data ?? []
 }
 
+// Rendez-vous des jours finis encore « prévus » : clos par la base (« Venu » ou « Non
+// venu », automatique), avant de lire l'agenda ou l'onglet Rendez-vous. Rejouable ; un
+// échec n'empêche pas la lecture (la clôture se refera à la prochaine ouverture ou à la
+// première arrivée du jour).
+async function clorePasses(orgId) {
+  try {
+    await client().rpc('close_past_appointments', { p_org_id: orgId })
+  } catch {
+    // réseau coupé : la lecture qui suit affichera l'erreur
+  }
+}
+
 // --- Rendez-vous d'un patient (fiche) ----------------------------------------------
 
-export async function chargerRdvPatient(patientId) {
+export async function chargerRdvPatient(patientId, orgId) {
+  if (orgId) await clorePasses(orgId)
   const { data, error } = await client().rpc('list_patient_appointments', {
     p_patient_id: patientId,
   })

@@ -9,7 +9,7 @@ import Table from '../../../../components/ui/Table/Table.jsx'
 import Tampon from '../../../../components/ui/Tampon/Tampon.jsx'
 import { formatHeure } from '../../../../lib/format.js'
 import { nomComplet } from '../../../patients/utils.js'
-import { ageOuNaissance, nomJour, STATUTS_RDV } from '../../agenda.js'
+import { ageOuNaissance, nomJour, statutRdv } from '../../agenda.js'
 import { dateFr } from '../../utils.js'
 import './VueListe.css'
 
@@ -74,11 +74,15 @@ export default function VueListe({
       cle: 'type',
       titre: 'Type et statut',
       rendu: (r) => {
-        const s = STATUTS_RDV[r.status]
+        const s = statutRdv(r)
         return (
           <span className="vue-liste__type">
             <span>{r.type_label ?? '—'}</span>
-            {s && <Tampon ton={s.ton}>{s.libelle}</Tampon>}
+            {s && (
+              <Tampon ton={s.ton} long={s.long}>
+                {s.libelle}
+              </Tampon>
+            )}
             {onOuvrir && (
               <Button
                 variante="discret"

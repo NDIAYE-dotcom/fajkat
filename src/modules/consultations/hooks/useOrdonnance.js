@@ -2,6 +2,7 @@ import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import {
   chargerEnTeteStructure,
   chargerFormes,
+  chargerQualites,
   chargerVoies,
   cles,
   suggererMedicaments,
@@ -25,6 +26,15 @@ export function useSuggestionsMedicaments(orgId, texte, actif = true) {
     placeholderData: keepPreviousData,
     staleTime: 60 * 1000,
     retry: false,
+  })
+}
+
+export function useQualites(consultationId, actif = true) {
+  return useQuery({
+    queryKey: cles.qualites(consultationId),
+    queryFn: () => chargerQualites(consultationId),
+    enabled: Boolean(consultationId) && actif,
+    staleTime: 10 * 60 * 1000,
   })
 }
 

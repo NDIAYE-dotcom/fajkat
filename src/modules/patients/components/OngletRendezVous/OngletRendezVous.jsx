@@ -5,7 +5,7 @@ import Message from '../../../../components/ui/Message/Message.jsx'
 import Skeleton from '../../../../components/ui/Skeleton/Skeleton.jsx'
 import Tampon from '../../../../components/ui/Tampon/Tampon.jsx'
 import { formatHeure } from '../../../../lib/format.js'
-import { aujourdhui, STATUTS_RDV } from '../../../rendez-vous/agenda.js'
+import { aujourdhui, statutRdv } from '../../../rendez-vous/agenda.js'
 import { useRdvPatient, useStatsPatient } from '../../../rendez-vous/hooks/useAgenda.js'
 import { resumeAbsences, separerRdvPatient } from '../../../rendez-vous/suivi.js'
 import { dateFr } from '../../../rendez-vous/utils.js'
@@ -15,8 +15,9 @@ import './OngletRendezVous.css'
 // arrivent de la base sous « Consultation » pour l'accueil et le caissier, sans série,
 // ni motif, ni note, comme dans l'agenda.
 export default function OngletRendezVous({ patient }) {
-  const liste = useRdvPatient(patient.id)
-  const stats = useStatsPatient(patient.id)
+  const liste = useRdvPatient(patient.id, true, patient.org_id)
+  // Taux d’absence lu après la liste : les rendez-vous des jours finis sont alors clos.
+  const stats = useStatsPatient(patient.id, liste.isSuccess)
   const erreur = liste.error ?? stats.error
 
   if (erreur) {
@@ -92,7 +93,7 @@ function Section({ titre, liste, vide }) {
 }
 
 function LigneRdvPatient({ rdv }) {
-  const statut = STATUTS_RDV[rdv.status]
+  const statut = statutRdv(rdv)
   const details = [
     rdv.practitioner_name,
     rdv.series_index && `Série, n° ${rdv.series_index}`,
@@ -109,7 +110,11 @@ function LigneRdvPatient({ rdv }) {
       <div className="onglet-rdv__quoi">
         <p className="onglet-rdv__type">
           <span>{rdv.type_label ?? 'Consultation'}</span>
-          {statut && <Tampon ton={statut.ton}>{statut.libelle}</Tampon>}
+          {statut && (
+            <Tampon ton={statut.ton} long={statut.long}>
+              {statut.libelle}
+            </Tampon>
+          )}
         </p>
         {details.length > 0 && <p className="onglet-rdv__details">{details.join(' · ')}</p>}
         {rdv.note && <p className="onglet-rdv__note">Note : {rdv.note}</p>}
