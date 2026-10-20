@@ -1,15 +1,33 @@
 // Jour férié daté après coup (étape 13, partie B, vérifié en partie E) : la Tabaski est
 // annoncée alors que des rendez-vous sont déjà pris ce jour-là (e2e/donnees.sql :
-// « SUIVI Férié 1 » en consultation, « SUIVI Férié 2 » en PF, à J + 12). L'owner l'ajoute
-// dans Paramètres de l'agenda, voit aussitôt les rendez-vous du jour, les reporte en un
-// geste à J + 13 ; les anciens restent visibles comme « Reporté ».
+// « SUIVI Férié 1 » en consultation, « SUIVI Férié 2 » en PF, au premier jour ouvert à
+// partir de J + 12). L'owner l'ajoute dans Paramètres de l'agenda, voit aussitôt les
+// rendez-vous du jour, les reporte en un geste au jour ouvert suivant ; les anciens restent
+// visibles comme « Reporté ». Dates relues dans la base : indépendant du calendrier.
 import { expect, test } from '@playwright/test'
 import { COMPTES } from './comptes.js'
-import { ajouterJours, aujourdhui, connecter, surveillerConsole, verifierEcran } from './outils.js'
+import { connecter, lireBase, SQL_JOUR_OUVERT, surveillerConsole, verifierEcran } from './outils.js'
 
 const fr = (iso) => iso.split('-').reverse().join('/')
-const FERIE = () => ajouterJours(aujourdhui(), 12)
-const APRES = () => ajouterJours(aujourdhui(), 13)
+let ferie = ''
+let apres = ''
+const FERIE = () => ferie
+const APRES = () => apres
+
+test.beforeAll(() => {
+  // Jour des rendez-vous « SUIVI Férié », choisi par e2e/donnees.sql : ni férié, ni fermé.
+  ferie = lireBase(`
+    select a.local_date from public.appointments a
+      join public.patients p on p.id = a.patient_id
+     where p.last_name = 'SUIVI' and p.first_name = 'Férié 1' and a.status = 'scheduled'`)
+  // Jour du report : le jour ouvert suivant.
+  apres = lireBase(`
+    select min(d)::date from public.organizations o,
+           generate_series('${ferie}'::date + 1, '${ferie}'::date + 60, interval '1 day') d
+     where o.name = 'Poste de santé Test' and ${SQL_JOUR_OUVERT('d::date')}`)
+  expect(ferie).toMatch(/^\d{4}-\d{2}-\d{2}$/)
+  expect(apres).toMatch(/^\d{4}-\d{2}-\d{2}$/)
+})
 
 test.describe('jour férié daté après coup', () => {
   test('owner : rendez-vous du jour affichés puis reportés en un geste', async ({ page }) => {
@@ -40,20 +58,12 @@ test.describe('jour férié daté après coup', () => {
     await page.setViewportSize({ width: 1440, height: 900 })
     await verifierEcran(page, 'ferie-report-1440')
     await fenetre.getByRole('button', { name: 'Reporter 2 rendez-vous' }).click()
-    // Nouveau jour lui-même férié (le 1er novembre…) : la base demande une confirmation.
-    const succes = page.getByText(`2 rendez-vous reportés au ${fr(APRES())}.`)
-    const quandMeme = fenetre.getByRole('button', { name: 'Reporter quand même' })
-    await expect(succes.or(quandMeme)).toBeVisible()
-    const confirmation = await quandMeme.isVisible()
-    if (confirmation) {
-      await expect(fenetre.getByText('À confirmer avant de reporter')).toBeVisible()
-      await quandMeme.click()
-    }
+    // Nouveau jour ouvert : aucune confirmation demandée.
     await expect(page.getByText(`2 rendez-vous reportés au ${fr(APRES())}.`)).toBeVisible()
     await expect(fenetre.getByText('Aucun rendez-vous à reporter ce jour-là.')).toBeVisible()
     await fenetre.getByRole('button', { name: 'Fermer', exact: true }).first().click()
 
-    // Nouveaux rendez-vous à J + 13, même heure ; anciens « Reporté » à J + 12.
+    // Nouveaux rendez-vous au jour choisi, même heure ; anciens « Reporté » au jour férié.
     await page.goto(`/app/rendez-vous?date=${APRES()}`)
     for (const [nom, heure] of [
       ['SUIVI Férié 1', '09:00'],
@@ -66,9 +76,6 @@ test.describe('jour férié daté après coup', () => {
     await expect(
       page.getByRole('listitem').filter({ hasText: 'SUIVI Férié 1' }).getByText('Reporté').first(),
     ).toBeVisible()
-    // Une confirmation demandée par la base revient en 400 : Chromium la journalise.
-    const refus = erreurs.filter((e) => /status of 400/.test(e))
-    expect(refus).toHaveLength(confirmation ? 1 : 0)
-    expect(erreurs.filter((e) => !refus.includes(e))).toEqual([])
+    expect(erreurs).toEqual([])
   })
 })

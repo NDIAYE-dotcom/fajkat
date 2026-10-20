@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCanalSecours } from '../../../hooks/useCanalSecours.js'
 import { useToast } from '../../../hooks/useToast.js'
 import { chargerSalles, cles, deplacerPassage, ecouterFile } from '../api.js'
 
@@ -7,25 +8,25 @@ import { chargerSalles, cles, deplacerPassage, ecouterFile } from '../api.js'
 // sur un autre poste) ne déclenchent qu'une relecture.
 const DELAI_RELECTURE_MS = 400
 
-// Le tableau se met à jour seul quand la file change sur un autre appareil.
+// Le tableau (et les arrivées du jour) se met à jour seul quand la file change sur un
+// autre appareil. Canal coupé : rouvert, et relecture toutes les 60 s, au retour du réseau
+// et au retour sur l'onglet (useCanalSecours). Renvoie true si le temps réel est actif.
 export function useFileTempsReel(orgId) {
   const queryClient = useQueryClient()
-  useEffect(() => {
-    if (!orgId) return undefined
-    let minuteur = null
-    const relire = () => {
-      clearTimeout(minuteur)
-      minuteur = setTimeout(
-        () => queryClient.invalidateQueries({ queryKey: cles.tableau(orgId) }),
-        DELAI_RELECTURE_MS,
-      )
-    }
-    const desabonner = ecouterFile(orgId, { surChangement: relire, surConnexion: relire })
-    return () => {
-      clearTimeout(minuteur)
-      desabonner()
-    }
+  const minuteur = useRef(null)
+  const relire = useCallback(() => {
+    clearTimeout(minuteur.current)
+    minuteur.current = setTimeout(
+      () => queryClient.invalidateQueries({ queryKey: cles.tableau(orgId) }),
+      DELAI_RELECTURE_MS,
+    )
   }, [orgId, queryClient])
+  useEffect(() => () => clearTimeout(minuteur.current), [])
+  const ouvrir = useCallback(
+    (surEtat) => ecouterFile(orgId, { surChangement: relire, surEtat }),
+    [orgId, relire],
+  )
+  return useCanalSecours(ouvrir, relire, { actif: Boolean(orgId) })
 }
 
 // Heure courante, renouvelée régulièrement : les temps d'attente avancent seuls.

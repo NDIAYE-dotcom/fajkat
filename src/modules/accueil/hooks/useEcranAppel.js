@@ -1,10 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCanalSecours } from '../../../hooks/useCanalSecours.js'
 import { chargerEcranPublic, ecouterEcran } from '../api.js'
 
-// Actualisation de secours : jamais plus d'une lecture par minute par écran.
-const SECOURS_MS = 60 * 1000
-// Délai avant de rouvrir un canal tombé (le client Supabase retente aussi de son côté).
-const RECONNEXION_MS = 5 * 1000
 const NB_APPELS = 6
 
 // Un appel = un passage appelé une fois de plus (rappel compris).
@@ -19,14 +16,15 @@ function fusionner(anciens, nouveaux) {
 }
 
 // Écran d'appel : lecture initiale, appels poussés par la base (Broadcast), reconnexion
-// automatique, actualisation de secours toutes les 60 s. surNouvelAppel : un appel arrivé
+// automatique, actualisation de secours toutes les 60 s même connecté (une télévision
+// allumée toute la journée ne reste jamais figée), au retour du réseau et au retour sur
+// la page (useCanalSecours). surNouvelAppel : un appel arrivé
 // depuis la dernière lecture (son, mise en évidence).
 // etat : chargement | valid | revoked | unavailable | unknown ; connexion : en_ligne | reconnexion.
 export function useEcranAppel(jeton, surNouvelAppel) {
   const [etat, setEtat] = useState('chargement')
   const [infos, setInfos] = useState(null)
   const [appels, setAppels] = useState([])
-  const [connexion, setConnexion] = useState('reconnexion')
   const [topic, setTopic] = useState(null)
   const vus = useRef(null) // clés des appels déjà connus (null avant la première lecture)
   const rappel = useRef(surNouvelAppel)
@@ -52,58 +50,34 @@ export function useEcranAppel(jeton, surNouvelAppel) {
       recevoir(reponse.calls ?? [])
     } catch {
       // Réseau coupé : l'écran garde ce qu'il affiche ; la lecture suivante rattrapera.
-      setConnexion('reconnexion')
     }
   }, [jeton, recevoir])
 
-  // Première lecture, secours toutes les 60 s, et dès le retour du réseau.
+  // Première lecture.
   useEffect(() => {
     const premier = setTimeout(relire, 0)
-    const minuteur = setInterval(relire, SECOURS_MS)
-    window.addEventListener('online', relire)
-    return () => {
-      clearTimeout(premier)
-      clearInterval(minuteur)
-      window.removeEventListener('online', relire)
-    }
+    return () => clearTimeout(premier)
   }, [relire])
 
-  // Canal Broadcast : rouvert après une coupure ; relecture à chaque (re)connexion pour
-  // rattraper les appels manqués pendant la coupure.
-  useEffect(() => {
-    if (!topic || etat !== 'valid') return undefined
-    let desabonner = () => {}
-    let minuteur = null
-    let actif = true
-    const ouvrir = () => {
-      desabonner = ecouterEcran(topic, {
+  // Canal Broadcast (une fois le lien reconnu) : rouvert après une coupure ; relecture à
+  // chaque (re)connexion pour rattraper les appels manqués pendant la coupure. Écran
+  // retiré : canal fermé et plus aucune lecture.
+  const valide = Boolean(topic) && etat === 'valid'
+  const ouvrir = useCallback(
+    (surEtat) =>
+      ecouterEcran(topic, {
         surAppel: (appel) => recevoir([appel]),
         surRetrait: () => setEtat('revoked'),
-        surEtat: (statut) => {
-          if (!actif) return
-          if (statut === 'SUBSCRIBED') {
-            setConnexion('en_ligne')
-            relire()
-          } else if (['CHANNEL_ERROR', 'TIMED_OUT', 'CLOSED'].includes(statut)) {
-            setConnexion('reconnexion')
-            clearTimeout(minuteur)
-            minuteur = setTimeout(() => {
-              desabonner()
-              if (actif) ouvrir()
-            }, RECONNEXION_MS)
-          }
-        },
-      })
-    }
-    ouvrir()
-    return () => {
-      actif = false
-      clearTimeout(minuteur)
-      desabonner()
-    }
-  }, [topic, etat, recevoir, relire])
+        surEtat,
+      }),
+    [topic, recevoir],
+  )
+  const abonne = useCanalSecours(valide ? ouvrir : null, relire, {
+    actif: etat !== 'revoked',
+    toujours: true,
+  })
 
-  return { etat, infos, appels, connexion }
+  return { etat, infos, appels, connexion: valide && abonne ? 'en_ligne' : 'reconnexion' }
 }
 
 // L'écran ne se met jamais en veille (Wake Lock), tant que la page est visible ; le verrou

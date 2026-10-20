@@ -4,6 +4,27 @@ import { formatIlYa } from '../../lib/format.js'
 // libellés. Le brouillon a la forme attendue par validate_encounter (étape 14, partie A) ;
 // les champs en plus (libellé du type, drapeaux du catalogue) servent à l'écran seulement.
 
+// Retour depuis une consultation : la page d'où l'on vient (state.retour, posé par le lien
+// qui l'a ouverte, gardé par le navigateur au rechargement), sinon la file d'attente pour
+// un passage et la fiche du patient pour une consultation ouverte hors passage.
+const RETOURS = [
+  [/^\/app\/file-attente(\?|$)/, 'File d’attente'],
+  [/^\/app\/consultations(\?|$)/, 'Consultations'],
+  [/^\/app\/patients\/[^/?]+(\?|$)/, 'Fiche du patient'],
+  [/^\/app\/?(\?|$)/, 'Journée du jour'],
+]
+
+export function retourConsultation(consultation, depuis) {
+  const connu = typeof depuis === 'string' && RETOURS.find(([motif]) => motif.test(depuis))
+  if (connu) return { to: depuis, libelle: connu[1] }
+  return consultation.visit_id
+    ? { to: '/app/file-attente', libelle: 'File d’attente' }
+    : { to: `/app/patients/${consultation.patient_id}`, libelle: 'Fiche du patient' }
+}
+
+// État de navigation à passer au lien qui ouvre une consultation.
+export const etatRetour = (location) => ({ retour: location.pathname + location.search })
+
 export const LIMITES = { reason: 500, history: 4000, examination: 4000, plan: 4000 }
 export const DIAGNOSTICS_MAX = 10
 export const EXAMENS_MAX = 20

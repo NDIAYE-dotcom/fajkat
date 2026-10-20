@@ -172,6 +172,23 @@ test.describe('1440 px — saisie, coupure, validation', () => {
     await expect(brouillons.getByRole('link', { name: 'CONSULT Fatou' })).toBeVisible()
     await brouillons.getByRole('link', { name: 'CONSULT Fatou' }).click()
     await expect(page.getByRole('radio', { name: 'Négatif' })).toBeChecked()
+    // Le lien retour ramène d'où l'on vient : Journée du jour, puis page Consultations.
+    await page
+      .locator('.en-tete-consultation')
+      .getByRole('link', { name: 'Journée du jour' })
+      .click()
+    await page.waitForURL(/\/app$/)
+    await page.goto('/app/consultations')
+    await page.getByRole('link', { name: 'CONSULT Fatou' }).click()
+    await page.waitForURL(/\/app\/consultations\/[0-9a-f-]{36}$/)
+    await page.reload()
+    const retour = page
+      .locator('.en-tete-consultation')
+      .getByRole('link', { name: 'Consultations' })
+    await expect(retour).toBeVisible()
+    await retour.click()
+    await page.waitForURL(/\/app\/consultations$/)
+    await page.getByRole('link', { name: 'CONSULT Fatou' }).click()
 
     await page.getByRole('button', { name: 'Valider la consultation' }).click()
     const fenetre = page.getByRole('dialog', { name: 'Valider la consultation ?' })

@@ -63,7 +63,9 @@ commit;
 --              sans téléphone : section « Sans téléphone » unique, après les numéros) ;
 --   aujourd'hui : Rokhaya (PF, pour « Arrivé »), Absente (consultation, pour « Absent ») ;
 --   J + 5    : Annulée (consultation, pour « Annuler ») ;
---   J + 12   : Férié 1 (consultation) et Férié 2 (PF), pour le jour férié daté après coup ;
+--   J + 12 ou après : Férié 1 (consultation) et Férié 2 (PF), pour le jour férié daté après
+--              coup, au premier jour ouvert (ni férié, ni fermé) à partir de J + 12 :
+--              e2e.ferie, relu par e2e/ferie-report.spec.js ;
 --   passés   : un rendez-vous honoré et un manqué pour Mariama (taux d'absence 50 %),
 --              et une série de PF à J + 30 (masquée à l'accueil).
 -- Jour férié à J + 20 + 3 mois : 2e date de la série prise dans serie-rdv.spec.js.
@@ -74,6 +76,15 @@ begin;
 select set_config('e2e.poste', id::text, true) from public.organizations where name = 'Poste de santé Test';
 select set_config('e2e.owner', '00000000-0000-4000-e2e0-000000000001', true);
 select set_config('e2e.auj', public.org_local_date(current_setting('e2e.poste')::uuid)::text, true);
+-- Premier jour ouvert à partir de J + 12 (le 1er novembre, Tabaski… sont déjà fériés).
+select set_config('e2e.ferie', min(d)::date::text, true)
+  from generate_series(current_setting('e2e.auj')::date + 12, current_setting('e2e.auj')::date + 60,
+                       interval '1 day') d
+  join public.organizations o on o.id = current_setting('e2e.poste')::uuid
+ where not exists (select 1 from public.holidays h
+                    where h.org_id = o.id and h.holiday_date = d::date and h.deleted_at is null)
+   and coalesce(o.settings -> 'opening_hours'
+                  -> public.weekday_key(extract(isodow from d)::integer) ->> 'statut', '') <> 'ferme';
 
 create function pg_temp.type_suivi(p_code text) returns uuid language sql security definer as $$
   select id from public.appointment_types
@@ -106,8 +117,8 @@ begin
       ('Rokhaya', 'F', '+221770001004', 'patient',  'pf',           0, '07:00'),
       ('Absente', 'F', null,            null,       'consultation', 0, '07:15'),
       ('Annulée', 'F', null,            null,       'consultation', 5, '09:00'),
-      ('Férié 1', 'M', null,            null,       'consultation', 12, '09:00'),
-      ('Férié 2', 'F', '+221770001005', 'patient',  'pf',           12, '10:00'),
+      ('Férié 1', 'M', null,            null,       'consultation', -1, '09:00'),
+      ('Férié 2', 'F', '+221770001005', 'patient',  'pf',           -1, '10:00'),
       ('Série',   'F', '+221770001006', 'patient',  null,           null, null))
     v(prenom, sexe, tel, titulaire, type_code, jours, heure)
   loop
@@ -118,7 +129,10 @@ begin
     returning id into v_id;
     if r.type_code is not null then
       perform public.book_appointment(v_org, v_id, pg_temp.type_suivi(r.type_code),
-        pg_temp.a(r.jours, r.heure::time),
+        -- jours = -1 : jour du férié de test (e2e.ferie).
+        case when r.jours = -1
+             then (current_setting('e2e.ferie')::date + r.heure::time) at time zone 'Africa/Dakar'
+             else pg_temp.a(r.jours, r.heure::time) end,
         p_note => case when r.prenom = 'Mariama' then 'Pilule mal tolérée' end, p_confirm => true);
     end if;
     if r.prenom = 'Mariama' then

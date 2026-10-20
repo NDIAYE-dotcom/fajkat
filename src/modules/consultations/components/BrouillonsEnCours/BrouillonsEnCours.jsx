@@ -1,16 +1,18 @@
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import Button from '../../../../components/ui/Button/Button.jsx'
 import Message from '../../../../components/ui/Message/Message.jsx'
 import Skeleton from '../../../../components/ui/Skeleton/Skeleton.jsx'
 import { formatHeure, formatIlYa } from '../../../../lib/format.js'
 import { nomComplet } from '../../../patients/utils.js'
 import { useMesBrouillons } from '../../hooks/useConsultation.js'
+import { etatRetour } from '../../utils.js'
 import './BrouillonsEnCours.css'
 
 // Consultations commencées par l'utilisateur et pas encore validées (brouillons oubliés
 // en fin de garde). Rien ne s'affiche s'il n'y en a aucune, sauf « vide » demandé.
 export default function BrouillonsEnCours({ orgId, niveau = 2, vide = null }) {
   const brouillons = useMesBrouillons(orgId)
+  const location = useLocation()
   const Titre = `h${niveau}`
 
   if (brouillons.isPending) return <Skeleton forme="bloc" hauteur="4rem" />
@@ -35,7 +37,11 @@ export default function BrouillonsEnCours({ orgId, niveau = 2, vide = null }) {
       <ul className="brouillons-en-cours__liste">
         {liste.map((b) => (
           <li key={b.encounter_id} className="brouillons-en-cours__ligne">
-            <Link className="brouillons-en-cours__nom" to={`/app/consultations/${b.encounter_id}`}>
+            <Link
+              className="brouillons-en-cours__nom"
+              to={`/app/consultations/${b.encounter_id}`}
+              state={etatRetour(location)}
+            >
               {nomComplet({ last_name: b.patient_last_name, first_name: b.patient_first_name })}
             </Link>
             {b.file_number && <span className="brouillons-en-cours__dossier">{b.file_number}</span>}

@@ -37,4 +37,5 @@ Pendant une étape, on corrige seulement les bugs. Toute idée d'amélioration e
 ## Hébergement
 
 - **Passer à l'offre Pro de Supabase avant une mise en production à grande échelle** : l'offre gratuite limite Realtime à 200 connexions simultanées, en comptant le personnel connecté (tableau de la salle d'attente, cloche) et les écrans d'appel.
-  - Si la limite est atteinte, la cloche des notifications ne tombe pas : sans canal Realtime, elle se relit toutes les 60 secondes et à chaque retour sur l'onglet (étape 14, partie B). Le tableau de la salle d'attente et les écrans d'appel n'ont pas encore ce repli toutes les 60 secondes : à vérifier avant la mise en production.
+  - Si la limite est atteinte, rien ne reste figé : sans canal Realtime, la cloche des notifications (étape 14, partie B), le tableau de la salle d'attente et la page File d'attente se relisent toutes les 60 secondes, au retour du réseau et à chaque retour sur l'onglet ; le canal est rouvert seul 5 secondes après une coupure (src/hooks/useCanalSecours.js, correctif de l'étape 14). L'écran d'appel se relit toutes les 60 secondes même connecté et se reconnecte seul. Vérifié par e2e/repli-temps-reel.spec.js.
+  - Chaque appareil en repli fait une lecture par minute : à surveiller si beaucoup d'appareils tombent en même temps (charge de la base).

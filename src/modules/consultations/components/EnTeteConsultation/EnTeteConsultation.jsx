@@ -1,17 +1,19 @@
 import { ArrowLeft } from 'lucide-react'
+import { useLocation } from 'react-router-dom'
 import Button from '../../../../components/ui/Button/Button.jsx'
 import Icone from '../../../../components/ui/Icone/Icone.jsx'
 import Tampon from '../../../../components/ui/Tampon/Tampon.jsx'
 import { formatDateHeure } from '../../../../lib/format.js'
 import { libelleAge, nomComplet } from '../../../patients/utils.js'
+import { retourConsultation } from '../../utils.js'
 import './EnTeteConsultation.css'
 
-// En-tête : retour (file d'attente si la consultation vient d'un passage, sinon fiche),
-// patient, type, statut. enfants : choix du type et indicateur d'enregistrement.
+// En-tête : retour vers la page d'où l'on vient (file d'attente, Consultations, fiche du
+// patient, Journée du jour), patient, type, statut. enfants : choix du type et indicateur
+// d'enregistrement.
 export default function EnTeteConsultation({ consultation: c, patient, sensible, children }) {
-  const retour = c.visit_id
-    ? { to: '/app/file-attente', libelle: 'File d’attente' }
-    : { to: `/app/patients/${c.patient_id}`, libelle: 'Fiche du patient' }
+  const location = useLocation()
+  const retour = retourConsultation(c, location.state?.retour)
   const details = patient
     ? [patient.sex === 'F' ? 'Féminin' : 'Masculin', libelleAge(patient)]
         .filter(Boolean)

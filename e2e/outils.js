@@ -1,5 +1,6 @@
 // Outils communs des parcours : connexion, contrôles d'écran, captures, console.
 import { expect } from '@playwright/test'
+import { execFileSync } from 'node:child_process'
 import { mkdirSync } from 'node:fs'
 import { MOT_DE_PASSE } from './comptes.js'
 
@@ -22,6 +23,31 @@ export function prochainMardi() {
   const iso = ((new Date(`${auj}T12:00:00Z`).getUTCDay() + 6) % 7) + 1
   return ajouterJours(auj, (2 - iso + 7) % 7)
 }
+
+// Lecture dans la base locale des tests (fajkat_e2e, jamais fajkat-dev) : première
+// colonne de la première ligne, en texte.
+export function lireBase(requete) {
+  return execFileSync('psql', ['-U', 'postgres', '-d', 'fajkat_e2e', '-At', '-c', requete], {
+    encoding: 'utf8',
+  }).trim()
+}
+
+// Écriture dans la base locale des tests au nom d'un compte (RPC de l'application, avec
+// ses contrôles), comme si un autre appareil agissait. Renvoie la dernière valeur lue.
+export function ecrireBase(compte, requete) {
+  const claims = JSON.stringify({ sub: compte.id, role: 'authenticated' })
+  const sortie = lireBase(
+    `set role authenticated; select set_config('request.jwt.claims', '${claims}', false); ${requete}`,
+  )
+  return sortie.split('\n').at(-1)
+}
+
+// Jour ouvert du Poste de santé Test : ni férié, ni fermé d'après ses horaires.
+export const SQL_JOUR_OUVERT = (d) => `
+  not exists (select 1 from public.holidays h
+               where h.org_id = o.id and h.holiday_date = ${d} and h.deleted_at is null)
+  and coalesce(o.settings -> 'opening_hours'
+                 -> public.weekday_key(extract(isodow from ${d})::integer) ->> 'statut', '') <> 'ferme'`
 
 // Erreurs de la console et de la page, relevées pendant tout le test.
 export function surveillerConsole(page) {

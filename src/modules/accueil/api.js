@@ -284,9 +284,10 @@ export async function appelerSuivant(orgId, cible, salleId = null, serviceIds = 
 }
 
 // Changements de la file (arrivée, déplacement, appel) faits sur n'importe quel appareil
-// de la structure. La table visits ne porte ni motif ni constantes. surConnexion : après
-// chaque (re)connexion du canal, pour rattraper ce qui a pu être manqué.
-export function ecouterFile(orgId, { surChangement, surConnexion }) {
+// de la structure. La table visits ne porte ni motif ni constantes. surEtat : statut du
+// canal (« SUBSCRIBED » après chaque (re)connexion, pour rattraper ce qui a pu être manqué ;
+// erreur, délai dépassé ou fermeture sinon), suivi par useCanalSecours.
+export function ecouterFile(orgId, { surChangement, surEtat }) {
   if (!supabase) return () => {}
   const canal = supabase
     .channel(`file:${orgId}:${Math.random().toString(36).slice(2)}`)
@@ -295,9 +296,7 @@ export function ecouterFile(orgId, { surChangement, surConnexion }) {
       { event: '*', schema: 'public', table: 'visits', filter: `org_id=eq.${orgId}` },
       surChangement,
     )
-    .subscribe((statut) => {
-      if (statut === 'SUBSCRIBED') surConnexion()
-    })
+    .subscribe((statut) => surEtat(statut))
   return () => {
     supabase.removeChannel(canal)
   }
