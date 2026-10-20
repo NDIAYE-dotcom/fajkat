@@ -14,8 +14,8 @@ import PanneauReglages, { BlocNouveau } from '../PanneauReglages/PanneauReglages
 // (contrôlé par la base). multiPraticiens : offre Clinique (praticien de la séance).
 export default function OngletSeances({ orgId, multiPraticiens }) {
   const enLigne = useEnLigne()
-  const seances = useSeances(orgId)
-  const types = useTypesRdv(orgId)
+  const seances = useSeances(orgId, { parametres: true })
+  const types = useTypesRdv(orgId, { parametres: true })
   const praticiens = usePraticiens(orgId, multiPraticiens)
   const { agir, occupe, erreur } = useActionReglage(cles.seances(orgId))
   const [edition, setEdition] = useState(null)

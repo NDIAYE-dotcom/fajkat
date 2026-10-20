@@ -1,6 +1,9 @@
-import { keepPreviousData, useQuery } from '@tanstack/react-query'
+import { keepPreviousData, useInfiniteQuery, useQuery } from '@tanstack/react-query'
+import { useState } from 'react'
 import { useFeature } from '../../../hooks/useFeature.js'
 import {
+  chargerAntecedents,
+  chargerChronologie,
   chargerConsultation,
   chargerExamens,
   chargerMesBrouillons,
@@ -31,12 +34,30 @@ export function usePermissionsConsultation(orgId) {
   }
 }
 
+// Identifiant d'une ouverture d'écran : la base n'enregistre qu'une lecture d'un contenu
+// sensible par ouverture, quel que soit le nombre de relectures (validation, avenant,
+// ajout d'un antécédent). Nouvel écran ouvert : nouvel identifiant.
+function nouvelleOuverture() {
+  if (globalThis.crypto?.randomUUID) return globalThis.crypto.randomUUID()
+  const o = globalThis.crypto.getRandomValues(new Uint8Array(16))
+  o[6] = (o[6] & 0x0f) | 0x40
+  o[8] = (o[8] & 0x3f) | 0x80
+  const h = [...o].map((x) => x.toString(16).padStart(2, '0')).join('')
+  return `${h.slice(0, 8)}-${h.slice(8, 12)}-${h.slice(12, 16)}-${h.slice(16, 20)}-${h.slice(20)}`
+}
+
+export function useOuverture() {
+  const [ouverture] = useState(nouvelleOuverture)
+  return ouverture
+}
+
 // Contenu médical : jamais gardé en mémoire après la sortie de l'écran, jamais relu en
-// arrière-plan (chaque lecture d'une consultation sensible est journalisée).
+// arrière-plan (chaque ouverture d'une consultation sensible est journalisée).
 export function useConsultation(id) {
+  const ouverture = useOuverture()
   return useQuery({
     queryKey: cles.consultation(id),
-    queryFn: () => chargerConsultation(id),
+    queryFn: () => chargerConsultation(id, ouverture),
     enabled: Boolean(id),
     gcTime: 0,
     staleTime: Infinity,
@@ -81,6 +102,34 @@ export function useMesBrouillons(orgId, actif = true) {
     queryKey: cles.mesBrouillons(orgId),
     queryFn: () => chargerMesBrouillons(orgId),
     enabled: Boolean(orgId) && actif,
+    staleTime: 30 * 1000,
+  })
+}
+
+// Antécédents du patient (soignants) : même règle que la consultation, une lecture
+// journalisée par ouverture s'il y a des antécédents sensibles ; aucune copie gardée.
+export function useAntecedents(patientId, actif = true) {
+  const ouverture = useOuverture()
+  return useQuery({
+    queryKey: cles.antecedents(patientId),
+    queryFn: () => chargerAntecedents(patientId, ouverture),
+    enabled: Boolean(patientId) && actif,
+    gcTime: 0,
+    staleTime: Infinity,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+  })
+}
+
+// Chronologie du dossier, par pages de 20, la plus récente en haut. types : filtre (null :
+// tout ce que le rôle peut voir, la base décide).
+export function useChronologie(patientId, types, actif = true) {
+  return useInfiniteQuery({
+    queryKey: cles.chronologie(patientId, types),
+    queryFn: ({ pageParam }) => chargerChronologie(patientId, types, pageParam),
+    initialPageParam: null,
+    getNextPageParam: (page) => page.suite,
+    enabled: Boolean(patientId) && actif,
     staleTime: 30 * 1000,
   })
 }

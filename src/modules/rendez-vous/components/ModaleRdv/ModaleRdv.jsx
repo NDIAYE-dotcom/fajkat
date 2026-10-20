@@ -41,7 +41,8 @@ export default function ModaleRdv({
   const [echec, setEchec] = useState(null)
   const statut = STATUTS_RDV[rdv.status]
   const reportable = droits.write && REPORTABLES.includes(rdv.status)
-  const typeModifiable = droits.write && droits.medical && TYPE_MODIFIABLE.includes(rdv.status)
+  // « Changer le type » : soignants habilités seulement, pour tout rendez-vous (étape 14 C).
+  const typeModifiable = droits.write && droits.discreet && TYPE_MODIFIABLE.includes(rdv.status)
   const nom = nomComplet({ last_name: rdv.patient_last_name, first_name: rdv.patient_first_name })
   const lignes = [
     ['Quand', `${dateLongue(rdv.local_date)}, ${formatHeure(rdv.starts_at)}`],

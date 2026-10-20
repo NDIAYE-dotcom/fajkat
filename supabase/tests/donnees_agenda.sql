@@ -13,7 +13,9 @@
 --
 -- Chaque rendez-vous est pris par book_appointment en se faisant passer pour l'owner de
 -- la structure : mêmes contrôles que l'application (les avertissements, jour férié ou
--- pause, sont acceptés d'office). Pour retirer ces données : bloc en bas du fichier.
+-- pause, sont acceptés d'office). Un type discret (PF) n'est pris que par un rôle médical
+-- (étape 14, partie C) : l'owner est déclaré « exerce » le temps du script, puis remis
+-- comme avant. Pour retirer ces données : bloc en bas du fichier.
 -- =============================================================================
 
 begin;
@@ -45,6 +47,13 @@ select set_config('donnees.owner_poste', (select user_id::text from public.membe
 select set_config('donnees.owner_clinique', (select user_id::text from public.memberships
   where org_id = current_setting('donnees.clinique')::uuid and role = 'owner'
     and is_active and deleted_at is null order by created_at limit 1), true);
+-- Owners « exercent » le temps du script (valeur d'origine gardée, remise à la fin).
+create temporary table donnees_exercice on commit drop as
+  select id, is_clinician from public.memberships
+   where org_id in (current_setting('donnees.poste')::uuid, current_setting('donnees.clinique')::uuid)
+     and role = 'owner';
+update public.memberships set is_clinician = true
+ where id in (select id from donnees_exercice);
 select set_config('donnees.auj',
   public.org_local_date(current_setting('donnees.poste')::uuid)::text, true);
 
@@ -214,6 +223,8 @@ begin
 end $$;
 
 reset role;
+update public.memberships m set is_clinician = d.is_clinician
+  from donnees_exercice d where m.id = d.id;
 commit;
 
 

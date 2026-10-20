@@ -1,5 +1,5 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query'
-import { EyeOff, Pencil } from 'lucide-react'
+import { Pencil } from 'lucide-react'
 import { useState } from 'react'
 import Button from '../../../../components/ui/Button/Button.jsx'
 import Checkbox from '../../../../components/ui/Checkbox/Checkbox.jsx'
@@ -100,12 +100,9 @@ export default function OngletMedical({ patient }) {
             onChange={(e) => maj('allergies', e.target.value)}
           />
         </Field>
-        {masque ? (
-          <Message ton="info" titre="Antécédents masqués">
-            <p>Ils sont réservés aux soignants habilités et restent inchangés.</p>
-          </Message>
-        ) : (
-          <Field id={`${ID}-antecedents`} label="Antécédents" facultatif>
+        {/* Notes sensibles : aucune trace pour qui n'est pas habilité (la base les garde). */}
+        {!masque && (
+          <Field id={`${ID}-antecedents`} label="Notes médicales (texte libre)" facultatif>
             <Textarea
               rows={5}
               maxLength={4000}
@@ -116,8 +113,8 @@ export default function OngletMedical({ patient }) {
         )}
         {droits.sensible && (
           <Checkbox
-            label="Antécédents sensibles"
-            description="VIH / PTME, santé mentale… Masqués à l’aide-soignant ; chaque lecture est journalisée."
+            label="Notes sensibles"
+            description="VIH / PTME, santé mentale… Réservées aux soignants habilités ; chaque lecture est journalisée."
             checked={edition.sensible}
             onChange={(e) => maj('sensible', e.target.checked)}
           />
@@ -139,26 +136,17 @@ export default function OngletMedical({ patient }) {
     )
   }
 
+  // Notes sensibles masquées : ni ligne, ni mention (aucune trace pour qui n'est pas habilité).
   const lignes = [
     ['Groupe sanguin', m?.blood_group],
     ['Allergies', m?.allergies],
-    [
-      'Antécédents',
-      masque ? (
-        <span className="onglet-medical__masque">
-          <Icone icone={EyeOff} />
-          Masqués : réservés aux soignants habilités
-        </span>
-      ) : (
-        m?.medical_history
-      ),
-    ],
-  ]
+    !masque && ['Notes médicales', m?.medical_history],
+  ].filter(Boolean)
 
   return (
     <div className="onglet-medical">
       <div className="onglet-medical__entete">
-        {m?.is_sensitive && <Tampon ton="alerte">Sensible</Tampon>}
+        {m?.is_sensitive && !masque && <Tampon ton="alerte">Sensible</Tampon>}
         {m?.updated_at && (
           <p className="onglet-medical__maj">Mis à jour le {formatDateHeure(m.updated_at)}</p>
         )}

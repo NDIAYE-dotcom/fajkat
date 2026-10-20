@@ -1,0 +1,74 @@
+/* Antécédents par catégorie, façon registre : filets fins entre les lignes. */
+.antecedents {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-4);
+}
+
+.antecedents__categorie {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-1);
+}
+
+.antecedents__titre {
+  margin: 0;
+  font-family: var(--police-texte);
+  font-size: var(--texte-s);
+  font-weight: 700;
+  color: var(--encre-douce);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.antecedents__vide {
+  margin: 0;
+  font-size: var(--texte-s);
+  color: var(--encre-douce);
+}
+
+.antecedents__liste {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.antecedents__ligne {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-1);
+  padding: var(--esp-2) 0;
+  border-bottom: 1px solid var(--doux);
+}
+
+.antecedents__libelle {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--esp-1) var(--esp-2);
+  margin: 0;
+  color: var(--encre);
+  overflow-wrap: break-word;
+}
+
+.antecedents__annee {
+  font-family: var(--police-mono);
+  font-size: var(--texte-s);
+  font-variant-numeric: tabular-nums;
+  color: var(--encre-douce);
+}
+
+.antecedents__details {
+  margin: 0;
+  font-size: var(--texte-s);
+  color: var(--encre-douce);
+  white-space: pre-line;
+  overflow-wrap: break-word;
+}
+
+.antecedents__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--esp-2);
+  margin: 0;
+}

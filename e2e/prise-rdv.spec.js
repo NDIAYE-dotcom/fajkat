@@ -211,13 +211,13 @@ test.describe('1440 px — prise, report, type', () => {
     expect(erreurs).toEqual([])
     await accueil.close()
 
-    const owner = await browser.newPage({ viewport: { width: 1440, height: 900 } })
-    await connecter(owner, COMPTES.ownerPoste)
-    await owner.goto(`/app/rendez-vous?date=${jour(2)}`)
+    const soignant = await browser.newPage({ viewport: { width: 1440, height: 900 } })
+    await connecter(soignant, COMPTES.infirmier)
+    await soignant.goto(`/app/rendez-vous?date=${jour(2)}`)
     await expect(
-      owner.getByRole('region', { name: 'Planification familiale' }).getByText('Note discrète'),
+      soignant.getByRole('region', { name: 'Planification familiale' }).getByText('Note discrète'),
     ).toBeVisible()
-    await owner.close()
+    await soignant.close()
   })
 
   test('infirmier : change le type ; l’accueil voit toujours « Consultation »', async ({

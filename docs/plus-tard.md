@@ -15,7 +15,7 @@ Pendant une étape, on corrige seulement les bugs. Toute idée d'amélioration e
 - **Part du tiers payant sur le ticket de consultation** (SEN-CSU, mutuelle) : aujourd'hui, le ticket est payé en entier ou gratuit avec un motif.
 - **Étape 19 (caisse) : annulation d'un ticket vendu par erreur**, réservée à un rôle autorisé, avec motif obligatoire et trace dans le journal, sans jamais supprimer la vente (remboursement éventuel compris).
 - **Contrôle d'âge facultatif sur un motif de gratuité** (exemple : « moins de 5 ans » refusé pour un adulte), contre la fraude ; borne d'âge paramétrable par motif.
-- **Clôture des passages restés ouverts** en fin de journée (patient parti sans être marqué).
+- ~~Clôture des passages restés ouverts~~ — **réglé à l'étape 14 (correctif)** : la validation d'une consultation termine son passage ; un passage encore ouvert d'un jour passé est clos à la première arrivée du jour dans la structure (« Terminé » s'il était en consultation, sinon « Parti sans être vu », heure de fin : fin du jour du passage).
 - **Temps d'attente estimé** sur la page de suivi du ticket (QR).
 - **Annonce en wolof sur l'écran d'appel** avec une vraie voix sénégalaise enregistrée (lettres, nombres et noms des salles assemblés), qui marche aussi hors ligne. L'annonce en français utilise déjà la synthèse vocale de l'appareil (partie E).
 - **Code court d'appairage pour l'écran d'appel** (6 chiffres à saisir sur la télévision, valable quelques minutes) : taper un lien long avec une télécommande est pénible.

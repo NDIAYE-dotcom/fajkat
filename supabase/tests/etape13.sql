@@ -283,7 +283,7 @@ begin
   raise notice 'OK : jour férié refusé sans confirmation explicite (%)', v_r.message;
 
   v_a := (select a from public.book_appointment(v_org, v_p, pg_temp.type_a('consultation'),
-          pg_temp.a(1, '09:00'), p_note => 'Contrôle après traitement', p_confirm => true) a);
+          pg_temp.a(1, '09:00'), p_confirm => true) a);
   if not v_a.holiday_confirmed or v_a.status <> 'scheduled'
      or v_a.ends_at - v_a.starts_at <> interval '15 minutes' then
     raise exception 'ÉCHEC : rendez-vous confirmé un jour férié : %', v_a;
@@ -326,6 +326,25 @@ end $$;
 -- -----------------------------------------------------------------------------
 -- Note réservée aux soignants
 -- -----------------------------------------------------------------------------
+-- L'accueil n'écrit pas de note (étape 14, partie C : écriture réservée aux soignants
+-- habilités) ; la note du rendez-vous est posée ici comme par un soignant.
+select pg_temp.en_tant_que('09');
+do $$
+begin
+  perform public.book_appointment(current_setting('test.org_a')::uuid,
+    (select patient_id from public.appointments where id = current_setting('test.rdv_ferie')::uuid),
+    (select appointment_type_id from public.appointments where id = current_setting('test.rdv_ferie')::uuid),
+    now() + interval '20 days', p_note => 'Note de l''accueil', p_confirm => true);
+  raise exception 'ÉCHEC : note écrite par l''accueil';
+exception when insufficient_privilege then
+  raise notice 'OK : l''accueil n''écrit pas de note (%)', sqlerrm;
+end $$;
+reset role;
+select set_config('request.jwt.claims', '', true);
+insert into public.appointment_notes (org_id, appointment_id, note)
+values (current_setting('test.org_a')::uuid, current_setting('test.rdv_ferie')::uuid,
+        'Contrôle après traitement');
+set local role authenticated;
 do $$
 declare
   v_code text;

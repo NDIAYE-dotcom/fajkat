@@ -14,6 +14,7 @@ import Diagnostics from '../Diagnostics/Diagnostics.jsx'
 import EnTeteConsultation from '../EnTeteConsultation/EnTeteConsultation.jsx'
 import ExamensRapides from '../ExamensRapides/ExamensRapides.jsx'
 import IndicateurEnregistrement from '../IndicateurEnregistrement/IndicateurEnregistrement.jsx'
+import MiseEnPageConsultation from '../MiseEnPageConsultation/MiseEnPageConsultation.jsx'
 import ModaleValidation from '../ModaleValidation/ModaleValidation.jsx'
 import SectionConsultation from '../SectionConsultation/SectionConsultation.jsx'
 import './SaisieConsultation.css'
@@ -23,7 +24,9 @@ const pluriel = (n, mot) => `${n} ${mot}${n > 1 ? 's' : ''}`
 
 // Consultation en brouillon, tenue par l'utilisateur : une seule page, sections repliables.
 // Chaque frappe est gardée sur l'appareil, et envoyée au serveur toutes les 10 secondes.
+// panneau(sensible) : panneau du dossier affiché à côté (antécédents).
 export default function SaisieConsultation({
+  panneau,
   consultation,
   patient,
   orgId,
@@ -138,84 +141,86 @@ export default function SaisieConsultation({
         </Message>
       )}
 
-      <SectionConsultation
-        titre="Motif et histoire de la maladie"
-        resume={c.reason ? `Motif : ${c.reason}` : 'Motif à saisir'}
-        alerte={Boolean(erreurs.reason)}
-      >
-        {champTexte('reason', 'Motif de consultation', 2, true)}
-        {champTexte('history', 'Histoire de la maladie', 4)}
-      </SectionConsultation>
+      <MiseEnPageConsultation panneau={panneau?.(sensible)}>
+        <SectionConsultation
+          titre="Motif et histoire de la maladie"
+          resume={c.reason ? `Motif : ${c.reason}` : 'Motif à saisir'}
+          alerte={Boolean(erreurs.reason)}
+        >
+          {champTexte('reason', 'Motif de consultation', 2, true)}
+          {champTexte('history', 'Histoire de la maladie', 4)}
+        </SectionConsultation>
 
-      <SectionConsultation
-        titre="Constantes du passage"
-        resume={
-          consultation.vitals?.length ? pluriel(consultation.vitals.length, 'mesure') : 'Aucune'
-        }
-      >
-        <ConstantesPassage
-          mesures={consultation.vitals}
-          avecPassage={Boolean(consultation.visit_id)}
-        />
-      </SectionConsultation>
-
-      <SectionConsultation titre="Examen clinique" resume={c.examination ? 'Saisi' : 'À saisir'}>
-        {champTexte('examination', 'Examen clinique', 4)}
-      </SectionConsultation>
-
-      <SectionConsultation
-        titre="Examens rapides"
-        resume={c.tests.length ? pluriel(c.tests.length, 'examen') : 'Aucun'}
-        alerte={Boolean(erreurs.tests)}
-      >
-        <ExamensRapides
-          examens={examens}
-          valeur={c.tests}
-          erreurs={erreurs.tests}
-          desactive={bloque}
-          onChange={(v) => maj('tests', v)}
-        />
-      </SectionConsultation>
-
-      <SectionConsultation
-        titre="Diagnostics"
-        resume={c.diagnoses.length ? pluriel(c.diagnoses.length, 'diagnostic') : 'Aucun'}
-        alerte={Boolean(erreurs.diagnoses) || declarations.length > 0}
-      >
-        <Diagnostics
-          orgId={orgId}
-          valeur={c.diagnoses}
-          erreur={erreurs.diagnoses}
-          desactive={bloque}
-          onChange={(v) => maj('diagnoses', v)}
-        />
-      </SectionConsultation>
-
-      <SectionConsultation titre="Conduite à tenir" resume={c.plan ? 'Saisie' : 'À saisir'}>
-        {champTexte('plan', 'Conduite à tenir', 4)}
-        <Checkbox
-          label="Consultation sensible"
-          description={
-            sensibleAuto
-              ? 'Sensible d’office (type, diagnostic ou examen sensible) : elle le restera.'
-              : 'Réservée aux soignants habilités ; chaque lecture est enregistrée. Une consultation sensible le reste.'
+        <SectionConsultation
+          titre="Constantes du passage"
+          resume={
+            consultation.vitals?.length ? pluriel(consultation.vitals.length, 'mesure') : 'Aucune'
           }
-          checked={sensible}
-          disabled={bloque || sensibleAuto}
-          onChange={(e) => maj('is_sensitive', e.target.checked)}
-        />
-      </SectionConsultation>
+        >
+          <ConstantesPassage
+            mesures={consultation.vitals}
+            avecPassage={Boolean(consultation.visit_id)}
+          />
+        </SectionConsultation>
 
-      <div className="saisie-consultation__pied">
-        {Object.keys(erreurs).some((k) => erreurs[k]) && (
-          <Message ton="erreur">
-            <p>Corrigez les cases signalées avant de valider.</p>
-          </Message>
-        )}
-        <Button onClick={demanderValidation} disabled={bloque}>
-          Valider la consultation
-        </Button>
-      </div>
+        <SectionConsultation titre="Examen clinique" resume={c.examination ? 'Saisi' : 'À saisir'}>
+          {champTexte('examination', 'Examen clinique', 4)}
+        </SectionConsultation>
+
+        <SectionConsultation
+          titre="Examens rapides"
+          resume={c.tests.length ? pluriel(c.tests.length, 'examen') : 'Aucun'}
+          alerte={Boolean(erreurs.tests)}
+        >
+          <ExamensRapides
+            examens={examens}
+            valeur={c.tests}
+            erreurs={erreurs.tests}
+            desactive={bloque}
+            onChange={(v) => maj('tests', v)}
+          />
+        </SectionConsultation>
+
+        <SectionConsultation
+          titre="Diagnostics"
+          resume={c.diagnoses.length ? pluriel(c.diagnoses.length, 'diagnostic') : 'Aucun'}
+          alerte={Boolean(erreurs.diagnoses) || declarations.length > 0}
+        >
+          <Diagnostics
+            orgId={orgId}
+            valeur={c.diagnoses}
+            erreur={erreurs.diagnoses}
+            desactive={bloque}
+            onChange={(v) => maj('diagnoses', v)}
+          />
+        </SectionConsultation>
+
+        <SectionConsultation titre="Conduite à tenir" resume={c.plan ? 'Saisie' : 'À saisir'}>
+          {champTexte('plan', 'Conduite à tenir', 4)}
+          <Checkbox
+            label="Consultation sensible"
+            description={
+              sensibleAuto
+                ? 'Sensible d’office (type, diagnostic ou examen sensible) : elle le restera.'
+                : 'Réservée aux soignants habilités ; chaque lecture est enregistrée. Une consultation sensible le reste.'
+            }
+            checked={sensible}
+            disabled={bloque || sensibleAuto}
+            onChange={(e) => maj('is_sensitive', e.target.checked)}
+          />
+        </SectionConsultation>
+
+        <div className="saisie-consultation__pied">
+          {Object.keys(erreurs).some((k) => erreurs[k]) && (
+            <Message ton="erreur">
+              <p>Corrigez les cases signalées avant de valider.</p>
+            </Message>
+          )}
+          <Button onClick={demanderValidation} disabled={bloque}>
+            Valider la consultation
+          </Button>
+        </div>
+      </MiseEnPageConsultation>
 
       <ModaleValidation
         ouvert={validation}

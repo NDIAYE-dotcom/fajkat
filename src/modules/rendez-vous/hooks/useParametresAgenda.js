@@ -24,12 +24,23 @@ export function usePermissionsAgenda(orgId) {
   })
 }
 
-export function useTypesRdv(orgId) {
+// Types discrets (PF, dépistage…) : l'owner et l'admin qui n'exercent pas les lisent pour
+// paramétrer l'agenda (parametres), mais ne les voient ni dans l'agenda ni dans la prise de
+// rendez-vous : seuls les rôles médicaux (droit « discreet ») les voient là. Tant que les
+// droits ne sont pas lus, ils sont écartés.
+function useVoitDiscret(orgId) {
+  return usePermissionsAgenda(orgId).data?.discreet === true
+}
+
+export function useTypesRdv(orgId, { parametres = false } = {}) {
+  const discret = useVoitDiscret(orgId)
+  const garder = parametres || discret
   return useQuery({
     queryKey: cles.types(orgId),
     queryFn: () => chargerTypes(orgId),
     enabled: Boolean(orgId),
     staleTime: CINQ_MINUTES,
+    select: garder ? undefined : (types) => types.filter((t) => !t.is_discreet),
   })
 }
 
@@ -42,12 +53,20 @@ export function useServicesFile(orgId) {
   })
 }
 
-export function useSeances(orgId) {
+// Séances : même règle que les types (séance d'un type discret écartée hors paramètres).
+export function useSeances(orgId, { parametres = false } = {}) {
+  const discret = useVoitDiscret(orgId)
+  const tous = useTypesRdv(orgId, { parametres: true }).data
+  const garder = parametres || discret
+  const discrets = new Set((tous ?? []).filter((t) => t.is_discreet).map((t) => t.id))
   return useQuery({
     queryKey: cles.seances(orgId),
     queryFn: () => chargerSeances(orgId),
-    enabled: Boolean(orgId),
+    enabled: Boolean(orgId) && (garder || Boolean(tous)),
     staleTime: CINQ_MINUTES,
+    select: garder
+      ? undefined
+      : (seances) => seances.filter((s) => !discrets.has(s.appointment_type_id)),
   })
 }
 

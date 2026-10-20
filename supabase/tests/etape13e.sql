@@ -33,6 +33,11 @@ reset role;
 insert into public.memberships (org_id, user_id, role, is_active)
 select current_setting('test.org')::uuid, ('00000000-0000-4000-a13e-0000000000' || c)::uuid, r, true
   from (values ('0c', 'infirmier'), ('06', 'caissier'), ('09', 'accueil')) v(c, r);
+-- Owner qui exerce une profession soignante (is_clinician) : il voit les types discrets
+-- comme un soignant (étape 14, partie C). L'owner qui n'exerce pas : etape13c.sql, etape14c.sql.
+update public.memberships set is_clinician = true
+ where org_id = current_setting('test.org')::uuid
+   and user_id = '00000000-0000-4000-a13e-00000000000a';
 -- D = demain ; fêtes fixes retirées, puis un jour férié à D + 7.
 select set_config('test.d', (public.org_local_date(current_setting('test.org')::uuid) + 1)::text, true);
 update public.holidays set deleted_at = now() where org_id = current_setting('test.org')::uuid;
@@ -73,7 +78,7 @@ select set_config('test.seance_consult', (select id::text from public.appointmen
 
 set local role authenticated;
 
--- Patientes, et une PF à D 08:00 prise par l'owner (séance PF pleine à D).
+-- Patientes, et une PF à D 08:00 prise par l'owner qui exerce (séance PF pleine à D).
 select pg_temp.en_tant_que('0a');
 do $$
 declare
@@ -91,7 +96,7 @@ begin
     pg_temp.type_e('pf'), pg_temp.a(0, '08:00'), p_confirm => true)), true);
   perform set_config('test.pf3', (select id::text from public.book_appointment(v_org, v_q,
     pg_temp.type_e('pf'), pg_temp.a(21, '08:00'), p_confirm => true)), true);
-  raise notice 'OK : l''owner prend un rendez-vous de planification familiale';
+  raise notice 'OK : l''owner qui exerce prend un rendez-vous de planification familiale';
 end $$;
 
 -- -----------------------------------------------------------------------------
@@ -139,7 +144,8 @@ begin
 end $$;
 
 -- -----------------------------------------------------------------------------
--- Report par l'accueil d'une PF masquée : vrai type et séance du vrai type
+-- Report par l'accueil d'une PF masquée : comme une consultation (étape 14, partie C) :
+-- vrai type et durée gardés, aucune séance, aucun contrôle de places
 -- -----------------------------------------------------------------------------
 select pg_temp.en_tant_que('09');
 do $$
@@ -165,28 +171,30 @@ begin
   end if;
   v_neuf := pg_temp.rdv(v_neuf.id);
   if v_neuf.appointment_type_id <> pg_temp.type_e('pf')
-     or v_neuf.session_id is distinct from current_setting('test.seance_pf')::uuid
+     or v_neuf.session_id is not null
+     or v_neuf.ends_at - v_neuf.starts_at
+        <> make_interval(mins => (select duration_minutes from public.appointment_types
+                                   where id = pg_temp.type_e('pf')))
      or (pg_temp.rdv(current_setting('test.pf1')::uuid)).appointment_type_id <> pg_temp.type_e('pf') then
-    raise exception 'ÉCHEC : report masqué : type ou séance remplacés : %', v_neuf;
+    raise exception 'ÉCHEC : report masqué : type, séance ou durée : %', v_neuf;
   end if;
   perform set_config('test.pf1b', v_neuf.id::text, true);
-  raise notice 'OK : report par l''accueil : type PF gardé, séance PF retrouvée, séance envoyée ignorée';
+  raise notice 'OK : report par l''accueil : type PF et durée gardés, hors séance, séance envoyée ignorée';
 
-  -- Contrôle d'un report (PF de D + 21) vers D + 14, déjà pleine : vrai type contrôlé,
-  -- même si l'application envoie le type et la séance de consultation.
+  -- Contrôle d'un report (PF de D + 21) vers D + 14, où la séance PF est pleine : réponse
+  -- d'une consultation (aucun « séance pleine », rien de la PF).
   v_ctrl := public.check_appointment(v_org, current_setting('test.p')::uuid,
     pg_temp.type_e('consultation'), pg_temp.a(14, '09:00'),
     p_session_id => current_setting('test.seance_consult')::uuid,
     p_exclude_id => current_setting('test.pf3')::uuid);
-  if not (v_ctrl -> 0 -> 'blocking') @> '[{"code": "full"}]'
-     or v_ctrl::text ~* 'planification'
+  if (v_ctrl -> 0 -> 'blocking') @> '[{"code": "full"}]'
+     or v_ctrl::text ~* 'planification|pleine'
      or v_ctrl -> 0 -> 'session_id' <> 'null'::jsonb
      or v_ctrl::text ~ current_setting('test.seance_pf')
      or v_ctrl::text ~ pg_temp.type_e('pf')::text then
-    raise exception 'ÉCHEC : contrôle du report sur le type affiché : %', v_ctrl;
+    raise exception 'ÉCHEC : contrôle du report comme une consultation : %', v_ctrl;
   end if;
-  raise notice 'OK : contrôle d''un report : séance du vrai type, pleine, sans nommer la PF (%)',
-    v_ctrl -> 0 -> 'blocking' -> 0 ->> 'message';
+  raise notice 'OK : contrôle d''un report masqué : comme une consultation, aucune séance pleine ni PF (%)', v_ctrl;
 end $$;
 
 -- -----------------------------------------------------------------------------
@@ -199,35 +207,38 @@ declare
   v_n   integer;
 begin
   perform pg_temp.en_tant_que('0c');
-  -- D : libre (la PF a été reportée) ; D + 7 : férié ; D + 14 : pleine ; D + 21 : prise.
+  -- D : libre (la PF a été reportée) ; D + 7 : férié ; D + 14 : libre (la PF reportée par
+  -- l'accueil l'est hors séance, étape 14 C) ; D + 21 : prise.
   select array_agg(local_date order by local_date) as jours,
          array_agg(places_left order by local_date) as places,
          bool_and(session_id = current_setting('test.seance_pf')::uuid) as seance
     into v_r
     from public.next_available_sessions(v_org, pg_temp.type_e('pf'),
            p_from => current_setting('test.d')::date, p_limit => 2);
-  if v_r.jours <> array[current_setting('test.d')::date, current_setting('test.d')::date + 28]
+  if v_r.jours <> array[current_setting('test.d')::date, current_setting('test.d')::date + 14]
      or v_r.places <> array[1, 1] or not v_r.seance then
     raise exception 'ÉCHEC : prochaines séances PF : %', v_r;
   end if;
-  raise notice 'OK : prochaines séances : jour férié, séance pleine et séance prise sautés';
+  raise notice 'OK : prochaines séances : jour férié sauté ; séance de D + 14 libre (report masqué hors séance)';
 
+  -- Accueil : les prochaines séances d'une PF masquée sont celles d'une consultation.
   perform pg_temp.en_tant_que('09');
-  select count(*) into v_n
-    from public.next_available_sessions(v_org, p_appointment_id => current_setting('test.pf3')::uuid,
-           p_from => current_setting('test.d')::date + 1, p_limit => 3)
-   where session_id is null and end_time is null and start_time = '08:00' and places_left = 1;
-  if v_n <> 3 then
-    raise exception 'ÉCHEC : prochaines séances d''une PF masquée (%)', v_n;
+  if (select array_agg(row(local_date, start_time, end_time, places_left, session_id)::text order by starts_at)
+        from public.next_available_sessions(v_org, p_appointment_id => current_setting('test.pf3')::uuid,
+               p_from => current_setting('test.d')::date + 1, p_limit => 3))
+     is distinct from
+     (select array_agg(row(local_date, start_time, end_time, places_left, session_id)::text order by starts_at)
+        from public.next_available_sessions(v_org, pg_temp.type_e('consultation'),
+               p_from => current_setting('test.d')::date + 1, p_limit => 3)) then
+    raise exception 'ÉCHEC : prochaines séances d''une PF masquée différentes d''une consultation';
   end if;
-  -- Sa propre place n'est pas comptée : D + 21 proposé.
-  if not exists (select 1 from public.next_available_sessions(v_org,
-                   p_appointment_id => current_setting('test.pf3')::uuid,
-                   p_from => current_setting('test.d')::date + 21, p_limit => 1)
-                 where local_date = current_setting('test.d')::date + 21) then
-    raise exception 'ÉCHEC : la place du rendez-vous reporté est comptée';
+  if exists (select 1 from public.next_available_sessions(v_org,
+               p_appointment_id => current_setting('test.pf3')::uuid,
+               p_from => current_setting('test.d')::date + 1, p_limit => 10)
+              where session_id = current_setting('test.seance_pf')::uuid) then
+    raise exception 'ÉCHEC : séance PF proposée pour une PF masquée';
   end if;
-  raise notice 'OK : PF masquée : date, heure et places seulement (aucune séance renvoyée)';
+  raise notice 'OK : PF masquée : prochaines séances d''une consultation, rien de la séance PF';
 end $$;
 
 -- -----------------------------------------------------------------------------
@@ -392,7 +403,7 @@ begin
   raise notice 'OK : accueil : contrôle, report, annulation, séances, agenda : ni type PF, ni séance PF, ni motif dans les réponses (la base garde la PF et sa séance)';
 end $$;
 
--- Prise et suivi par l'owner : lignes complètes (il voit les types discrets).
+-- Prise et suivi par l'owner qui exerce : lignes complètes (il voit les types discrets).
 select pg_temp.en_tant_que('0a');
 do $$
 declare
@@ -446,7 +457,10 @@ declare
   v_ctrl jsonb;
   v_a    public.appointments;
 begin
-  -- Séance PF de D + 14 pleine (report de la première PF). Sans « hors séance » : refusé.
+  -- Séance PF de D + 14 remplie (1 place) par une PF prise par l'owner qui exerce (le
+  -- report de l'accueil y est hors séance depuis l'étape 14 C). Sans « hors séance » : refusé.
+  perform public.book_appointment(v_org, current_setting('test.p')::uuid, pg_temp.type_e('pf'),
+    pg_temp.a(14, '08:00'), p_confirm => true);
   v_ctrl := public.check_appointment(v_org, current_setting('test.q')::uuid,
     pg_temp.type_e('pf'), pg_temp.a(14, '09:00'));
   if not (v_ctrl -> 0 -> 'blocking') @> '[{"code": "full"}]' then

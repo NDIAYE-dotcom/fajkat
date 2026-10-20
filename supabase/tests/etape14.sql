@@ -233,10 +233,12 @@ begin
     end loop;
     perform pg_temp.refus(format('update public.encounters set reason = %L', 'x'), '42501');
   end loop;
-  -- L'accueil ne lit ni le contenu, ni la chronologie, ni les antécédents.
+  -- L'accueil ne lit ni le contenu, ni les antécédents ; sa chronologie (partie C) ne
+  -- montre que les passages et les rendez-vous.
   perform pg_temp.en_tant_que('09');
   perform pg_temp.refus(format('select public.get_encounter(%L)', current_setting('test.e1')), '42501');
-  perform pg_temp.refus(format('select * from public.patient_timeline(%L)', current_setting('test.moussa')), '42501');
+  assert not exists (select 1 from public.patient_timeline(current_setting('test.moussa')::uuid)
+                      where kind not in ('visit', 'appointment')), 'chronologie de l''accueil';
   perform pg_temp.refus(format('select * from public.get_medical_history(%L)', current_setting('test.moussa')), '42501');
   perform pg_temp.refus(format('select * from public.search_diagnoses(%L, %L)', current_setting('test.org'), 'palu'), '42501');
   perform pg_temp.en_tant_que('06');
@@ -480,11 +482,12 @@ declare
 begin
   v := public.get_encounter(current_setting('test.e1')::uuid);
   assert v ->> 'reason' = 'Fièvre depuis 3 jours', 'lecture ordinaire';
-  perform pg_temp.refus(format('select public.get_encounter(%L)', current_setting('test.e_vih')), '42501', 'habilités');
+  perform pg_temp.refus(format('select public.get_encounter(%L)', current_setting('test.e_vih')), '42501', 'Consultation introuvable.');
   perform pg_temp.refus(format('select public.get_encounter(%L)', current_setting('test.e_pf')), '42501');
   assert not exists (select 1 from public.patient_timeline(current_setting('test.moussa')::uuid)
                       where encounter_id = current_setting('test.e_vih')::uuid), 'absente de la chronologie';
-  assert not exists (select 1 from public.patient_timeline(current_setting('test.awa')::uuid)), 'PF absente';
+  assert not exists (select 1 from public.patient_timeline(current_setting('test.awa')::uuid)
+                      where kind not in ('visit', 'appointment')), 'PF absente';
   perform pg_temp.refus(format('select public.add_encounter_addendum(%L, %L)', current_setting('test.e1'), 'x'), '42501');
   raise notice 'OK : aide-soignant : lecture ordinaire seulement, rien de sensible, aucune écriture';
 end $$;

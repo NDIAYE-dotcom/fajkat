@@ -1,0 +1,68 @@
+/* Ligne de registre : date à gauche en chiffres tabulaires, filet fin dessous. */
+.ligne-chronologie {
+  display: grid;
+  grid-template-columns: 9.5rem minmax(0, 1fr);
+  gap: var(--esp-1) var(--esp-4);
+  padding: var(--esp-3) 0;
+  border-bottom: 1px solid var(--doux);
+}
+
+.ligne-chronologie__quand {
+  margin: 0;
+  font-family: var(--police-mono);
+  font-size: var(--texte-s);
+  font-variant-numeric: tabular-nums;
+  color: var(--encre-douce);
+}
+
+.ligne-chronologie__quoi {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-1);
+  min-width: 0;
+}
+
+.ligne-chronologie__genre {
+  margin: 0;
+  font-size: var(--texte-xs);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--encre-douce);
+}
+
+.ligne-chronologie__titre {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--esp-1) var(--esp-2);
+  margin: 0;
+  color: var(--encre);
+  overflow-wrap: break-word;
+}
+
+.ligne-chronologie__lien {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  color: var(--primaire);
+  font-weight: 700;
+}
+
+.ligne-chronologie__lien:focus-visible {
+  outline: 2px solid var(--primaire);
+  outline-offset: 2px;
+}
+
+.ligne-chronologie__precisions {
+  margin: 0;
+  font-size: var(--texte-s);
+  color: var(--encre-douce);
+  overflow-wrap: break-word;
+}
+
+@media (max-width: 40rem) {
+  .ligne-chronologie {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

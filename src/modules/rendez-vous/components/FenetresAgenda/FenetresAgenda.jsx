@@ -69,7 +69,8 @@ export default function FenetresAgenda({
         <ModalePriseRdv
           orgId={orgId}
           multiPraticiens={multiPraticiens}
-          medical={droits.medical}
+          // Note de rendez-vous : soignants habilités seulement (droit « discreet »).
+          medical={droits.discreet === true}
           peutCreerPatient={peutCreerPatient}
           patientCree={fenetre.patientCree ?? null}
           onFermer={fermer}
@@ -86,7 +87,7 @@ export default function FenetresAgenda({
         <ModaleSerie
           orgId={orgId}
           multiPraticiens={multiPraticiens}
-          medical={droits.medical}
+          medical={droits.discreet === true}
           peutCreerPatient={peutCreerPatient}
           patientCree={fenetre.patientCree ?? null}
           onFermer={fermer}

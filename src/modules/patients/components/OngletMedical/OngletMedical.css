@@ -45,13 +45,6 @@
   color: var(--encre-douce);
 }
 
-.onglet-medical__masque {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--esp-2);
-  color: var(--encre-douce);
-}
-
 .onglet-medical__actions {
   display: flex;
   flex-wrap: wrap;

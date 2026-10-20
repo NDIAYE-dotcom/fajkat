@@ -1,0 +1,35 @@
+.mise-en-page-consultation {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-4);
+}
+
+.mise-en-page-consultation__principal {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-4);
+  min-width: 0;
+}
+
+.mise-en-page-consultation__panneau {
+  min-width: 0;
+}
+
+/* Grand écran : panneau du dossier dans une colonne à droite de la saisie. */
+@media (min-width: 75rem) {
+  .mise-en-page-consultation {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(17rem, 22rem);
+    align-items: start;
+  }
+
+  .mise-en-page-consultation__panneau {
+    grid-column: 2;
+    grid-row: 1;
+  }
+
+  .mise-en-page-consultation__principal {
+    grid-column: 1;
+    grid-row: 1;
+  }
+}

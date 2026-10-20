@@ -14,7 +14,9 @@ import {
   verifierEcran,
 } from './outils.js'
 
-// Ce qui ne doit jamais atteindre l'accueil ni le caissier : nom d'un type discret, note.
+// Ce qui ne doit jamais atteindre l'accueil, le caissier ni l'owner qui n'exerce pas : nom
+// d'un type discret, note. L'owner lit les types et séances discrets pour les paramétrer
+// (appointment_types, appointment_sessions), jamais sur un rendez-vous.
 const SENSIBLE = /Planification familiale|Dépistage|Implant à retirer|"is_discreet":true/
 const API_AGENDA =
   /\/rest\/v1\/(rpc\/(list_appointments|appointments_to_remind)|appointment_types|appointment_sessions)/
@@ -38,7 +40,7 @@ for (const largeur of LARGEURS) {
       test(`agenda du poste — ${role}`, async ({ page }) => {
         const erreurs = surveillerConsole(page)
         const reponses = relever(page, API_AGENDA)
-        const medical = role === 'owner' || role === 'infirmier'
+        const medical = role === 'infirmier'
         await connecter(page, compte)
         for (const vue of VUES) {
           await page.goto(vue.adresse())
@@ -55,9 +57,12 @@ for (const largeur of LARGEURS) {
         }
         if (!medical) {
           for (const r of reponses) {
+            if (role === 'owner' && /appointment_(types|sessions)/.test(r.url)) continue
             expect(r.texte, `${role} : donnée sensible reçue (${r.url})`).not.toMatch(SENSIBLE)
           }
-          await expect(page.getByRole('link', { name: 'Paramètres de l’agenda' })).toHaveCount(0)
+          await expect(page.getByRole('link', { name: 'Paramètres de l’agenda' })).toHaveCount(
+            role === 'owner' ? 1 : 0,
+          )
         }
         expect(erreurs, 'erreurs dans la console').toEqual([])
       })

@@ -34,6 +34,11 @@ reset role;
 insert into public.memberships (org_id, user_id, role, is_active)
 select current_setting('test.org')::uuid, ('00000000-0000-4000-a13f-0000000000' || c)::uuid, r, true
   from (values ('0c', 'infirmier'), ('06', 'caissier'), ('09', 'accueil'), ('05', 'comptable')) v(c, r);
+-- Owner qui exerce une profession soignante (is_clinician) : il voit les types discrets
+-- comme un soignant (étape 14, partie C). L'owner qui n'exerce pas : etape13c.sql, etape14c.sql.
+update public.memberships set is_clinician = true
+ where org_id = current_setting('test.org')::uuid
+   and user_id = '00000000-0000-4000-a13f-00000000000a';
 -- A = aujourd'hui, D = demain ; fêtes fixes retirées, jour férié à D + 7.
 select set_config('test.a', public.org_local_date(current_setting('test.org')::uuid)::text, true);
 select set_config('test.d', (current_setting('test.a')::date + 1)::text, true);
@@ -154,13 +159,23 @@ begin
   if v_l.reminder_done_at is null or v_l.reminder_done_by_name <> 'Test 09' then
     raise exception 'ÉCHEC : rappel fait non relu : %', v_l;
   end if;
-  -- Rendez-vous exclu des rappels : refusé comme s'il n'existait pas.
+  -- Rendez-vous exclu des rappels (PF sur le téléphone du mari) : pour l'accueil, qui ne
+  -- voit pas le vrai type, accepté comme un autre (un refus révélerait la PF, étape 14 C) ;
+  -- il ne figure toujours pas dans sa liste.
+  perform public.set_appointment_reminder(array[current_setting('test.r_awa')::uuid], true);
+  if exists (select 1 from public.appointments_to_remind(current_setting('test.org')::uuid)
+              where appointment_id = current_setting('test.r_awa')::uuid) then
+    raise exception 'ÉCHEC : PF sur le téléphone du mari dans les rappels';
+  end if;
+  -- Pour un soignant habilité : refusé comme s'il n'existait pas.
+  perform pg_temp.en_tant_que('0c');
   begin
     perform public.set_appointment_reminder(array[current_setting('test.r_awa')::uuid], true);
     raise exception 'ÉCHEC : rappel coché pour une PF sur le téléphone du mari';
   exception when insufficient_privilege then
     if sqlerrm <> 'Rendez-vous introuvable.' then raise; end if;
   end;
+  perform pg_temp.en_tant_que('09');
   -- Décocher.
   perform public.set_appointment_reminder(array[current_setting('test.r_aida')::uuid], false);
   if (pg_temp.rdv(current_setting('test.r_aida')::uuid)).reminder_done_at is not null

@@ -12,12 +12,13 @@ import { useOrganization } from '../../../../hooks/useOrganization.js'
 import FeatureRoute from '../../../../router/guards/FeatureRoute/FeatureRoute.jsx'
 import RoleRoute from '../../../../router/guards/RoleRoute/RoleRoute.jsx'
 import { entreeDepuisChemin, offresDeLEntree } from '../../../../router/navigation.js'
+import Antecedents from '../../../consultations/components/Antecedents/Antecedents.jsx'
+import Chronologie from '../../../consultations/components/Chronologie/Chronologie.jsx'
 import { usePermissionsConsultation } from '../../../consultations/hooks/useConsultation.js'
 import { usePermissionsAgenda } from '../../../rendez-vous/hooks/useParametresAgenda.js'
 import { chargerPatient, cles } from '../../api.js'
 import EnTeteFiche from '../../components/EnTeteFiche/EnTeteFiche.jsx'
 import OngletCouvertures from '../../components/OngletCouvertures/OngletCouvertures.jsx'
-import OngletHistorique from '../../components/OngletHistorique/OngletHistorique.jsx'
 import OngletIdentite from '../../components/OngletIdentite/OngletIdentite.jsx'
 import OngletMedical from '../../components/OngletMedical/OngletMedical.jsx'
 import OngletRendezVous from '../../components/OngletRendezVous/OngletRendezVous.jsx'
@@ -89,12 +90,12 @@ function ChargementFiche() {
   return <Fiche patient={patient} cle={cles.patient(id)} />
 }
 
-const ONGLETS = ['identite', 'couvertures', 'rendez-vous', 'medical', 'historique']
+const ONGLETS = ['identite', 'couvertures', 'rendez-vous', 'medical', 'chronologie']
 
 function Fiche({ patient, cle }) {
   const { structure } = useOrganization()
   const droits = usePermissionsPatients(structure.id)
-  const consultation = usePermissionsConsultation(droits.medical ? structure.id : null).ecrire
+  const dossier = usePermissionsConsultation(droits.medical ? structure.id : null)
   // Rendez-vous : module inclus dans l'offre et rôle qui lit l'agenda.
   const agendaInclus = useFeature('rendez_vous').actif
   const agenda = usePermissionsAgenda(agendaInclus ? structure.id : null).data?.read === true
@@ -125,14 +126,39 @@ function Fiche({ patient, cle }) {
       libelle: 'Rendez-vous',
       contenu: actif === 'rendez-vous' ? <OngletRendezVous patient={patient} /> : null,
     },
-    // Monté seulement quand il est ouvert : chaque lecture d'antécédents sensibles est
+    // Monté seulement quand il est ouvert : chaque ouverture d'antécédents sensibles est
     // journalisée, elle ne doit pas avoir lieu à la simple ouverture de la fiche.
     droits.medical && {
       id: 'medical',
       libelle: 'Médical',
-      contenu: actif === 'medical' ? <OngletMedical patient={patient} /> : null,
+      contenu:
+        actif === 'medical' ? (
+          <div className="fiche-patient__medical">
+            <OngletMedical patient={patient} />
+            {dossier.lire && (
+              <section className="fiche-patient__antecedents" aria-labelledby="fiche-antecedents">
+                <h2 id="fiche-antecedents" className="fiche-patient__sous-titre">
+                  Antécédents
+                </h2>
+                <Antecedents
+                  patientId={patient.id}
+                  ecrire={dossier.ecrire}
+                  habilite={dossier.sensible}
+                />
+              </section>
+            )}
+          </div>
+        ) : null,
     },
-    { id: 'historique', libelle: 'Historique', contenu: <OngletHistorique /> },
+    // Chronologie : la base ne renvoie à chacun que ce qu'il peut voir.
+    {
+      id: 'chronologie',
+      libelle: 'Chronologie',
+      contenu:
+        actif === 'chronologie' ? (
+          <Chronologie patientId={patient.id} medical={dossier.lire} />
+        ) : null,
+    },
   ].filter(Boolean)
 
   return (
@@ -147,7 +173,7 @@ function Fiche({ patient, cle }) {
         cle={cle}
         ecrire={droits.ecrire}
         fusionner={droits.fusionner && droits.ecrire}
-        consultation={consultation}
+        consultation={dossier.ecrire}
       />
       <Tabs
         libelle="Rubriques du dossier"

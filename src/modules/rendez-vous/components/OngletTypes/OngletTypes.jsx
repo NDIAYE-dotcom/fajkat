@@ -13,7 +13,7 @@ import PanneauReglages, { BlocNouveau } from '../PanneauReglages/PanneauReglages
 // suppression : les rendez-vous déjà pris gardent leur type.
 export default function OngletTypes({ orgId }) {
   const enLigne = useEnLigne()
-  const types = useTypesRdv(orgId)
+  const types = useTypesRdv(orgId, { parametres: true })
   const services = useServicesFile(orgId)
   const { agir, occupe, erreur } = useActionReglage(cles.types(orgId))
   const [edition, setEdition] = useState(null) // id, ou 'nouveau'

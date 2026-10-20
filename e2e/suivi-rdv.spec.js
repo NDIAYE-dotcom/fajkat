@@ -25,7 +25,8 @@ const CAPTURES = new URL('./captures/', import.meta.url).pathname
 mkdirSync(CAPTURES, { recursive: true })
 
 const ROLES = [
-  ['owner', COMPTES.ownerPoste, true],
+  // Owner qui n'exerce pas : types discrets masqués, comme l'accueil (étape 14, partie C).
+  ['owner', COMPTES.ownerPoste, false],
   ['infirmier', COMPTES.infirmier, true],
   ['accueil', COMPTES.accueil, false],
   ['caissier', COMPTES.caissier, false],
@@ -97,12 +98,14 @@ for (const largeur of LARGEURS) {
         if (medical) {
           expect(fiche).toContain('Planification familiale')
           expect(fiche).toContain('Série, n° 1')
-          // La note : soignants seulement (l'owner voit les types discrets, pas les notes).
-          if (role === 'owner') expect(fiche).not.toContain('Pilule mal tolérée')
-          else expect(fiche).toContain('Pilule mal tolérée')
+          expect(fiche).toContain('Pilule mal tolérée')
         } else {
           expect(fiche).not.toMatch(/Planification|Série|Pilule/)
-          for (const r of reponses) expect(r.texte, `${role} : ${r.url}`).not.toMatch(SENSIBLE)
+          for (const r of reponses) {
+            // Types à paramétrer : lus par l'owner, ce ne sont pas des données de patients.
+            if (role === 'owner' && /appointment_types/.test(r.url)) continue
+            expect(r.texte, `${role} : ${r.url}`).not.toMatch(SENSIBLE)
+          }
         }
         expect(erreurs).toEqual([])
       })

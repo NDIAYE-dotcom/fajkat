@@ -1,0 +1,31 @@
+/* Fiche d'ajout d'un antécédent : panneau cartonné, sans ombre. */
+.formulaire-antecedent {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-3);
+  padding: var(--esp-3);
+  border: var(--trait);
+  border-radius: var(--rayon-panneau);
+  background: var(--surface);
+}
+
+.formulaire-antecedent__titre {
+  margin: 0;
+  font-family: var(--police-titre);
+  font-weight: 600;
+  color: var(--primaire);
+}
+
+.formulaire-antecedent__ajoutes,
+.formulaire-antecedent__hors-ligne {
+  margin: 0;
+  font-size: var(--texte-s);
+  color: var(--encre-douce);
+}
+
+.formulaire-antecedent__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: var(--esp-2);
+}

@@ -3,3 +3,24 @@
   flex-direction: column;
   gap: var(--esp-5);
 }
+
+.fiche-patient__medical {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-6);
+}
+
+.fiche-patient__antecedents {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-3);
+  max-width: 48rem;
+}
+
+.fiche-patient__sous-titre {
+  margin: 0;
+  font-family: var(--police-titre);
+  font-weight: 600;
+  font-size: var(--texte-l);
+  color: var(--primaire);
+}

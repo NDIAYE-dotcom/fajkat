@@ -34,7 +34,7 @@ async function ouvrirColonneConsultation(page) {
     .getByRole('group', { name: 'Colonne affichée' })
     .getByRole('button', { name: /En consultation/ })
   if (await onglet.isVisible()) await onglet.click()
-  const carte = page.locator('.carte-file', { hasText: 'CONSULT Lecture' })
+  const carte = page.locator('.carte-file', { hasText: 'CONSULT Aliou' })
   await expect(carte).toBeVisible()
   return carte
 }
@@ -89,9 +89,11 @@ for (const largeur of LARGEURS) {
       test('écran de consultation — infirmier', async ({ page }) => {
         const erreurs = surveillerConsole(page)
         await connecter(page, COMPTES.infirmier)
-        // Passage dont la consultation est déjà validée : une nouvelle consultation
-        // s'ouvre, motif de la file repris ; validée aussitôt, puis lecture seule.
-        await commencer(page, 'Lecture')
+        // Passage dont la consultation est déjà validée, patiente rappelée en consultation :
+        // une nouvelle consultation s'ouvre, motif de la file repris ; validée aussitôt,
+        // puis lecture seule ; le passage quitte « En consultation ».
+        const prenom = largeur === 360 ? 'Lecture' : 'Relecture'
+        await commencer(page, prenom)
         await expect(champ(page, 'Motif de consultation')).toHaveValue('Maux de tête')
         await page.getByRole('button', { name: 'Valider la consultation' }).click()
         await page
@@ -99,8 +101,16 @@ for (const largeur of LARGEURS) {
           .getByRole('button', { name: 'Valider la consultation' })
           .click()
         await expect(page.getByText('Validée', { exact: true })).toBeVisible()
-        await expect(page.getByRole('button', { name: 'Ajouter un avenant' })).toBeVisible()
+        await expect(
+          page.getByRole('button', { name: 'Corriger ou compléter (avenant)' }),
+        ).toBeVisible()
         await verifierEcran(page, `consultation-lecture-${largeur}`)
+        await ouvrirColonneConsultation(page)
+        await expect(
+          page
+            .getByRole('region', { name: /^En consultation/ })
+            .locator('.carte-file', { hasText: `CONSULT ${prenom}` }),
+        ).toHaveCount(0)
         await commencer(page, 'Aliou')
         await expect(champ(page, 'Motif de consultation')).toHaveValue('Contrôle de tension')
         await expect(page.getByText(/TA 125\/80/)).toBeVisible()
@@ -198,7 +208,7 @@ test.describe('1440 px — saisie, coupure, validation', () => {
     await expect(page.getByRole('textbox')).toHaveCount(0)
     await expect(page.getByText('Râles crépitants à droite.')).toBeVisible()
 
-    await page.getByRole('button', { name: 'Ajouter un avenant' }).click()
+    await page.getByRole('button', { name: 'Corriger ou compléter (avenant)' }).click()
     const avenant = page.getByRole('dialog', { name: 'Ajouter un avenant' })
     await avenant.getByRole('textbox').fill('Radiographie demandée au centre de santé.')
     await avenant.getByRole('button', { name: 'Ajouter l’avenant' }).click()

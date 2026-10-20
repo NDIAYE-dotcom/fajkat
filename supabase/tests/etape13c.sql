@@ -49,10 +49,10 @@ $$;
 grant execute on function pg_temp.en_tant_que(text), pg_temp.type_c(text) to authenticated;
 set local role authenticated;
 
--- Demain (pris par l'owner : l'accueil ne prend pas un type discret, étape 13 D) : une PF
--- (file « Sage-femme »), un dépistage (file
+-- Demain (pris par l'infirmier : ni l'accueil ni l'owner qui n'exerce pas ne prennent un
+-- type discret, étapes 13 D et 14 C) : une PF (file « Sage-femme »), un dépistage (file
 -- « Consultation »), une vaccination ; même patiente pour la PF et la vaccination.
-select pg_temp.en_tant_que('0a');
+select pg_temp.en_tant_que('0c');
 do $$
 declare
   v_org uuid := current_setting('test.org')::uuid;
@@ -136,47 +136,74 @@ begin
   raise notice 'OK : séance d''un type discret cachée à l''accueil';
 end $$;
 
--- Soignant et owner : le vrai nom ; note pour le soignant seulement ; identité renvoyée.
+-- Soignant : le vrai nom, la discrétion, le motif d'annulation, la note. Owner qui
+-- n'exerce pas (étape 14, partie C) : « Consultation » comme l'accueil, sans note ni motif
+-- d'annulation ; mais il voit les types et les séances discrets pour les paramétrer.
+-- Owner qui exerce : comme le soignant. Identité renvoyée à tous.
 do $$
 declare
-  v_code text;
+  v_jour date := current_setting('test.demain')::date;
+  v_org  uuid := current_setting('test.org')::uuid;
 begin
-  foreach v_code in array array['0c', '0a'] loop
-    perform pg_temp.en_tant_que(v_code);
-    if (select array_agg(type_label order by starts_at) from public.list_appointments(
-          current_setting('test.org')::uuid, current_setting('test.demain')::date,
-          current_setting('test.demain')::date)) <> array['Planification familiale', 'Dépistage', 'Planification familiale']
-       or (select count(*) from public.appointment_types where is_discreet) <> 2 then
-      raise exception 'ÉCHEC : le rôle % ne voit pas le vrai nom', v_code;
-    end if;
-  end loop;
   perform pg_temp.en_tant_que('0c');
-  if (select note from public.list_appointments(current_setting('test.org')::uuid,
-        current_setting('test.demain')::date, current_setting('test.demain')::date)
+  if (select array_agg(type_label order by starts_at) from public.list_appointments(v_org, v_jour, v_jour))
+       <> array['Planification familiale', 'Dépistage', 'Planification familiale']
+     or (select count(*) from public.list_appointments(v_org, v_jour, v_jour) where is_discreet) <> 3
+     or not exists (select 1 from public.list_appointments(v_org, v_jour, v_jour)
+                     where cancel_reason ~ 'implant') then
+    raise exception 'ÉCHEC : l''infirmier ne voit pas le vrai nom, la discrétion ou le motif';
+  end if;
+  if (select note from public.list_appointments(v_org, v_jour, v_jour)
       where patient_id = current_setting('test.p')::uuid) <> 'Implant à retirer' then
     raise exception 'ÉCHEC : l''infirmier ne lit pas la note';
   end if;
+
   perform pg_temp.en_tant_que('0a');
-  if exists (select 1 from public.list_appointments(current_setting('test.org')::uuid,
-               current_setting('test.demain')::date, current_setting('test.demain')::date)
-             where note is not null) then
-    raise exception 'ÉCHEC : l''owner non soignant lit la note';
+  if exists (select 1 from public.list_appointments(v_org, v_jour, v_jour)
+              where type_label <> 'Consultation' or is_discreet or note is not null
+                 or cancel_reason is not null or session_id is not null) then
+    raise exception 'ÉCHEC : l''owner qui n''exerce pas voit un type discret, une note ou un motif';
   end if;
-  if (select count(*) from public.list_appointments(current_setting('test.org')::uuid,
-        current_setting('test.demain')::date, current_setting('test.demain')::date)
+  if (select count(*) from public.list_appointments(v_org, v_jour, v_jour)) <> 3 then
+    raise exception 'ÉCHEC : l''owner ne voit plus les rendez-vous';
+  end if;
+  if (select count(*) from public.appointments a join public.appointment_types t
+        on t.id = a.appointment_type_id where a.org_id = v_org and t.is_discreet) <> 0 then
+    raise exception 'ÉCHEC : rendez-vous discrets lisibles par l''owner dans la table';
+  end if;
+  if (select count(*) from public.appointment_types where is_discreet) <> 2
+     or (select count(*) from public.appointment_sessions) <> 2 then
+    raise exception 'ÉCHEC : l''owner ne voit plus les types et séances à paramétrer';
+  end if;
+  if (select count(*) from public.list_appointments(v_org, v_jour, v_jour)
       where patient_sex = 'F' and file_number is not null
         and (birth_date = '1990-03-12' or birth_year is not null)) <> 3 then
     raise exception 'ÉCHEC : identité des homonymes absente';
   end if;
-  if (select count(*) from public.list_appointments(current_setting('test.org')::uuid,
-        current_setting('test.demain')::date, current_setting('test.demain')::date)
-      where is_discreet) <> 3
-     or not exists (select 1 from public.list_appointments(current_setting('test.org')::uuid,
-          current_setting('test.demain')::date, current_setting('test.demain')::date)
-        where cancel_reason ~ 'implant') then
-    raise exception 'ÉCHEC : l''owner ne voit pas la discrétion ou le motif d''annulation';
+  if ((public.appointment_permissions(v_org)) ->> 'discreet')::boolean then
+    raise exception 'ÉCHEC : droit « discreet » annoncé à l''owner qui n''exerce pas';
   end if;
-  raise notice 'OK : soignant et owner voient le vrai nom, la discrétion et le motif ; note au soignant seul ; sexe, naissance, n° de dossier renvoyés';
+  begin
+    perform public.book_appointment(v_org, current_setting('test.p')::uuid, pg_temp.type_c('pf'),
+      (v_jour + 7 + time '09:00') at time zone 'Africa/Dakar', p_confirm => true);
+    raise exception 'ÉCHEC : l''owner qui n''exerce pas prend une PF';
+  exception when insufficient_privilege then null;
+  end;
+
+  -- Owner qui exerce : vrai nom.
+  reset role;
+  update public.memberships set is_clinician = true
+   where org_id = v_org and user_id = '00000000-0000-4000-a13c-00000000000a';
+  set local role authenticated;
+  if (select count(*) from public.list_appointments(v_org, v_jour, v_jour)
+      where type_label = 'Planification familiale') <> 2 then
+    raise exception 'ÉCHEC : l''owner qui exerce ne voit pas le vrai nom';
+  end if;
+  reset role;
+  update public.memberships set is_clinician = false
+   where org_id = v_org and user_id = '00000000-0000-4000-a13c-00000000000a';
+  set local role authenticated;
+  raise notice 'OK : soignant et owner qui exerce : vrai nom, discrétion, motif ; owner qui n''exerce pas : « Consultation », ni note, ni motif, ni séance, mais types et séances à paramétrer ; identité renvoyée';
 end $$;
 
 -- appointment_issues : jamais appelé en direct (seulement par check_ / book_appointment…).

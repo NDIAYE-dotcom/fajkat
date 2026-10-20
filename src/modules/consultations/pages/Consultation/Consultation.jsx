@@ -20,7 +20,9 @@ import ReserveAuxSoignants from '../../components/ReserveAuxSoignants/ReserveAux
 import CopieLocale from '../../components/CopieLocale/CopieLocale.jsx'
 import EnTeteConsultation from '../../components/EnTeteConsultation/EnTeteConsultation.jsx'
 import LectureConsultation from '../../components/LectureConsultation/LectureConsultation.jsx'
+import MiseEnPageConsultation from '../../components/MiseEnPageConsultation/MiseEnPageConsultation.jsx'
 import ModaleAvenant from '../../components/ModaleAvenant/ModaleAvenant.jsx'
+import PanneauAntecedents from '../../components/PanneauAntecedents/PanneauAntecedents.jsx'
 import SaisieConsultation from '../../components/SaisieConsultation/SaisieConsultation.jsx'
 import {
   useConsultation,
@@ -104,9 +106,24 @@ function VueConsultation({ consultation: c, patient, droits, recharger }) {
   const types = useTypesConsultation(structure.id)
   const examens = useExamensRapides(structure.id)
 
+  const panneau = (sensible) => (
+    <PanneauAntecedents
+      patientId={c.patient_id}
+      consultation={c}
+      droits={droits}
+      sensible={sensible}
+    />
+  )
+
   if (c.status === 'validated') {
     return (
-      <VueValidee consultation={c} patient={patient} ecrire={droits.ecrire} recharger={recharger} />
+      <VueValidee
+        consultation={c}
+        patient={patient}
+        ecrire={droits.ecrire}
+        recharger={recharger}
+        panneau={panneau(c.is_sensitive)}
+      />
     )
   }
   if (!c.mine) {
@@ -132,6 +149,7 @@ function VueConsultation({ consultation: c, patient, droits, recharger }) {
   return (
     <SaisieConsultation
       key={`${c.id}-${c.version}`}
+      panneau={panneau}
       consultation={c}
       patient={patient}
       orgId={structure.id}
@@ -146,30 +164,33 @@ function VueConsultation({ consultation: c, patient, droits, recharger }) {
   )
 }
 
-function VueValidee({ consultation: c, patient, ecrire, recharger }) {
+function VueValidee({ consultation: c, patient, ecrire, recharger, panneau }) {
   const toast = useToast()
   const enLigne = useEnLigne()
   const [avenant, setAvenant] = useState(false)
   return (
     <div className="consultation">
       <EnTeteConsultation consultation={c} patient={patient} sensible={c.is_sensitive} />
-      <p className="consultation__aide">
-        Cette consultation est validée : elle ne se modifie plus. Une correction s’ajoute en avenant
-        daté.
-      </p>
-      {ecrire && (
-        <div>
-          <Button
-            variante="secondaire"
-            iconeDebut={<Icone icone={NotebookPen} />}
-            disabled={!enLigne}
-            onClick={() => setAvenant(true)}
-          >
-            Ajouter un avenant
-          </Button>
-        </div>
-      )}
-      <LectureConsultation consultation={c} />
+      <MiseEnPageConsultation panneau={panneau}>
+        <p className="consultation__aide">
+          Cette consultation est validée : elle ne se modifie plus. Une correction s’ajoute en
+          avenant daté.
+        </p>
+        <LectureConsultation consultation={c} />
+        {/* Sous le contenu et ses avenants, loin du panneau des antécédents. */}
+        {ecrire && (
+          <div>
+            <Button
+              variante="secondaire"
+              iconeDebut={<Icone icone={NotebookPen} />}
+              disabled={!enLigne}
+              onClick={() => setAvenant(true)}
+            >
+              Corriger ou compléter (avenant)
+            </Button>
+          </div>
+        )}
+      </MiseEnPageConsultation>
       <ModaleAvenant
         ouvert={avenant}
         onFermer={() => setAvenant(false)}

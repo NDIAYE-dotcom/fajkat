@@ -55,6 +55,12 @@ export const COMPTES = {
     nom: 'Pape Gueye',
     role: 'aide_soignant',
   },
+  pharmacien: {
+    id: '00000000-0000-4000-e2e0-00000000000a',
+    email: 'pharmacien.poste@fajkat.test',
+    nom: 'Cheikh Mbaye',
+    role: 'pharmacien',
+  },
 }
 
 // Clé de signature des jetons de test : locale, sans valeur ailleurs.
