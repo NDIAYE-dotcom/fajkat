@@ -1,16 +1,28 @@
 // Serveur local des tests de bout en bout, à l'adresse que l'application prend pour
 // Supabase (VITE_SUPABASE_URL = http://localhost:54321) :
-//   /rest/v1/*     -> PostgREST (binaire indiqué par E2E_POSTGREST), sur la base fajkat_e2e ;
+//   /rest/v1/*     -> PostgREST (~/fajkat-outils/postgrest/postgrest), un par worker sur sa
+//                     base fajkat_e2e_n, choisi d'après l'origine http://wn.localhost:5179 ;
 //   /auth/v1/*     -> connexion simulée : comptes de e2e/comptes.js, jetons signés avec la
 //                     clé locale SECRET_JWT (PostgREST la vérifie) ;
 //   /realtime/v1/* -> WebSocket minimal qui accepte les abonnements ; il diffuse seulement
 //                     les nouvelles notifications (postgres_changes, INSERT) à leur
-//                     destinataire, lues dans la base toutes les 700 ms.
+//                     destinataire, lues dans la base du worker toutes les 700 ms.
 // Local seulement : jamais fajkat-dev ni la production.
 import { execFile, spawn } from 'node:child_process'
 import { createHash } from 'node:crypto'
+import { existsSync } from 'node:fs'
 import http from 'node:http'
-import { COMPTES, MOT_DE_PASSE, PORTS, SECRET_JWT } from './comptes.js'
+import { homedir } from 'node:os'
+import { join } from 'node:path'
+import {
+  baseWorker,
+  COMPTES,
+  MOT_DE_PASSE,
+  origineWorker,
+  PORTS,
+  SECRET_JWT,
+  WORKERS,
+} from './comptes.js'
 import { jeton } from './jetons.js'
 
 function utilisateur(compte) {
@@ -48,6 +60,16 @@ function depuisJeton(entete) {
   } catch {
     return null
   }
+}
+
+// Worker à l'origine d'une requête (Origin, ou Referer pour une page ouverte directement) :
+// http://wn.localhost:5179 -> n ; sans origine reconnue, le worker 0.
+function workerDe(req) {
+  const origine = req.headers.origin ?? req.headers.referer ?? ''
+  for (let n = 0; n < WORKERS; n += 1) {
+    if (origine === origineWorker(n) || origine.startsWith(`${origineWorker(n)}/`)) return n
+  }
+  return 0
 }
 
 const CORS = {
@@ -96,12 +118,13 @@ async function auth(req, res, url) {
 }
 
 function rest(req, res, url) {
-  const entetes = { ...req.headers, host: `localhost:${PORTS.postgrest}` }
+  const port = PORTS.postgrest + workerDe(req)
+  const entetes = { ...req.headers, host: `localhost:${port}` }
   delete entetes.origin
   const amont = http.request(
     {
       host: '127.0.0.1',
-      port: PORTS.postgrest,
+      port,
       method: req.method,
       path: url.pathname.replace('/rest/v1', '') + url.search,
       headers: entetes,
@@ -152,6 +175,7 @@ function lireTrames(tampon) {
 }
 
 function websocket(req, socket) {
+  const worker = workerDe(req)
   const accepte = createHash('sha1')
     .update(req.headers['sec-websocket-key'] + '258EAFA5-E914-47DA-95CA-C5AB0DC85B11')
     .digest('base64')
@@ -176,7 +200,7 @@ function websocket(req, socket) {
       changes.forEach((c, k) => {
         const destinataire = /^recipient_user_id=eq\.(.+)$/.exec(c.filter ?? '')?.[1]
         if (c.table === 'notifications' && destinataire) {
-          abonnes.push({ socket, topic, id: k + 1, destinataire, v2 })
+          abonnes.push({ socket, topic, id: k + 1, destinataire, v2, worker })
         }
       })
       const reponse =
@@ -202,13 +226,14 @@ function websocket(req, socket) {
   })
 }
 
-// Abonnés aux notifications : { socket, topic, id, destinataire, v2 }.
+// Abonnés aux notifications : { socket, topic, id, destinataire, v2, worker }.
 const abonnes = []
-let repere = null // created_at de la dernière notification diffusée (horloge de la base)
+// Par worker : created_at de la dernière notification diffusée (horloge de sa base).
+const reperes = Array(WORKERS).fill(null)
 
-function lireBase(sql) {
+function lireBase(worker, sql) {
   return new Promise((ok) =>
-    execFile('psql', ['-U', 'postgres', '-d', 'fajkat_e2e', '-At', '-c', sql], (e, sortie) =>
+    execFile('psql', ['-U', 'postgres', '-d', baseWorker(worker), '-At', '-c', sql], (e, sortie) =>
       ok(e ? null : sortie),
     ),
   )
@@ -216,18 +241,21 @@ function lireBase(sql) {
 
 // Nouvelles notifications depuis le dernier passage, envoyées à leur seul destinataire
 // (le vrai Realtime applique en plus les policies RLS de la table).
-async function diffuser() {
-  if (repere === null) {
-    repere = (await lireBase('select now()'))?.trim() ?? null
+async function diffuser(worker) {
+  if (reperes[worker] === null) {
+    reperes[worker] = (await lireBase(worker, 'select now()'))?.trim() ?? null
     return
   }
   const sortie = await lireBase(
-    `select row_to_json(n) from public.notifications n where created_at > '${repere}' order by created_at`,
+    worker,
+    `select row_to_json(n) from public.notifications n where created_at > '${reperes[worker]}' order by created_at`,
   )
   for (const ligne of (sortie ?? '').split('\n').filter(Boolean)) {
     const n = JSON.parse(ligne)
-    repere = n.created_at
-    for (const a of abonnes.filter((x) => x.destinataire === n.recipient_user_id)) {
+    reperes[worker] = n.created_at
+    for (const a of abonnes.filter(
+      (x) => x.worker === worker && x.destinataire === n.recipient_user_id,
+    )) {
       const charge = {
         ids: [a.id],
         data: {
@@ -252,26 +280,33 @@ async function diffuser() {
     }
   }
 }
-setInterval(diffuser, 700)
+setInterval(() => {
+  for (let n = 0; n < WORKERS; n += 1) diffuser(n)
+}, 700)
 
 // --- Lancement ----------------------------------------------------------------------------
-const binaire = process.env.E2E_POSTGREST
-if (!binaire) throw new Error('Indiquez le binaire PostgREST : E2E_POSTGREST=/chemin/postgrest')
+// Binaire rangé hors du dépôt (docs/tests-locaux.md) ; E2E_POSTGREST pour un autre chemin.
+const binaire = process.env.E2E_POSTGREST ?? join(homedir(), 'fajkat-outils/postgrest/postgrest')
+if (!existsSync(binaire)) {
+  throw new Error(`PostgREST introuvable (${binaire}) : voir docs/tests-locaux.md.`)
+}
 const hote = process.env.PGHOST ?? 'localhost'
-const postgrest = spawn(binaire, [], {
-  stdio: ['ignore', 'inherit', 'inherit'],
-  env: {
-    ...process.env,
-    PGRST_DB_URI: `postgres://authenticator@/fajkat_e2e?host=${encodeURIComponent(hote)}&port=${process.env.PGPORT ?? 5432}`,
-    PGRST_DB_SCHEMAS: 'public',
-    PGRST_DB_ANON_ROLE: 'anon',
-    PGRST_JWT_SECRET: SECRET_JWT,
-    PGRST_SERVER_PORT: String(PORTS.postgrest),
-    PGRST_SERVER_HOST: '127.0.0.1',
-    PGRST_LOG_LEVEL: 'error',
-  },
-})
-process.on('exit', () => postgrest.kill())
+const postgrests = Array.from({ length: WORKERS }, (_, n) =>
+  spawn(binaire, [], {
+    stdio: ['ignore', 'inherit', 'inherit'],
+    env: {
+      ...process.env,
+      PGRST_DB_URI: `postgres://authenticator@/${baseWorker(n)}?host=${encodeURIComponent(hote)}&port=${process.env.PGPORT ?? 5432}`,
+      PGRST_DB_SCHEMAS: 'public',
+      PGRST_DB_ANON_ROLE: 'anon',
+      PGRST_JWT_SECRET: SECRET_JWT,
+      PGRST_SERVER_PORT: String(PORTS.postgrest + n),
+      PGRST_SERVER_HOST: '127.0.0.1',
+      PGRST_LOG_LEVEL: 'error',
+    },
+  }),
+)
+process.on('exit', () => postgrests.forEach((p) => p.kill()))
 process.on('SIGTERM', () => process.exit(0))
 process.on('SIGINT', () => process.exit(0))
 

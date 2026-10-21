@@ -1,15 +1,16 @@
-// Base locale des tests de bout en bout : recréée de zéro à chaque lancement.
-//   stubs Supabase -> toutes les migrations -> comptes de test -> données de l'agenda.
-// Connexion : variables PGHOST / PGPORT (base « fajkat_e2e », utilisateur postgres).
-// Jamais fajkat-dev : le nom de la base est fixé ici et la connexion est locale.
+// Bases locales des tests de bout en bout : recréées de zéro à chaque lancement.
+//   stubs Supabase -> toutes les migrations -> comptes de test -> données de l'agenda,
+//   dans la base modèle fajkat_e2e_modele, puis un clone par worker (fajkat_e2e_0, _1…).
+// Connexion : variables PGHOST / PGPORT (utilisateur postgres).
+// Jamais fajkat-dev : les noms des bases sont fixés ici et la connexion est locale.
 import { execFileSync } from 'node:child_process'
 import { readdirSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
-import { COMPTES } from './comptes.js'
+import { BASE_MODELE, baseWorker, COMPTES, WORKERS } from './comptes.js'
 
 const RACINE = new URL('..', import.meta.url).pathname
-const BASE = 'fajkat_e2e'
+const BASE = BASE_MODELE
 const commun = ['-U', 'postgres', '-v', 'ON_ERROR_STOP=1', '-q']
 
 if (
@@ -28,7 +29,22 @@ function psql(base, fichier) {
 
 const echappe = (t) => t.replaceAll("'", "''")
 
-execFileSync('dropdb', ['-U', 'postgres', '--if-exists', BASE])
+// Bases d'un ancien lancement (fajkat_e2e d'avant les workers, clones en surnombre) retirées.
+const anciennes = execFileSync(
+  'psql',
+  [
+    ...commun,
+    '-d',
+    'postgres',
+    '-At',
+    '-c',
+    "select datname from pg_database where datname ~ '^fajkat_e2e'",
+  ],
+  { encoding: 'utf8' },
+)
+for (const b of anciennes.split('\n').filter(Boolean)) {
+  execFileSync('dropdb', ['-U', 'postgres', '--force', b])
+}
 execFileSync('createdb', ['-U', 'postgres', BASE])
 psql(BASE, join(RACINE, 'e2e/stubs.sql'))
 for (const f of readdirSync(join(RACINE, 'supabase/migrations')).sort()) {
@@ -73,4 +89,9 @@ writeFileSync(fichier, sql)
 psql(BASE, fichier)
 psql(BASE, join(RACINE, 'supabase/tests/donnees_agenda.sql'))
 psql(BASE, join(RACINE, 'e2e/donnees.sql'))
-console.log(`Base ${BASE} prête : ${comptes.split('\n').length} comptes de test.`)
+for (let n = 0; n < WORKERS; n += 1) {
+  execFileSync('createdb', ['-U', 'postgres', '-T', BASE, baseWorker(n)])
+}
+console.log(
+  `Base ${BASE} prête (${comptes.split('\n').length} comptes de test), ${WORKERS} clone(s) par worker.`,
+)

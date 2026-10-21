@@ -3,8 +3,8 @@
 // pleine (prochaines séances), jour férié à confirmer, report d'une PF masquée par
 // l'accueil (vrai type gardé), changement de type par un soignant, coupure du réseau
 // (saisie gardée), brouillon propre à chaque compte, file « Sage-femme » renommable.
-// Les tests s'enchaînent dans l'ordre (un seul worker) : chacun part des données laissées
-// par le précédent (base fajkat_e2e recréée à chaque lancement).
+// Les tests s'enchaînent dans l'ordre (fichier entier dans un worker) : chacun part des données
+// laissées par le précédent (base du worker recréée à chaque lancement).
 import { expect, test } from '@playwright/test'
 import { COMPTES } from './comptes.js'
 import {

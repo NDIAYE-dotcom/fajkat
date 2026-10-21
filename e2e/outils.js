@@ -2,7 +2,7 @@
 import { expect } from '@playwright/test'
 import { execFileSync } from 'node:child_process'
 import { mkdirSync } from 'node:fs'
-import { MOT_DE_PASSE } from './comptes.js'
+import { baseWorker, MOT_DE_PASSE } from './comptes.js'
 
 export const LARGEURS = [360, 768, 1440]
 const CAPTURES = new URL('./captures/', import.meta.url).pathname
@@ -24,10 +24,11 @@ export function prochainMardi() {
   return ajouterJours(auj, (2 - iso + 7) % 7)
 }
 
-// Lecture dans la base locale des tests (fajkat_e2e, jamais fajkat-dev) : première
+// Lecture dans la base locale du worker (fajkat_e2e_n, jamais fajkat-dev) : première
 // colonne de la première ligne, en texte.
 export function lireBase(requete) {
-  return execFileSync('psql', ['-U', 'postgres', '-d', 'fajkat_e2e', '-At', '-c', requete], {
+  const base = baseWorker(process.env.TEST_PARALLEL_INDEX ?? 0)
+  return execFileSync('psql', ['-U', 'postgres', '-d', base, '-At', '-c', requete], {
     encoding: 'utf8',
   }).trim()
 }

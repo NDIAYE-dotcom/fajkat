@@ -1,6 +1,6 @@
 // Parcours de l'agenda (étape 13) : vues jour / semaine / liste à 360, 768 et 1440 px,
 // confidentialité des types discrets par rôle, paramètres des séances et leurs garde-fous.
-// Données : supabase/tests/donnees_agenda.sql et e2e/donnees.sql (base fajkat_e2e).
+// Données : supabase/tests/donnees_agenda.sql et e2e/donnees.sql (base du worker, fajkat_e2e_n).
 import { expect, test } from '@playwright/test'
 import { COMPTES } from './comptes.js'
 import {

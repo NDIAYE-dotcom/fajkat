@@ -67,3 +67,15 @@ export const COMPTES = {
 export const SECRET_JWT = 'fajkat-e2e-cle-locale-sans-valeur-0123456789'
 
 export const PORTS = { api: 54321, postgrest: 54330, app: 5179 }
+
+// Workers en parallèle (E2E_WORKERS, 4 par défaut ; 1 pour déboguer un seul fichier).
+// Le worker n a sa base fajkat_e2e_n (clone de fajkat_e2e_modele), son PostgREST sur le
+// port 54330 + n, et ouvre l'application à http://wn.localhost:5179 : le serveur local
+// reconnaît le worker à l'origine des requêtes (Chrome envoie *.localhost vers la machine).
+export const WORKERS = Number(process.env.E2E_WORKERS ?? 4)
+if (!Number.isInteger(WORKERS) || WORKERS < 1 || WORKERS > 8) {
+  throw new Error('E2E_WORKERS : un nombre entier de 1 à 8.')
+}
+export const BASE_MODELE = 'fajkat_e2e_modele'
+export const baseWorker = (n) => `fajkat_e2e_${n}`
+export const origineWorker = (n) => `http://w${n}.localhost:${PORTS.app}`
