@@ -60,3 +60,7 @@ Pendant une étape, on corrige seulement les bugs. Toute idée d'amélioration e
 - **Passer à l'offre Pro de Supabase avant une mise en production à grande échelle** : l'offre gratuite limite Realtime à 200 connexions simultanées, en comptant le personnel connecté (tableau de la salle d'attente, cloche) et les écrans d'appel.
   - Si la limite est atteinte, rien ne reste figé : sans canal Realtime, la cloche des notifications (étape 14, partie B), le tableau de la salle d'attente et la page File d'attente se relisent toutes les 60 secondes, au retour du réseau et à chaque retour sur l'onglet ; le canal est rouvert seul 5 secondes après une coupure (src/hooks/useCanalSecours.js, correctif de l'étape 14). L'écran d'appel se relit toutes les 60 secondes même connecté et se reconnecte seul. Vérifié par e2e/repli-temps-reel.spec.js.
   - Chaque appareil en repli fait une lecture par minute : à surveiller si beaucoup d'appareils tombent en même temps (charge de la base).
+
+## Performance (étape 30)
+
+- **`list_appointments` lente** (relevé le 21/10/2026 pendant les tests en parallèle) : environ 0,5 s avec un seul worker sur la base locale, plus de 5 s sous charge (4 workers). À optimiser : droits de l'utilisateur calculés une seule fois par appel et non à chaque ligne, index à vérifier (plan d'exécution avec `explain analyze`). À mesurer sur fajkat-dev avant et après.
