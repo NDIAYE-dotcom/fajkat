@@ -70,6 +70,7 @@ fajkat/
 - Montants en FCFA stockés en entiers (bigint), jamais de décimales.
 - Dates en timestamptz (UTC) en base ; affichage dans le fuseau de la structure (Africa/Dakar par défaut).
 - Migrations : un fichier SQL par étape dans supabase/migrations. Ne jamais modifier une migration déjà appliquée : en créer une nouvelle.
+- Le nom d'une migration porte la date et l'heure réelles de sa création, jamais une date future.
 - Buckets Storage privés (URLs signées) pour signatures, cachets, documents, dossiers patients, médias WhatsApp. Seul le bucket logos est public.
 - Secrets (PayDunya, WhatsApp) uniquement dans les secrets des Edge Functions, jamais dans le front ni dans Git.
 - Données sensibles (VIH / PTME, santé mentale…) : drapeau is_sensitive, visibles seulement par les rôles médicaux habilités, chaque lecture journalisée.

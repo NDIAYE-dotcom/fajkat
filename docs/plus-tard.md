@@ -68,4 +68,5 @@ Pendant une étape, on corrige seulement les bugs. Toute idée d'amélioration e
 
 ## Performance (étape 30)
 
-- **`list_appointments` lente** (relevé le 21/10/2026 pendant les tests en parallèle) : environ 0,5 s avec un seul worker sur la base locale, plus de 5 s sous charge (4 workers). À optimiser : droits de l'utilisateur calculés une seule fois par appel et non à chaque ligne, index à vérifier (plan d'exécution avec `explain analyze`). À mesurer sur fajkat-dev avant et après.
+- ~~`list_appointments` lente~~ — **réglé** (migration `20261021173000_etape13h_perf_agenda.sql`) : les droits étaient recalculés à chaque rendez-vous. Base locale, 325 rendez-vous sur une semaine dont 134 discrets : 250 ms (sage-femme) et 700 ms (accueil) avant, 6 ms après ; `list_patient_appointments` et `appointments_to_remind` corrigées de même. À mesurer aussi sur fajkat-dev.
+- **`patient_timeline` à surveiller** : 33 à 48 ms pour 20 lignes (patient de 160 éléments, base locale, 21/10/2026), sous le seuil de 50 ms fixé pour une correction ; à reprendre si elle dépasse.
