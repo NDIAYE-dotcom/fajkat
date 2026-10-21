@@ -7,7 +7,7 @@ Les migrations appliquées sur fajkat-dev ne se modifient jamais.
 | Partie | Contenu                                   | État                          |
 | ------ | ----------------------------------------- | ----------------------------- |
 | A      | Grossesse, datation                       | faite (commit f19f671)        |
-| B1     | CPN : modèle, saisie, prochaine CPN       | à faire                       |
+| B1     | CPN : modèle, saisie, prochaine CPN       | faite (commit 15ac6d4)        |
 | B2     | CPN : traitements préventifs, Td, examens | à faire                       |
 | C      | Facteurs de risque, signes de danger      | à faire                       |
 | D      | Accouchement, partogramme, nouveau-nés    | à faire (rôle matrone inclus) |
@@ -90,6 +90,18 @@ antécédents obstétricaux dans `medical_history`. Registre `audit_medical_tabl
   défaut, impossible pour un type discret (contrainte en base).
 
 ### B2. CPN : traitements préventifs, Td, examens
+
+- **Défaut de B1 à corriger dans la migration de B2 : `anc_status` compte les visites au lieu
+  des périodes couvertes.** Exemple sur fajkat-dev : TEST Agenda 2 a deux CPN, à 15 et 16 SA,
+  toutes deux dans la fenêtre du contact 1 ; l'écran annonce « Prochaine : CPN 3 vers le
+  10/02/2027 » et saute le contact de 26 SA. Règle attendue :
+  - chaque CPN couvre le contact dont la fenêtre contient son âge gestationnel ;
+  - plusieurs CPN dans la même fenêtre ne couvrent qu'un contact ;
+  - manquées = contacts dont la fenêtre est passée sans aucune CPN ;
+  - prochaine = premier contact non couvert dont la fenêtre n'est pas encore passée ;
+  - le numéro de CPN (CPN 1, 2, 3…) reste l'ordre des visites ;
+  - même règle dans la copie JS (`prochaineApresBrouillon`, src/modules/maternite/cpn.js) : la
+    CPN du brouillon couvre le contact de la fenêtre du jour.
 
 - `maternal_intervention_types` / `maternal_interventions` : fer et acide folique, TPI (doses
   numérotées d'office), moustiquaire, déparasitage ; règles par type (âge gestationnel minimal,
