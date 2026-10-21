@@ -1,0 +1,41 @@
+.lecture-cpn {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-3);
+}
+
+.lecture-cpn__titre {
+  margin: 0;
+  font-family: var(--police-titre);
+  font-size: var(--texte-l);
+  color: var(--primaire);
+}
+
+.lecture-cpn__valeurs {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+  gap: var(--esp-3) var(--esp-4);
+  margin: 0;
+}
+
+.lecture-cpn__valeurs dt {
+  font-size: var(--texte-s);
+  color: var(--encre-douce);
+}
+
+.lecture-cpn__valeurs dd {
+  margin: 0;
+  color: var(--encre);
+  overflow-wrap: break-word;
+}
+
+.lecture-cpn__chiffres {
+  font-family: var(--police-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+.lecture-cpn__note {
+  margin: 0;
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
+}

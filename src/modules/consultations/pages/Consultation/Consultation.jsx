@@ -9,6 +9,7 @@ import Icone from '../../../../components/ui/Icone/Icone.jsx'
 import { useEnLigne } from '../../../../hooks/useEnLigne.js'
 import { useOrganization } from '../../../../hooks/useOrganization.js'
 import { useToast } from '../../../../hooks/useToast.js'
+import LectureCpn from '../../../maternite/components/LectureCpn/LectureCpn.jsx'
 import FeatureRoute from '../../../../router/guards/FeatureRoute/FeatureRoute.jsx'
 import RoleRoute from '../../../../router/guards/RoleRoute/RoleRoute.jsx'
 import { entreeDepuisChemin, offresDeLEntree } from '../../../../router/navigation.js'
@@ -118,9 +119,11 @@ function VueConsultation({ consultation: c, patient, droits, recharger }) {
   )
 
   if (c.status === 'validated') {
+    const type = (types.data ?? []).find((t) => t.id === c.encounter_type_id)
     return (
       <VueValidee
         consultation={c}
+        cpn={type?.template_code === 'cpn'}
         patient={patient}
         ecrire={droits.ecrire}
         references={droits.references}
@@ -168,7 +171,7 @@ function VueConsultation({ consultation: c, patient, droits, recharger }) {
   )
 }
 
-function VueValidee({ consultation: c, patient, ecrire, references, recharger, panneau }) {
+function VueValidee({ consultation: c, cpn, patient, ecrire, references, recharger, panneau }) {
   const toast = useToast()
   const enLigne = useEnLigne()
   const [avenant, setAvenant] = useState(false)
@@ -181,6 +184,7 @@ function VueValidee({ consultation: c, patient, ecrire, references, recharger, p
           avenant daté.
         </p>
         <LectureConsultation consultation={c} patient={patient} imprimer={ecrire} />
+        {cpn && ecrire && <LectureCpn consultationId={c.id} />}
         {ecrire && (
           <DocumentsConsultation
             consultation={c}

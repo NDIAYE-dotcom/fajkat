@@ -18,10 +18,12 @@ function versSaisie(t) {
     discret: t?.is_discreet ?? false,
     recurrence: t?.recurrence_months != null ? String(t.recurrence_months) : '',
     service: t?.queue_service_id ?? '',
+    nommer: t?.name_in_reminder ?? false,
   }
 }
 
-// Type de rendez-vous : libellé, durée, discrétion, récurrence proposée, file à l'arrivée.
+// Type de rendez-vous : libellé, durée, discrétion, récurrence proposée, file à l'arrivée,
+// nom du type dans le rappel (jamais pour un type discret : la base le refuse aussi).
 // type : null pour un nouveau type. services : services de la file (vide sans file).
 export default function FormulaireType({ type, services, envoi, onEnregistrer, onAnnuler }) {
   const [s, setS] = useState(() => versSaisie(type))
@@ -30,6 +32,7 @@ export default function FormulaireType({ type, services, envoi, onEnregistrer, o
   // Nouveau type : la base le rend discret d'office si le libellé évoque la PF, un
   // dépistage, le VIH… ; on l'annonce dès la saisie.
   const discretPropose = !type && MOTS_DISCRETS.test(s.label)
+  const discret = s.discret || discretPropose
 
   function envoyer(evenement) {
     evenement.preventDefault()
@@ -48,9 +51,10 @@ export default function FormulaireType({ type, services, envoi, onEnregistrer, o
     onEnregistrer({
       label: s.label.trim(),
       duration_minutes: duree,
-      is_discreet: s.discret || discretPropose,
+      is_discreet: discret,
       recurrence_months: recurrence,
       queue_service_id: s.service || null,
+      name_in_reminder: s.nommer && !discret,
     })
   }
 
@@ -100,9 +104,29 @@ export default function FormulaireType({ type, services, envoi, onEnregistrer, o
               ? 'Coché d’office pour ce nom : il ne sera jamais écrit dans un message ou un document remis au patient.'
               : 'Jamais écrit dans un message ou un document remis au patient, qui lira seulement « votre rendez-vous ». Le téléphone est souvent partagé par la famille.'
           }
-          checked={s.discret || discretPropose}
+          checked={discret}
           disabled={discretPropose}
-          onChange={(e) => setS((p) => ({ ...p, discret: e.target.checked }))}
+          onChange={(e) =>
+            // Un type discret n'est jamais nommé dans le rappel : la case se décoche.
+            setS((p) => ({
+              ...p,
+              discret: e.target.checked,
+              nommer: e.target.checked ? false : p.nommer,
+            }))
+          }
+        />
+      </div>
+      <div className="grille-formulaire__large">
+        <Checkbox
+          label="Nommer le type dans le rappel"
+          description={
+            discret
+              ? 'Impossible pour un type discret.'
+              : `Le rappel envoyé au patient dira « un rendez-vous au poste de santé (${s.label.trim() || 'nom du type'}) ». Sans cette case, il ne dit jamais le type.`
+          }
+          checked={s.nommer && !discret}
+          disabled={discret}
+          onChange={(e) => setS((p) => ({ ...p, nommer: e.target.checked }))}
         />
       </div>
     </GrilleFormulaire>

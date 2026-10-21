@@ -130,7 +130,7 @@ begin
     end if;
     select * into v_l from public.appointments_to_remind(v_org)
      where appointment_id = current_setting('test.r_khady')::uuid;
-    if v_l.patient_label <> 'votre rendez-vous au poste de santé (Consultation)' or v_l.file_number is null
+    if v_l.patient_label <> 'un rendez-vous au poste de santé F' or v_l.file_number is null
        or v_l.patient_sex is distinct from 'F' then
       raise exception 'ÉCHEC : message de rappel de la PF : %', v_l;
     end if;

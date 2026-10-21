@@ -1,0 +1,135 @@
+.tableau-cpn {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-3);
+}
+
+.tableau-cpn__entete {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--esp-3);
+}
+
+.tableau-cpn__titre {
+  margin: 0;
+  font-family: var(--police-titre);
+  font-size: var(--texte-m);
+  color: var(--primaire);
+}
+
+.tableau-cpn__bilan {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-1);
+  padding: var(--esp-3) var(--esp-4);
+  border-left: 4px solid var(--accent);
+  background: var(--surface);
+  border-radius: var(--rayon-panneau);
+}
+
+.tableau-cpn__bilan p {
+  margin: 0;
+  color: var(--encre);
+}
+
+.tableau-cpn__chiffres {
+  font-family: var(--police-mono);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.tableau-cpn__doux {
+  font-size: var(--texte-s);
+  color: var(--encre-douce);
+}
+
+.tableau-cpn__lien {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  color: var(--primaire);
+}
+
+.tableau-cpn__vide {
+  margin: 0;
+  color: var(--encre-douce);
+}
+
+.tableau-cpn__liste {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: var(--trait);
+}
+
+/* Une ligne du registre : filet fin en bas. */
+.tableau-cpn__fiche {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-2);
+  padding: var(--esp-3) 0;
+  border-bottom: var(--trait);
+}
+
+.tableau-cpn__tete {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--esp-1) var(--esp-4);
+}
+
+.tableau-cpn__numero {
+  font-family: var(--police-mono);
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  color: var(--primaire);
+  white-space: nowrap;
+}
+
+.tableau-cpn__lieu {
+  color: var(--encre-douce);
+  overflow-wrap: break-word;
+}
+
+.tableau-cpn__mesures {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(8.5rem, 1fr));
+  gap: var(--esp-2) var(--esp-4);
+  margin: 0;
+}
+
+.tableau-cpn__mesures dt {
+  font-size: var(--texte-xs);
+  color: var(--encre-douce);
+}
+
+.tableau-cpn__mesures dd {
+  margin: 0;
+  color: var(--encre);
+}
+
+.tableau-cpn__note {
+  margin: 0;
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
+}
+
+.tableau-cpn__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--esp-2) var(--esp-4);
+}
+
+.tableau-cpn__retrait {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-4);
+}
+
+.tableau-cpn__retrait p {
+  margin: 0;
+}

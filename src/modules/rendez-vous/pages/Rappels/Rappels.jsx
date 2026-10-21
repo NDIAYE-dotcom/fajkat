@@ -75,7 +75,6 @@ function PageRappels() {
     <GroupeRappel
       key={g.cle}
       groupe={g}
-      nomStructure={structure.name}
       desactive={!enLigne || Boolean(enCours)}
       enCours={enCours}
       echec={echecs[g.cle]}

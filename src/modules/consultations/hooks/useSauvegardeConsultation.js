@@ -96,6 +96,8 @@ export function useSauvegardeConsultation(consultation) {
   const contenuRef = useRef(initial.contenu)
   const modifieRef = useRef(initial.modifie)
   const envoiRef = useRef(false)
+  // Envoi en cours (promesse résolue à sa fin) : la validation l'attend au lieu d'échouer.
+  const envoiEnCoursRef = useRef(null)
   // Conflit ou consultation reprise par un collègue : plus aucun envoi automatique.
   const bloqueRef = useRef(Boolean(initial.conflit))
   const minuteurLocal = useRef(null)
@@ -137,6 +139,10 @@ export function useSauvegardeConsultation(consultation) {
     if (!modifieRef.current) return true
     if (envoiRef.current) return false
     envoiRef.current = true
+    let finEnvoi
+    envoiEnCoursRef.current = new Promise((resoudre) => {
+      finEnvoi = resoudre
+    })
     setEtat('envoi')
     const envoye = contenuRef.current
     try {
@@ -183,6 +189,7 @@ export function useSauvegardeConsultation(consultation) {
       return false
     } finally {
       envoiRef.current = false
+      finEnvoi()
     }
   }, [consultation.id, ecrireLocal])
 
@@ -250,6 +257,8 @@ export function useSauvegardeConsultation(consultation) {
   // Validation : la dernière saisie part d'abord au serveur, puis la consultation est
   // figée ; la copie locale n'a plus lieu d'être.
   const valider = useCallback(async () => {
+    // Enregistrement automatique en cours (toutes les 10 secondes) : on attend sa fin.
+    if (envoiRef.current) await envoiEnCoursRef.current
     if (modifieRef.current && !(await envoyer())) {
       throw new Error(
         'La dernière saisie n’a pas pu être enregistrée sur le serveur. Vérifiez la connexion, puis validez de nouveau.',

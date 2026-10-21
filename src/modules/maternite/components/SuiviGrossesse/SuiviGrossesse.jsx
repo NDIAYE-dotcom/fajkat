@@ -17,6 +17,7 @@ import { useGrossesse } from '../../hooks/useMaternite.js'
 import HistoriqueDatations from '../HistoriqueDatations/HistoriqueDatations.jsx'
 import ModaleDatation from '../ModaleDatation/ModaleDatation.jsx'
 import ModaleObstetrique from '../ModaleObstetrique/ModaleObstetrique.jsx'
+import TableauCpn from '../TableauCpn/TableauCpn.jsx'
 import './SuiviGrossesse.css'
 
 // Grossesse en cours : terme du jour (calculé par la base), DPA, datation retenue, gestité,
@@ -34,6 +35,8 @@ export default function SuiviGrossesse({ id, patientId, ecrire, reglages }) {
     Promise.all([
       queryClient.invalidateQueries({ queryKey: cles.grossesse(id) }),
       queryClient.invalidateQueries({ queryKey: cles.grossessesPatiente(patientId) }),
+      // Une nouvelle datation change le terme des CPN à venir et le bilan.
+      queryClient.invalidateQueries({ queryKey: cles.bilanCpn(id) }),
     ])
 
   if (requete.isPending) return <Skeleton forme="bloc" hauteur="10rem" />
@@ -128,6 +131,8 @@ export default function SuiviGrossesse({ id, patientId, ecrire, reglages }) {
           </div>
         )}
       </div>
+
+      <TableauCpn grossesseId={g.id} ecrire={ecrire} />
 
       <section className="suivi-grossesse__section" aria-labelledby="suivi-datations">
         <h3 id="suivi-datations" className="suivi-grossesse__sous-titre">

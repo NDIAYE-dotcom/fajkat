@@ -6,6 +6,9 @@ import Message from '../../../../components/ui/Message/Message.jsx'
 import Select from '../../../../components/ui/Select/Select.jsx'
 import Textarea from '../../../../components/ui/Textarea/Textarea.jsx'
 import { useEnLigne } from '../../../../hooks/useEnLigne.js'
+import SectionCpn from '../../../maternite/components/SectionCpn/SectionCpn.jsx'
+import { caseCpnDuMessage, verifierCpn } from '../../../maternite/cpn.js'
+import { useCpnConsultation } from '../../../maternite/hooks/useMaternite.js'
 import { useSauvegardeConsultation } from '../../hooks/useSauvegardeConsultation.js'
 import { contenuConsultation } from '../../documents.js'
 import { avertissementsOrdonnance, ligneVide, ordonnancePourValidation } from '../../ordonnance.js'
@@ -48,6 +51,9 @@ export default function SaisieConsultation({
   const bloque = ['conflit', 'reprise'].includes(s.etat)
   const typeId = c.encounter_type_id ?? consultation.encounter_type_id
   const type = types.find((t) => t.id === typeId)
+  // Consultation prénatale : section CPN (étape 15), recopiée par la base à la validation.
+  const estCpn = type?.template_code === 'cpn'
+  const cpn = useCpnConsultation(consultation.id, estCpn)
   const declarations = declarationsImmediates(c)
   // Sensible d'office (type, diagnostic ou examen sensible) : la base le fera aussi au
   // prochain enregistrement, et une consultation sensible le reste.
@@ -70,6 +76,14 @@ export default function SaisieConsultation({
       s.setContenu((p) => ({ ...p, prescription: ordonnancePourValidation(p.prescription) }))
     }
     const trouvees = verifier(c, examens)
+    if (estCpn) {
+      const m = verifierCpn(c.maternite)
+      if (cpn.data && !cpn.data.pregnancy) {
+        m.grossesse =
+          'Ouvrez le suivi de grossesse avant de valider la CPN, ou changez le type de consultation.'
+      }
+      if (Object.keys(m).length) trouvees.maternite = m
+    }
     setErreurs(trouvees)
     if (Object.keys(trouvees).length) {
       const premier = document.querySelector(
@@ -173,6 +187,18 @@ export default function SaisieConsultation({
           />
         </SectionConsultation>
 
+        {estCpn && (
+          <SectionCpn
+            consultation={consultation}
+            patient={patient}
+            orgId={orgId}
+            valeur={c.maternite}
+            erreurs={erreurs.maternite}
+            desactive={bloque}
+            onChange={(v) => maj('maternite', v)}
+          />
+        )}
+
         <SectionConsultation titre="Examen clinique" resume={c.examination ? 'Saisi' : 'À saisir'}>
           {champTexte('examination', 'Examen clinique', 4)}
         </SectionConsultation>
@@ -261,7 +287,15 @@ export default function SaisieConsultation({
         avertissements={validation ? avertissementsOrdonnance(c.prescription) : []}
         enLigne={enLigne}
         onValider={async () => {
-          await s.valider()
+          try {
+            await s.valider()
+          } catch (e) {
+            // Refus de la base sur une mesure de la CPN : aussi sous sa case.
+            const champ = estCpn ? caseCpnDuMessage(e.message) : null
+            if (champ)
+              setErreurs((x) => ({ ...x, maternite: { ...x.maternite, [champ]: e.message } }))
+            throw e
+          }
           setValidation(false)
           onValidee()
         }}

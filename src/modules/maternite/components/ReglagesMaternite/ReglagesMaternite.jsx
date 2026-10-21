@@ -10,8 +10,10 @@ import { useEnLigne } from '../../../../hooks/useEnLigne.js'
 import { formatDate } from '../../../../lib/format.js'
 import EtapeCadre from '../../../admin/components/EtapeCadre/EtapeCadre.jsx'
 import { cles, enregistrerReglages } from '../../api.js'
+import { ciblesModele } from '../../cpn.js'
 import { dpaDepuisDdr, formatSA, METHODES_DPA } from '../../grossesse.js'
-import { useReglagesMaternite } from '../../hooks/useMaternite.js'
+import { useModelesCpn, useReglagesMaternite } from '../../hooks/useMaternite.js'
+import ListesCpn from '../ListesCpn/ListesCpn.jsx'
 import './ReglagesMaternite.css'
 
 // Bornes des cases : celles des contraintes de maternity_settings (vraisemblance du réglage,
@@ -25,11 +27,13 @@ const saisieDe = (r) => ({
   methode: r.edd_method,
   duree: String(r.pregnancy_length_days),
   maximum: String(r.max_gestational_days),
+  modele: r.anc_model_code,
 })
 
 // Paramètres → Maternité (owner et admin) et onglet Réglages de la page Maternité (aussi la
-// sage-femme) : méthode de calcul de la DPA, durée de la grossesse, âge gestationnel maximal.
-// Un changement ne vaut que pour les datations suivantes : les autres gardent leur méthode.
+// sage-femme) : méthode de calcul de la DPA, durée de la grossesse, âge gestationnel maximal,
+// modèle de CPN ; puis les listes de la CPN. Un changement ne vaut que pour la suite : les
+// datations gardent leur méthode, les grossesses en cours leur modèle de CPN.
 export default function ReglagesMaternite({ structure, suivant }) {
   const reglages = useReglagesMaternite(structure.id)
   if (reglages.isPending) return <Skeleton forme="bloc" hauteur="12rem" />
@@ -40,7 +44,12 @@ export default function ReglagesMaternite({ structure, suivant }) {
       </Message>
     )
   }
-  return <Formulaire structure={structure} initial={reglages.data} suivant={suivant} />
+  return (
+    <>
+      <Formulaire structure={structure} initial={reglages.data} suivant={suivant} />
+      <ListesCpn orgId={structure.id} />
+    </>
+  )
 }
 
 function Formulaire({ structure, initial, suivant }) {
@@ -50,6 +59,7 @@ function Formulaire({ structure, initial, suivant }) {
   const [erreurs, setErreurs] = useState({})
   const [erreur, setErreur] = useState(null)
   const [envoi, setEnvoi] = useState(false)
+  const modeles = useModelesCpn()
 
   const duree = Number(s.duree)
   const maximum = Number(s.maximum)
@@ -84,6 +94,7 @@ function Formulaire({ structure, initial, suivant }) {
         edd_method: s.methode,
         pregnancy_length_days: duree,
         max_gestational_days: maximum,
+        anc_model_code: s.modele,
       })
       await queryClient.invalidateQueries({ queryKey: cles.reglages(structure.id) })
       await suivant?.()
@@ -157,6 +168,30 @@ function Formulaire({ structure, initial, suivant }) {
             onChange={(e) => maj('maximum', chiffres(e.target.value))}
           />
         </Field>
+        <Field groupe label="Modèle de CPN" requis>
+          <div className="reglages-maternite__choix">
+            {modeles.isPending && <Skeleton forme="bloc" hauteur="4rem" />}
+            {modeles.error && (
+              <Message
+                ton="erreur"
+                action={<Button onClick={() => modeles.refetch()}>Réessayer</Button>}
+              >
+                <p>{modeles.error.message}</p>
+              </Message>
+            )}
+            {(modeles.data ?? []).map((m) => (
+              <Radio
+                key={m.code}
+                name="reglages-maternite-modele"
+                label={m.label}
+                description={`Contacts vers ${ciblesModele(m.contacts)}.`}
+                checked={s.modele === m.code}
+                disabled={!enLigne}
+                onChange={() => maj('modele', m.code)}
+              />
+            ))}
+          </div>
+        </Field>
         {exemple && (
           <p className="reglages-maternite__exemple" role="status">
             Exemple : DDR le{' '}
@@ -165,8 +200,8 @@ function Formulaire({ structure, initial, suivant }) {
           </p>
         )}
         <p className="reglages-maternite__note">
-          Un changement vaut pour les datations suivantes. Les datations déjà notées gardent la
-          méthode de leur jour.
+          Un changement vaut pour la suite. Les datations déjà notées gardent la méthode de leur
+          jour ; les grossesses en cours gardent leur modèle de CPN.
         </p>
       </div>
     </EtapeCadre>

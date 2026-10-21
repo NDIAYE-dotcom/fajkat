@@ -423,11 +423,12 @@ begin
       (select count(*) from public.appointments_to_remind(v_org));
   end if;
   select patient_label into v_label from public.appointments_to_remind(v_org) where patient_id = v_p;
-  if v_label <> 'votre rendez-vous au poste de santé (Consultation)' then
+  if v_label <> 'un rendez-vous au poste de santé de A' then
     raise exception 'ÉCHEC : type discret nommé pour le patient : %', v_label;
   end if;
   select patient_label into v_label from public.appointments_to_remind(v_org) where patient_id = v_v;
-  if v_label <> 'votre rendez-vous au poste de santé (Vaccination)' then
+  -- Étape 15 B1 : plus aucun type dans le rappel (option du type désactivée par défaut).
+  if v_label <> 'un rendez-vous au poste de santé de A' then
     raise exception 'ÉCHEC : libellé pour le patient : %', v_label;
   end if;
   raise notice 'OK : « À rappeler demain » : le rendez-vous apparaît la veille ; type discret jamais nommé';

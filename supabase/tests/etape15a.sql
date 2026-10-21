@@ -369,8 +369,9 @@ begin
       raise exception 'ÉCHEC : % inscrite au registre mais introuvable', v_t;
     end if;
   end loop;
-  if (select count(*) from public.audit_medical_tables) <> 18 then
-    raise exception 'ÉCHEC : registre de % tables au lieu de 18',
+  -- Au moins les 18 tables connues à la partie A ; les parties suivantes en ajoutent.
+  if (select count(*) from public.audit_medical_tables) < 18 then
+    raise exception 'ÉCHEC : registre de % tables au lieu d''au moins 18',
       (select count(*) from public.audit_medical_tables);
   end if;
   -- Toute table inscrite existe (aucune faute de frappe).

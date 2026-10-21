@@ -84,7 +84,7 @@ export async function chargerTypes(orgId) {
     .from('appointment_types')
     .select(
       'id, template_code, label, duration_minutes, is_discreet, recurrence_months, ' +
-        'queue_service_id, is_active, sort_order',
+        'queue_service_id, name_in_reminder, is_active, sort_order',
     )
     .eq('org_id', orgId)
     .is('deleted_at', null)
@@ -96,7 +96,8 @@ export async function chargerTypes(orgId) {
 
 const MESSAGES_TYPE = {
   doublon: 'Un type de rendez-vous porte déjà ce nom.',
-  contrainte: 'Libellé de 2 à 60 caractères, durée de 5 à 480 minutes, récurrence de 1 à 24 mois.',
+  contrainte:
+    'Libellé de 2 à 60 caractères, durée de 5 à 480 minutes, récurrence de 1 à 24 mois ; un type discret n’est jamais nommé dans le rappel.',
 }
 
 export async function ajouterType(orgId, champs) {
@@ -109,7 +110,7 @@ export async function ajouterType(orgId, champs) {
 }
 
 // champs : label, duration_minutes, is_discreet, recurrence_months, queue_service_id,
-// is_active, sort_order. Jamais de suppression : les rendez-vous pris gardent leur type.
+// name_in_reminder, is_active, sort_order. Jamais de suppression : les rendez-vous pris gardent leur type.
 export async function modifierType(id, champs) {
   await modifier(
     'appointment_types',

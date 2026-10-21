@@ -12,15 +12,21 @@ import './GroupeRappel.css'
 // une famille). « Rappel fait » vaut pour tout le téléphone ; « Confirmé par le patient »
 // pour chaque rendez-vous. Le groupe « Sans téléphone » (telephone null) n'a ni numéro,
 // ni message, ni « Rappel fait » : seulement les rendez-vous. enCours : clé de la case en cours d'envoi.
-export default function GroupeRappel({
-  groupe,
-  nomStructure,
-  desactive,
-  enCours,
-  echec,
-  onRappel,
-  onConfirme,
-}) {
+// Mots composés (« rendez-vous », dates) gardés d'un seul tenant à l'affichage : le texte
+// copié pour le patient reste exactement le même.
+function sansCoupure(texte) {
+  return texte.split(/(\S+-\S+)/).map((morceau, i) =>
+    i % 2 ? (
+      <span key={i} className="groupe-rappel__mot">
+        {morceau}
+      </span>
+    ) : (
+      morceau
+    ),
+  )
+}
+
+export default function GroupeRappel({ groupe, desactive, enCours, echec, onRappel, onConfirme }) {
   const fait = groupe.rdv.find((r) => r.reminder_done_at)
   const langues = groupe.langues.map(libelleLangue).filter(Boolean)
 
@@ -66,7 +72,7 @@ export default function GroupeRappel({
             </p>
             {groupe.telephone && (
               <blockquote className="groupe-rappel__message">
-                {messageRappel(r, nomStructure)}
+                {sansCoupure(messageRappel(r))}
               </blockquote>
             )}
             <Checkbox

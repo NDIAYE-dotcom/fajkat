@@ -8,6 +8,9 @@ import Spinner from '../../../../components/ui/Spinner/Spinner.jsx'
 import { useEnLigne } from '../../../../hooks/useEnLigne.js'
 import { useFeature } from '../../../../hooks/useFeature.js'
 import { useOrganization } from '../../../../hooks/useOrganization.js'
+import { prochaineCpn, texteProchaine } from '../../../maternite/cpn.js'
+import { aujourdhuiStructure } from '../../../maternite/grossesse.js'
+import { useCpnConsultation, useModelesCpn } from '../../../maternite/hooks/useMaternite.js'
 import { ajouterJours, aujourdhui, seancesDuJour } from '../../../rendez-vous/agenda.js'
 import { chargerProchainesSeances, verifierRdv } from '../../../rendez-vous/api.js'
 import ChampsRdv from '../../../rendez-vous/components/ChampsRdv/ChampsRdv.jsx'
@@ -30,7 +33,9 @@ import {
   seancesPossibles,
   validerRdv,
 } from '../../../rendez-vous/prise.js'
+import { versDateInput } from '../../../rendez-vous/utils.js'
 import { prendreSuivi } from '../../api.js'
+import { useTypesConsultation } from '../../hooks/useConsultation.js'
 import './ModaleProchainRdv.css'
 
 const ID = 'prochain-rdv'
@@ -39,7 +44,41 @@ const ID = 'prochain-rdv'
 // séance ou heure, praticien (offre Clinique). Mêmes contrôles que l'agenda (séance pleine,
 // jour férié à confirmer…). Le rendez-vous suit ensuite les règles de l'agenda (type
 // discret jamais nommé hors des rôles médicaux) ; l'ordonnance imprime sa date et son heure.
+// Consultation prénatale : la prochaine CPN attendue (anc_status, étape 15) pré-remplit le
+// type et la date ; le soignant garde la main sur tout.
 export default function ModaleProchainRdv({ consultation, onFermer, onPris }) {
+  const { structure } = useOrganization()
+  const types = useTypesConsultation(structure.id)
+  const estCpn =
+    types.data?.find((t) => t.id === consultation.encounter_type_id)?.template_code === 'cpn'
+  const cpn = useCpnConsultation(consultation.id, estCpn)
+  const typesRdv = useTypesRdv(structure.id)
+  const modeles = useModelesCpn(estCpn)
+  const attente =
+    types.isPending || (estCpn && (cpn.isPending || typesRdv.isPending || modeles.isPending))
+  // Brouillon : la CPN en cours compte déjà (elle sera validée avant ce rendez-vous).
+  const next = estCpn ? prochaineCpn(cpn.data, modeles.data, aujourdhuiStructure()) : null
+  const suggestion = next
+    ? {
+        typeId: typesRdv.data?.find((t) => t.template_code === 'cpn' && t.is_active)?.id ?? '',
+        date: next.target_date,
+        texte: texteProchaine(next),
+      }
+    : null
+  // La fenêtre attend la suggestion (champs en squelette) : son état part de la suggestion.
+  return (
+    <FenetreProchainRdv
+      key={attente ? 'attente' : 'prete'}
+      consultation={consultation}
+      suggestion={suggestion}
+      attente={attente}
+      onFermer={onFermer}
+      onPris={onPris}
+    />
+  )
+}
+
+function FenetreProchainRdv({ consultation, suggestion, attente, onFermer, onPris }) {
   const { structure } = useOrganization()
   const orgId = structure.id
   const enLigne = useEnLigne()
@@ -48,15 +87,26 @@ export default function ModaleProchainRdv({ consultation, onFermer, onPris }) {
   const seances = useSeances(orgId)
   const praticiens = usePraticiens(orgId, multiPraticiens)
   const envoi = useEnvoiRdv()
-  const [v, setV] = useState({ ...PRISE_VIDE, patient: { id: consultation.patient_id } })
+  const [v, setV] = useState(() => ({
+    ...PRISE_VIDE,
+    patient: { id: consultation.patient_id },
+    ...(suggestion?.typeId
+      ? { typeId: suggestion.typeId, date: versDateInput(suggestion.date) }
+      : {}),
+  }))
   const [erreurs, setErreurs] = useState({})
   const jour = v.date?.date ?? null
   const agendaJour = useAgenda(orgId, jour ?? aujourdhui(), jour ?? aujourdhui())
   const demain = ajouterJours(aujourdhui(), 1)
+  // Prochaine CPN : séances proposées à partir de la date attendue.
+  const du =
+    suggestion?.typeId && v.typeId === suggestion.typeId && suggestion.date > demain
+      ? suggestion.date
+      : demain
   const propositions = useQuery({
-    queryKey: ['consultations', 'prochaines-seances', orgId, v.typeId, v.praticienId, demain],
+    queryKey: ['consultations', 'prochaines-seances', orgId, v.typeId, v.praticienId, du],
     queryFn: () =>
-      chargerProchainesSeances(orgId, { typeId: v.typeId, du: demain, praticienId: v.praticienId }),
+      chargerProchainesSeances(orgId, { typeId: v.typeId, du, praticienId: v.praticienId }),
     enabled: Boolean(v.typeId),
     staleTime: 30 * 1000,
   })
@@ -111,7 +161,7 @@ export default function ModaleProchainRdv({ consultation, onFermer, onPris }) {
     if (ok) onPris(ok.resultat)
   }
 
-  const chargement = types.isPending || seances.isPending
+  const chargement = attente || types.isPending || seances.isPending
   const erreurChargement = types.error ?? seances.error
   const liste = (types.data ?? []).filter((t) => t.is_active)
 
@@ -159,6 +209,11 @@ export default function ModaleProchainRdv({ consultation, onFermer, onPris }) {
               }
             >
               <p>{erreurChargement.message}</p>
+            </Message>
+          )}
+          {suggestion && !chargement && (
+            <Message ton="info" titre="Prochaine CPN">
+              <p>{suggestion.texte}</p>
             </Message>
           )}
           {chargement && !erreurChargement && <Skeleton forme="bloc" hauteur="8rem" />}

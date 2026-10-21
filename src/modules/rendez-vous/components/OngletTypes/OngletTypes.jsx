@@ -27,7 +27,7 @@ export default function OngletTypes({ orgId }) {
 
   return (
     <PanneauReglages
-      intro="La durée sert à placer les rendez-vous dans l’agenda. Un type discret n’est jamais nommé pour le patient : il lira seulement « votre rendez-vous »."
+      intro="La durée sert à placer les rendez-vous dans l’agenda. Le rappel envoyé au patient ne nomme pas le type, sauf si vous cochez « Nommer le type dans le rappel » ; un type discret n’est jamais nommé."
       erreur={erreur}
       requetes={[types]}
     >
@@ -58,6 +58,7 @@ export default function OngletTypes({ orgId }) {
                 libelleDuree(t.duration_minutes),
                 t.recurrence_months && `tous les ${t.recurrence_months} mois`,
                 nomService(t.queue_service_id) && `file : ${nomService(t.queue_service_id)}`,
+                t.name_in_reminder && 'nommé dans le rappel',
               ]
                 .filter(Boolean)
                 .join(' · ')}

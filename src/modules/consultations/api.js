@@ -153,7 +153,7 @@ export async function chargerMesBrouillons(orgId) {
 export async function chargerTypes(orgId) {
   const { data, error } = await client()
     .from('encounter_types')
-    .select('id, label, is_sensitive_default, is_active, sort_order')
+    .select('id, template_code, label, is_sensitive_default, is_active, sort_order')
     .eq('org_id', orgId)
     .is('deleted_at', null)
     .order('sort_order')

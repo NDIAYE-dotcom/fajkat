@@ -1,4 +1,4 @@
-import { formatHeure, formatTelephone } from '../../lib/format.js'
+import { formatDate, formatHeure, formatTelephone } from '../../lib/format.js'
 import { LANGUES } from '../patients/fiche.js'
 import { libelleTelephoneDe } from '../patients/utils.js'
 
@@ -96,15 +96,16 @@ export function libelleTitulaires(titulaires) {
   return titulaires.join(' · ')
 }
 
-// Message prévu pour le patient : jamais le nom d'un type discret (patient_label vient de
-// la base). Le prénom dit pour qui est le rendez-vous quand la famille partage le
-// téléphone. L'envoi WhatsApp viendra aux étapes 23 et 24.
-export function messageRappel(r, nomStructure) {
+// Message prévu pour le patient : « vous avez un rendez-vous au poste de santé de Kolda le
+// 14/10 à 09:00 ». patient_label vient de la base : jamais le type, sauf si le type le
+// demande (jamais un type discret). Le prénom dit pour qui est le rendez-vous quand la
+// famille partage le téléphone. L'envoi WhatsApp viendra aux étapes 23 et 24.
+export function messageRappel(r) {
   const qui = [r.patient_first_name, r.patient_last_name].filter((x) => x?.trim()).join(' ')
-  const label = r.patient_label ?? 'votre rendez-vous'
+  const label = r.patient_label ?? 'un rendez-vous'
   return (
-    `Bonjour. Rappel${qui ? ` pour ${qui}` : ''} : ${label} demain à ` +
-    `${formatHeure(r.starts_at)}. ${nomStructure}.`
+    `Bonjour. Rappel${qui ? ` pour ${qui}` : ''} : vous avez ${label} ` +
+    `le ${formatDate(r.starts_at).slice(0, 5)} à ${formatHeure(r.starts_at)}.`
   )
 }
 

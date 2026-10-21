@@ -66,13 +66,16 @@ for (const largeur of LARGEURS) {
         await expect(famille.getByText('Langue : Français, Wolof')).toBeVisible()
         const mariama = liste.locator('.groupe-rappel', { hasText: 'SUIVI Mariama' })
         await expect(mariama.locator('blockquote')).toHaveText(
-          /Rappel pour Mariama SUIVI : votre rendez-vous au poste de santé \(Consultation\) demain à 14:00\./,
+          /Rappel pour Mariama SUIVI : vous avez un rendez-vous au poste de santé Test le \d{2}\/\d{2} à 14:00\.$/,
         )
         // Titulaire accordé : « de la patiente », « du patient », « du conjoint ».
         await expect(mariama.getByText('Téléphone de la patiente')).toBeVisible()
         const ibou = liste.locator('.groupe-rappel', { hasText: 'SUIVI Ibou' })
         await expect(ibou.getByText('Téléphone du patient')).toBeVisible()
-        await expect(ibou.locator('blockquote')).toHaveText(/\(Consultation\) demain à 15:30/)
+        // Étape 15 (B1) : plus aucun type dans le rappel, discret ou non.
+        await expect(ibou.locator('blockquote')).toHaveText(
+          /vous avez un rendez-vous au poste de santé Test le \d{2}\/\d{2} à 15:30\.$/,
+        )
         const fallou = liste.locator('.groupe-rappel', { hasText: 'SUIVI Fallou' })
         await expect(fallou.getByText('Téléphone du conjoint')).toBeVisible()
         await expect(liste).not.toContainText(/ de le | de un /)

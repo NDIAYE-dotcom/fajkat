@@ -87,7 +87,10 @@ do $$
 declare
   v_org uuid := current_setting('test.org')::uuid;
 begin
-  assert (select count(*) from public.encounter_types where org_id = v_org) = 6, 'types';
+  -- Les 6 types de l'étape 14 (la maternité en ajoute à l'étape 15).
+  assert (select count(*) from public.encounter_types where org_id = v_org
+           and template_code in ('consultation', 'controle', 'suivi_chronique', 'soins', 'pf',
+                                 'depistage')) = 6, 'types';
   assert (select is_sensitive_default from public.encounter_types
            where org_id = v_org and template_code = 'pf'), 'PF sensible';
   assert (select count(*) from public.rapid_test_types where org_id = v_org) = 8, 'examens';

@@ -1,0 +1,19 @@
+.listes-cpn {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-4);
+  margin-top: var(--esp-6);
+}
+
+.listes-cpn__titre {
+  margin: 0;
+  font-family: var(--police-titre);
+  font-size: var(--texte-l);
+  color: var(--primaire);
+}
+
+.listes-cpn__liste {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-3);
+}

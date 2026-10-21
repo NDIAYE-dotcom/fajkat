@@ -1,10 +1,15 @@
 import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import { useFeature } from '../../../hooks/useFeature.js'
 import {
+  chargerBilanCpn,
+  chargerCpnConsultation,
   chargerGrossesse,
+  chargerModelesCpn,
+  chargerOptionsCpn,
   chargerPermissions,
   chargerReglages,
   cles,
+  listerCpn,
   listerGrossessesEnCours,
   listerGrossessesPatiente,
 } from '../api.js'
@@ -63,6 +68,53 @@ export function useGrossessesEnCours(orgId, texte, page, actif) {
     queryFn: () => listerGrossessesEnCours(orgId, texte, page),
     enabled: Boolean(orgId) && actif,
     placeholderData: keepPreviousData,
+    gcTime: 0,
+  })
+}
+
+// --- CPN ---------------------------------------------------------------------------------
+
+export function useModelesCpn(actif = true) {
+  return useQuery({
+    queryKey: cles.modelesCpn(),
+    queryFn: chargerModelesCpn,
+    enabled: actif,
+    staleTime: 60 * 60 * 1000,
+  })
+}
+
+export function useOptionsCpn(orgId, actif = true) {
+  return useQuery({
+    queryKey: cles.optionsCpn(orgId),
+    queryFn: () => chargerOptionsCpn(orgId),
+    enabled: Boolean(orgId) && actif,
+    staleTime: 10 * 60 * 1000,
+  })
+}
+
+export function useCpnConsultation(consultationId, actif) {
+  return useQuery({
+    queryKey: cles.cpnConsultation(consultationId),
+    queryFn: () => chargerCpnConsultation(consultationId),
+    enabled: Boolean(consultationId) && actif,
+    gcTime: 0,
+  })
+}
+
+export function useCpn(grossesseId) {
+  return useQuery({
+    queryKey: cles.cpn(grossesseId),
+    queryFn: () => listerCpn(grossesseId),
+    enabled: Boolean(grossesseId),
+    gcTime: 0,
+  })
+}
+
+export function useBilanCpn(grossesseId) {
+  return useQuery({
+    queryKey: cles.bilanCpn(grossesseId),
+    queryFn: () => chargerBilanCpn(grossesseId),
+    enabled: Boolean(grossesseId),
     gcTime: 0,
   })
 }

@@ -116,3 +116,7 @@
   font-weight: 700;
   color: var(--tampon);
 }
+
+.groupe-rappel__mot {
+  white-space: nowrap;
+}
