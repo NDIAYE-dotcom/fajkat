@@ -47,6 +47,11 @@ Pendant une étape, on corrige seulement les bugs. Toute idée d'amélioration e
 - **Prévenir le référent quand la contre-référence est saisie** (notification) et relancer les références en retard sur la Journée du jour. Partie E.
 - **Ordonnance depuis le catalogue de la pharmacie** avec le stock visible : étape 17 (clé étrangère sur `prescription_items.product_id`, contrôle du produit dans `encounter_insert_prescription`, lecture de l'ordonnance sans diagnostic par le pharmacien).
 
+## Santé maternelle (étape 15)
+
+- **À FAIRE AVANT LA MISE EN PRODUCTION : obtenir les « Politiques, normes et protocoles en santé de la reproduction » du Sénégal** (auprès du district sanitaire ou d’une sage-femme), puis faire valider par une sage-femme toutes les valeurs proposées de l’étape 15, aujourd’hui celles de l’OMS. Corrections par une nouvelle migration ; les datations déjà faites gardent leur méthode du jour.
+  - Partie A (`maternity_setting_defaults`) : DPA par la règle de Naegele (DDR + 7 jours − 3 mois + 1 an), durée de la grossesse 280 jours (DDR + 280 jours, échographie, estimation), âge gestationnel maximal admis 44 SA (308 jours).
+
 ## Offre Clinique, après le pilote
 
 - **Téléconsultation** (idée, rien n'est codé) :

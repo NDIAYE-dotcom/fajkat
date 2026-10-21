@@ -17,6 +17,8 @@ import EtapeTiersPayants from '../../components/EtapeTiersPayants/EtapeTiersPaya
 import ReglagesCertificats from '../../../consultations/components/ReglagesCertificats/ReglagesCertificats.jsx'
 import ReglagesOrdonnance from '../../../consultations/components/ReglagesOrdonnance/ReglagesOrdonnance.jsx'
 import ReglagesReferences from '../../../consultations/components/ReglagesReferences/ReglagesReferences.jsx'
+import ReglagesMaternite from '../../../maternite/components/ReglagesMaternite/ReglagesMaternite.jsx'
+import { cles as clesMaternite } from '../../../maternite/api.js'
 import { useDemarrage } from '../../useDemarrage.js'
 import './Parametres.css'
 
@@ -56,6 +58,14 @@ const ONGLETS = [
     cle: cles.fiche,
     horsDemarrage: true,
     feature: 'references',
+  },
+  {
+    id: 'maternite',
+    libelle: 'Maternité',
+    Composant: ReglagesMaternite,
+    cle: clesMaternite.reglages,
+    horsDemarrage: true,
+    feature: 'maternite',
   },
 ]
 

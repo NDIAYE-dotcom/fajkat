@@ -1,0 +1,37 @@
+.champs-datation {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-4);
+}
+
+.champs-datation__choix {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-2);
+}
+
+.champs-datation__age {
+  display: grid;
+  grid-template-columns: minmax(0, 7rem) minmax(0, 5.5rem);
+  gap: var(--esp-2);
+}
+
+/* Aperçu calculé : marge colorée des panneaux importants, comme une fiche cartonnée. */
+.champs-datation__apercu {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--esp-1) var(--esp-5);
+  margin: 0;
+  padding: var(--esp-3) var(--esp-4);
+  border-left: 4px solid var(--accent);
+  border-radius: var(--rayon-panneau);
+  background: var(--surface);
+  color: var(--encre);
+}
+
+.champs-datation__chiffres {
+  font-family: var(--police-mono);
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  white-space: nowrap;
+}

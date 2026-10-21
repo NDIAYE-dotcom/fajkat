@@ -10,7 +10,7 @@ import Tampon from '../../../../components/ui/Tampon/Tampon.jsx'
 import { useEnLigne } from '../../../../hooks/useEnLigne.js'
 import { useToast } from '../../../../hooks/useToast.js'
 import { cles, enregistrerAntecedent, retirerAntecedent } from '../../api.js'
-import { CATEGORIES, saisieAntecedent } from '../../dossier.js'
+import { ANTECEDENT_VIDE, CATEGORIES, saisieAntecedent } from '../../dossier.js'
 import { useAntecedents } from '../../hooks/useConsultation.js'
 import FormulaireAntecedent from '../FormulaireAntecedent/FormulaireAntecedent.jsx'
 import './Antecedents.css'
@@ -20,13 +20,15 @@ import './Antecedents.css'
 // La base ne renvoie un antécédent sensible qu'aux soignants habilités (aucune ligne pour
 // les autres) et refuse tout aux rôles non médicaux.
 // ecrire : soignant qui rédige ; habilite : peut marquer sensible ; consultationId :
-// consultation d'où vient un ajout ; sensibleParDefaut : consultation sensible en cours.
+// consultation d'où vient un ajout ; sensibleParDefaut : consultation sensible en cours ;
+// categories : codes affichés (toutes par défaut), la première choisie pour un ajout.
 export default function Antecedents({
   patientId,
   ecrire,
   habilite,
   consultationId = null,
   sensibleParDefaut = false,
+  categories = null,
 }) {
   const queryClient = useQueryClient()
   const toast = useToast()
@@ -48,6 +50,7 @@ export default function Antecedents({
     )
   }
   const liste = requete.data ?? []
+  const affichees = categories ? CATEGORIES.filter((c) => categories.includes(c.code)) : CATEGORIES
 
   async function enregistrer(valeur) {
     await enregistrerAntecedent(patientId, valeur, consultationId)
@@ -84,17 +87,19 @@ export default function Antecedents({
       )}
       {formulaire && !formulaire.initial && (
         <FormulaireAntecedent
+          initial={categories ? { ...ANTECEDENT_VIDE, category: categories[0] } : undefined}
           habilite={habilite}
           sensibleParDefaut={sensibleParDefaut}
           onEnregistrer={enregistrer}
           onFermer={() => setFormulaire(null)}
         />
       )}
-      {CATEGORIES.map((c) => {
+      {affichees.map((c) => {
         const items = liste.filter((a) => a.category === c.code)
         return (
           <section key={c.code} className="antecedents__categorie" aria-label={c.libelle}>
-            <h3 className="antecedents__titre">{c.libelle}</h3>
+            {/* Une seule catégorie : le titre de la section qui entoure suffit. */}
+            {affichees.length > 1 && <h3 className="antecedents__titre">{c.libelle}</h3>}
             {items.length === 0 ? (
               <p className="antecedents__vide">Aucun noté</p>
             ) : (

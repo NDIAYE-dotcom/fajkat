@@ -1,0 +1,84 @@
+.suivi-grossesse {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-6);
+}
+
+/* Fiche cartonnée : marge colorée à gauche du panneau important. */
+.suivi-grossesse__fiche {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-4);
+  padding: var(--esp-4) var(--esp-5);
+  border: var(--trait);
+  border-left: 4px solid var(--accent);
+  border-radius: var(--rayon-panneau);
+  background: var(--surface);
+}
+
+.suivi-grossesse__titre,
+.suivi-grossesse__sous-titre {
+  margin: 0;
+  font-family: var(--police-titre);
+  color: var(--primaire);
+}
+
+.suivi-grossesse__titre {
+  font-size: var(--texte-l);
+}
+
+.suivi-grossesse__sous-titre {
+  font-size: var(--texte-m);
+}
+
+.suivi-grossesse__valeurs {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));
+  gap: var(--esp-3) var(--esp-5);
+  margin: 0;
+}
+
+.suivi-grossesse__valeurs dt {
+  font-size: var(--texte-s);
+  color: var(--encre-douce);
+}
+
+.suivi-grossesse__valeurs dd {
+  margin: 0;
+  color: var(--encre);
+}
+
+.suivi-grossesse__chiffres,
+.suivi-grossesse__terme {
+  font-family: var(--police-mono);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.suivi-grossesse__terme {
+  font-size: var(--texte-l);
+  font-weight: 600;
+  color: var(--primaire);
+}
+
+.suivi-grossesse__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--esp-2) var(--esp-3);
+}
+
+.suivi-grossesse__section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-3);
+}
+
+.suivi-grossesse__retrait {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-4);
+}
+
+.suivi-grossesse__retrait p {
+  margin: 0;
+}

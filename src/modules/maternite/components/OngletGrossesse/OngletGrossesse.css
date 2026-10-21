@@ -1,0 +1,44 @@
+.onglet-grossesse {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-6);
+}
+
+.onglet-grossesse__section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-3);
+}
+
+.onglet-grossesse__titre {
+  margin: 0;
+  font-family: var(--police-titre);
+  font-size: var(--texte-l);
+  color: var(--primaire);
+}
+
+/* Registre : filets horizontaux fins. */
+.onglet-grossesse__liste {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: var(--trait);
+}
+
+.onglet-grossesse__ligne {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--esp-1) var(--esp-4);
+  padding-block: var(--esp-3);
+  border-bottom: var(--trait);
+}
+
+.onglet-grossesse__doux {
+  color: var(--encre-douce);
+}
+
+.onglet-grossesse__chiffres {
+  font-family: var(--police-mono);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}

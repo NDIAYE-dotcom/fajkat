@@ -11,9 +11,11 @@
   background: var(--fond);
 }
 
+/* 18rem : sous cette largeur, le nom passe sous la photo, sur toute la largeur du panneau,
+   plutôt que de couper un prénom long d'un seul tenant (« Mouhamadoulamine »). */
 .en-tete-fiche__identite {
   display: flex;
-  flex: 1 1 14rem;
+  flex: 1 1 18rem;
   flex-direction: column;
   gap: var(--esp-1);
   min-width: 0;

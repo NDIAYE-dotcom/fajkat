@@ -15,6 +15,8 @@ import { entreeDepuisChemin, offresDeLEntree } from '../../../../router/navigati
 import Antecedents from '../../../consultations/components/Antecedents/Antecedents.jsx'
 import Chronologie from '../../../consultations/components/Chronologie/Chronologie.jsx'
 import { usePermissionsConsultation } from '../../../consultations/hooks/useConsultation.js'
+import OngletGrossesse from '../../../maternite/components/OngletGrossesse/OngletGrossesse.jsx'
+import { usePermissionsMaternite } from '../../../maternite/hooks/useMaternite.js'
 import { usePermissionsAgenda } from '../../../rendez-vous/hooks/useParametresAgenda.js'
 import { chargerPatient, cles } from '../../api.js'
 import EnTeteFiche from '../../components/EnTeteFiche/EnTeteFiche.jsx'
@@ -90,20 +92,29 @@ function ChargementFiche() {
   return <Fiche patient={patient} cle={cles.patient(id)} />
 }
 
-const ONGLETS = ['identite', 'couvertures', 'rendez-vous', 'medical', 'chronologie']
+const ONGLETS = ['identite', 'couvertures', 'rendez-vous', 'grossesse', 'medical', 'chronologie']
 
 function Fiche({ patient, cle }) {
   const { structure } = useOrganization()
   const droits = usePermissionsPatients(structure.id)
   const dossier = usePermissionsConsultation(droits.medical ? structure.id : null)
+  // Grossesse : patiente, et rôle médical avec la feature maternite.
+  const maternite = usePermissionsMaternite(
+    droits.medical && patient.sex === 'F' ? structure.id : null,
+  )
   // Rendez-vous : module inclus dans l'offre et rôle qui lit l'agenda.
   const agendaInclus = useFeature('rendez_vous').actif
   const agenda = usePermissionsAgenda(agendaInclus ? structure.id : null).data?.read === true
   const [parametres, setParametres] = useSearchParams()
   const demande = parametres.get('onglet')
   const disponibles = ONGLETS.filter(
-    (o) => (o !== 'medical' || droits.medical) && (o !== 'rendez-vous' || agenda),
+    (o) =>
+      (o !== 'medical' || droits.medical) &&
+      (o !== 'rendez-vous' || agenda) &&
+      (o !== 'grossesse' || maternite.lire),
   )
+  // Lien direct vers ?onglet=grossesse : on attend les droits avant de choisir l'onglet.
+  const enAttente = demande === 'grossesse' && maternite.chargement
   const actif = disponibles.includes(demande) ? demande : 'identite'
 
   useEffect(() => {
@@ -125,6 +136,14 @@ function Fiche({ patient, cle }) {
       id: 'rendez-vous',
       libelle: 'Rendez-vous',
       contenu: actif === 'rendez-vous' ? <OngletRendezVous patient={patient} /> : null,
+    },
+    maternite.lire && {
+      id: 'grossesse',
+      libelle: 'Grossesse',
+      contenu:
+        actif === 'grossesse' ? (
+          <OngletGrossesse patient={patient} droits={maternite} dossier={dossier} />
+        ) : null,
     },
     // Monté seulement quand il est ouvert : chaque ouverture d'antécédents sensibles est
     // journalisée, elle ne doit pas avoir lieu à la simple ouverture de la fiche.
@@ -175,12 +194,16 @@ function Fiche({ patient, cle }) {
         fusionner={droits.fusionner && droits.ecrire}
         consultation={dossier.ecrire}
       />
-      <Tabs
-        libelle="Rubriques du dossier"
-        actif={actif}
-        onChange={(onglet) => setParametres({ onglet }, { replace: true })}
-        onglets={onglets}
-      />
+      {enAttente ? (
+        <EcranAttente integre libelle="Ouverture du suivi de grossesse…" />
+      ) : (
+        <Tabs
+          libelle="Rubriques du dossier"
+          actif={actif}
+          onChange={(onglet) => setParametres({ onglet }, { replace: true })}
+          onglets={onglets}
+        />
+      )}
     </div>
   )
 }

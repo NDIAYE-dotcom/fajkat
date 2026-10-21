@@ -1,0 +1,32 @@
+.reglages-maternite {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-5);
+  max-width: 40rem;
+}
+
+.reglages-maternite__choix {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-2);
+}
+
+.reglages-maternite__exemple {
+  margin: 0;
+  padding: var(--esp-3) var(--esp-4);
+  border-left: 4px solid var(--accent);
+  border-radius: var(--rayon-panneau);
+  background: var(--surface);
+}
+
+.reglages-maternite__note {
+  margin: 0;
+  font-size: var(--texte-s);
+  color: var(--encre-douce);
+}
+
+.reglages-maternite__chiffres {
+  font-family: var(--police-mono);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}

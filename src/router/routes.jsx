@@ -169,6 +169,11 @@ export const router = createBrowserRouter([
                   () => import('../modules/consultations/pages/References/References.jsx'),
                 ),
               },
+              // Maternité (feature maternite) : grossesses en cours, réglages.
+              {
+                path: 'maternite',
+                lazy: composant(() => import('../modules/maternite/pages/Maternite/Maternite.jsx')),
+              },
               {
                 path: 'mon-espace',
                 lazy: composant(() => import('../modules/personnel/pages/MonEspace/MonEspace.jsx')),
