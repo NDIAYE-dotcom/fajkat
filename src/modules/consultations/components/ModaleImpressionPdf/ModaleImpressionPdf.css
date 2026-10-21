@@ -1,10 +1,10 @@
-.impression-ordonnance {
+.modale-impression-pdf {
   display: flex;
   flex-direction: column;
   gap: var(--esp-4);
 }
 
-.impression-ordonnance__attente {
+.modale-impression-pdf__attente {
   display: flex;
   align-items: center;
   gap: var(--esp-2);
@@ -12,7 +12,7 @@
   color: var(--encre-douce);
 }
 
-.impression-ordonnance__actions {
+.modale-impression-pdf__actions {
   display: flex;
   flex-wrap: wrap;
   justify-content: flex-end;
@@ -20,14 +20,14 @@
 }
 
 /* Lien sans adresse tant que le PDF n'est pas prêt : visible, mais inactif. */
-.impression-ordonnance__inactif {
+.modale-impression-pdf__inactif {
   pointer-events: none;
   opacity: 0.55;
 }
 
 /* Cadre sans taille qui porte le PDF le temps de l'impression (pas de visibility: hidden :
    le lecteur PDF du navigateur ne s'y chargerait pas). */
-.impression-ordonnance__cadre {
+.modale-impression-pdf__cadre {
   position: fixed;
   right: 0;
   bottom: 0;

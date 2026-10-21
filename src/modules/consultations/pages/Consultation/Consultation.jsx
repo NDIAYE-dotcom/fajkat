@@ -18,12 +18,14 @@ import { ajouterAvenant, cles, reprendreConsultation } from '../../api.js'
 import ConsultationTenue from '../../components/ConsultationTenue/ConsultationTenue.jsx'
 import ReserveAuxSoignants from '../../components/ReserveAuxSoignants/ReserveAuxSoignants.jsx'
 import CopieLocale from '../../components/CopieLocale/CopieLocale.jsx'
+import DocumentsConsultation from '../../components/DocumentsConsultation/DocumentsConsultation.jsx'
 import EnTeteConsultation from '../../components/EnTeteConsultation/EnTeteConsultation.jsx'
 import LectureConsultation from '../../components/LectureConsultation/LectureConsultation.jsx'
 import MiseEnPageConsultation from '../../components/MiseEnPageConsultation/MiseEnPageConsultation.jsx'
 import ModaleAvenant from '../../components/ModaleAvenant/ModaleAvenant.jsx'
 import PanneauAntecedents from '../../components/PanneauAntecedents/PanneauAntecedents.jsx'
 import SaisieConsultation from '../../components/SaisieConsultation/SaisieConsultation.jsx'
+import { contenuConsultation } from '../../documents.js'
 import {
   useConsultation,
   useExamensRapides,
@@ -121,6 +123,7 @@ function VueConsultation({ consultation: c, patient, droits, recharger }) {
         consultation={c}
         patient={patient}
         ecrire={droits.ecrire}
+        references={droits.references}
         recharger={recharger}
         panneau={panneau(c.is_sensitive)}
       />
@@ -155,6 +158,7 @@ function VueConsultation({ consultation: c, patient, droits, recharger }) {
       orgId={structure.id}
       types={types.data ?? []}
       examens={examens.data ?? []}
+      references={droits.references}
       onRecharger={recharger}
       onValidee={() => {
         queryClient.invalidateQueries({ queryKey: cles.mesBrouillons(structure.id) })
@@ -164,7 +168,7 @@ function VueConsultation({ consultation: c, patient, droits, recharger }) {
   )
 }
 
-function VueValidee({ consultation: c, patient, ecrire, recharger, panneau }) {
+function VueValidee({ consultation: c, patient, ecrire, references, recharger, panneau }) {
   const toast = useToast()
   const enLigne = useEnLigne()
   const [avenant, setAvenant] = useState(false)
@@ -177,6 +181,15 @@ function VueValidee({ consultation: c, patient, ecrire, recharger, panneau }) {
           avenant daté.
         </p>
         <LectureConsultation consultation={c} patient={patient} imprimer={ecrire} />
+        {ecrire && (
+          <DocumentsConsultation
+            consultation={c}
+            contenu={contenuConsultation(c, null)}
+            patient={patient}
+            sensible={c.is_sensitive}
+            references={references}
+          />
+        )}
         {/* Sous le contenu et ses avenants, loin du panneau des antécédents. */}
         {ecrire && (
           <div>

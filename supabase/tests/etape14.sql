@@ -127,7 +127,7 @@ insert into public.appointments (org_id, patient_id, appointment_type_id, starts
                                  local_date, status, source)
 values (current_setting('test.org')::uuid, current_setting('test.awa')::uuid, pg_temp.type_rdv('pf'),
         now(), now() + interval '20 minutes',
-        public.org_local_date(current_setting('test.org')::uuid), 'scheduled', 'agenda')
+        (now() at time zone 'Africa/Dakar')::date, 'scheduled', 'agenda')
 returning set_config('test.rdv_pf', id::text, true);
 set local role authenticated;
 select pg_temp.en_tant_que('09');
@@ -668,8 +668,10 @@ begin
     current_setting('test.e1'), 'urgent', 'Paludisme grave'), '22023', 'établissement');
   v_ref := public.create_referral(current_setting('test.e1')::uuid, null, 'Centre de santé de Kolda',
     'urgent', 'Vomissements incoercibles', 'Paludisme confirmé', 'Artéméther-luméfantrine, 1 prise');
-  perform public.record_counter_referral(v_ref, 'Hospitalisé 2 jours, sorti guéri.');
-  perform pg_temp.refus(format('select public.record_counter_referral(%L, %L)', v_ref, 'encore'), '22023', 'déjà');
+  perform public.record_counter_referral(v_ref, (now() at time zone 'Africa/Dakar')::date,
+    'Centre de santé de Kolda', null, 'Hospitalisé 2 jours, sorti guéri.');
+  perform pg_temp.refus(format('select public.record_counter_referral(%L, %L::date, null, %L)', v_ref,
+    (now() at time zone 'Africa/Dakar')::date, 'encore'), '22023', 'déjà');
 
   select id into v_tpl from public.certificate_templates
    where org_id = current_setting('test.org')::uuid and template_code = 'repos';
@@ -705,8 +707,8 @@ do $$
 begin
   perform pg_temp.refus(format('select public.create_referral(%L, null, %L, %L, %L)',
     current_setting('test.e1'), 'Hôpital', 'routine', 'x'), '42501', 'offre');
-  perform pg_temp.refus(format('select public.record_counter_referral(%L, %L)',
-    current_setting('test.ref'), 'x'), '42501');
+  perform pg_temp.refus(format('select public.record_counter_referral(%L, %L::date, null, %L)',
+    current_setting('test.ref'), (now() at time zone 'Africa/Dakar')::date, 'x'), '42501');
   assert not (public.encounter_permissions(current_setting('test.org')::uuid) ->> 'references')::boolean, 'droits';
   raise notice 'OK : sans la feature « references » : référence refusée';
 end $$;

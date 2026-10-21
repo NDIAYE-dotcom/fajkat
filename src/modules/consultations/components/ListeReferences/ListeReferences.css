@@ -1,0 +1,27 @@
+.liste-references__pile {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--esp-1);
+  min-width: 0;
+}
+
+.liste-references__chiffres {
+  font-family: var(--police-mono);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.liste-references__motif {
+  overflow-wrap: break-word;
+}
+
+.liste-references__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--esp-2);
+}
+
+.liste-references__mot {
+  white-space: nowrap;
+}

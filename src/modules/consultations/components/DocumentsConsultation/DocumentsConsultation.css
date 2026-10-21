@@ -1,0 +1,61 @@
+/* Panneau important : marge colorée à gauche, comme une fiche du registre. */
+.documents-consultation {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-3);
+  padding: var(--esp-4);
+  border: 1px solid var(--doux);
+  border-left: 4px solid var(--accent);
+  border-radius: var(--rayon-panneau);
+  background: var(--fond);
+}
+
+.documents-consultation__titre {
+  margin: 0;
+  font-family: var(--police-titre);
+  font-size: var(--texte-l);
+  color: var(--primaire);
+}
+
+.documents-consultation__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--esp-2);
+}
+
+.documents-consultation__liste {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.documents-consultation__ligne {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--esp-2) var(--esp-3);
+  padding: var(--esp-2) 0;
+  border-top: 1px solid var(--doux);
+}
+
+.documents-consultation__libelle {
+  display: flex;
+  flex: 1 1 14rem;
+  flex-direction: column;
+  min-width: 0;
+  color: var(--encre);
+  overflow-wrap: break-word;
+}
+
+.documents-consultation__numero {
+  font-family: var(--police-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: var(--texte-s);
+}
+
+.documents-consultation__date {
+  font-size: var(--texte-s);
+  color: var(--encre-douce);
+}

@@ -1,0 +1,16 @@
+.formulaire-contre-reference {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-4);
+}
+
+.formulaire-contre-reference__ligne {
+  display: grid;
+  gap: var(--esp-4);
+}
+
+@media (min-width: 720px) {
+  .formulaire-contre-reference__ligne {
+    grid-template-columns: 1fr 1fr;
+  }
+}

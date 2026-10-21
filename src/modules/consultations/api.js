@@ -1,7 +1,8 @@
 // Accès aux données des consultations (étape 14, feature consultations). Partie B : écran
 // de consultation — démarrer, enregistrer le brouillon, reprendre, valider, avenants ;
 // diagnostics (recherche, favoris), examens rapides, types de consultation. Partie C :
-// antécédents, chronologie du dossier.
+// antécédents, chronologie du dossier. Partie E : références et contre-références,
+// certificats, prochain rendez-vous pris depuis la consultation.
 // Le contenu médical ne se lit que par get_encounter (aucune lecture directe des tables) :
 // la base refuse l'accueil, le caissier, le comptable et l'owner qui n'exerce pas.
 
@@ -28,6 +29,13 @@ export const cles = {
   medicaments: (orgId, texte) => ['consultations', 'medicaments', orgId, texte],
   enTeteStructure: (orgId) => ['consultations', 'en-tete', orgId],
   qualites: (consultationId) => ['consultations', 'qualites', consultationId],
+  destinations: (orgId) => ['consultations', 'destinations', orgId],
+  references: (orgId, statut) => ['consultations', 'references', orgId, statut],
+  toutesReferences: (orgId) => ['consultations', 'references', orgId],
+  reference: (id) => ['consultations', 'reference', id],
+  modelesCertificat: (orgId) => ['consultations', 'modeles-certificat', orgId],
+  certificat: (id) => ['consultations', 'certificat', id],
+  suivis: (consultationId) => ['consultations', 'suivis', consultationId],
 }
 
 // Erreur d'une fonction de la base. Les refus métier (22023, 42501 levés par nos
@@ -311,4 +319,205 @@ export async function chargerChronologie(patientId, types, curseur = null) {
     suite:
       lignes.length > PAGE_CHRONOLOGIE ? { at: derniere.occurred_at, id: derniere.item_id } : null,
   }
+}
+
+// --- Références, certificats, prochain rendez-vous (partie E) ------------------------------
+// Contenu lu par des fonctions réservées aux soignants qui rédigent : la base refuse
+// l'accueil, le caissier, le comptable et l'owner qui n'exerce pas.
+
+// Établissements de référence (Paramètres → Références, et liste de la lettre).
+export async function chargerDestinations(orgId) {
+  const { data, error } = await client()
+    .from('referral_destinations')
+    .select('id, name, kind, phone, address, is_active, sort_order')
+    .eq('org_id', orgId)
+    .is('deleted_at', null)
+    .order('sort_order')
+    .order('name')
+  if (error) throw traduireErreur(error, 'Les établissements de référence n’ont pas pu être lus.')
+  return data ?? []
+}
+
+function erreurReglage(error, repli) {
+  if (error?.code === '23505') return new Error('Cet établissement existe déjà.')
+  if (error?.code === '23514')
+    return new Error('Vérifiez les cases : une valeur n’est pas acceptée.')
+  if (error?.code === '42501') return new Error('Votre rôle ne permet pas cette modification.')
+  return traduireErreur(error, repli)
+}
+
+// d : { id?, name, kind, phone, address, is_active } ; renvoie la ligne enregistrée.
+export async function enregistrerDestination(orgId, d) {
+  const champs = {
+    name: d.name.trim(),
+    kind: d.kind || 'autre',
+    phone: d.phone || null,
+    address: d.address?.trim() || null,
+    is_active: d.is_active ?? true,
+  }
+  const requete = d.id
+    ? client().from('referral_destinations').update(champs).eq('id', d.id)
+    : client()
+        .from('referral_destinations')
+        .insert({ ...champs, org_id: orgId })
+  const { data, error } = await requete.select('id, name, kind, phone, address, is_active')
+  if (error) throw erreurReglage(error, 'L’établissement n’a pas pu être enregistré.')
+  if (!data?.length) throw new Error('Votre rôle ne permet pas cette modification.')
+  return data[0]
+}
+
+// Retiré de la liste, jamais effacé (les lettres déjà émises gardent son nom).
+export async function retirerDestination(id) {
+  const { data, error } = await client()
+    .from('referral_destinations')
+    .update({ deleted_at: new Date().toISOString() })
+    .eq('id', id)
+    .select('id')
+  if (error) throw erreurReglage(error, 'L’établissement n’a pas pu être retiré.')
+  if (!data?.length) throw new Error('Votre rôle ne permet pas cette modification.')
+}
+
+// r : { destinationId, destinationNom, urgent, motif, resume, traitements } -> id.
+export function creerReference(consultationId, r) {
+  return appeler(
+    'create_referral',
+    {
+      p_encounter_id: consultationId,
+      p_destination_id: r.destinationId || null,
+      p_destination_name: r.destinationId ? null : r.destinationNom.trim(),
+      p_urgency: r.urgent ? 'urgent' : 'routine',
+      p_reason: r.motif.trim(),
+      p_summary: r.resume.trim() || null,
+      p_treatments_given: r.traitements.trim() || null,
+    },
+    'La référence n’a pas été enregistrée.',
+  )
+}
+
+// Une référence (impression, contre-référence) ; lecture journalisée si elle est sensible.
+export function chargerReference(id, ouverture = null) {
+  return appeler(
+    'get_referral',
+    { p_referral_id: id, p_opening_id: ouverture },
+    'La référence n’a pas pu être lue.',
+  )
+}
+
+// statut : 'pending' (en attente de retour) | 'returned' (contre-référence reçue).
+export async function listerReferences(orgId, statut) {
+  return (
+    (await appeler(
+      'list_referrals',
+      { p_org_id: orgId, p_status: statut, p_limit: 200 },
+      'Les références n’ont pas pu être lues.',
+    )) ?? []
+  )
+}
+
+// c : { date (AAAA-MM-JJ), structure, diagnostic, traitement, conduite, suivi }.
+export function enregistrerContreReference(id, c) {
+  return appeler(
+    'record_counter_referral',
+    {
+      p_referral_id: id,
+      p_received_on: c.date,
+      p_from_name: c.structure || null,
+      p_diagnosis: c.diagnostic || null,
+      p_treatment: c.traitement || null,
+      p_plan: c.conduite || null,
+      p_followup: c.suivi || null,
+    },
+    'La contre-référence n’a pas été enregistrée.',
+  )
+}
+
+// Modèles de certificat (Paramètres → Certificats, et choix du modèle).
+export async function chargerModelesCertificat(orgId) {
+  const { data, error } = await client()
+    .from('certificate_templates')
+    .select('id, template_code, label, body, has_days, is_active, sort_order')
+    .eq('org_id', orgId)
+    .is('deleted_at', null)
+    .order('sort_order')
+  if (error) throw traduireErreur(error, 'Les modèles de certificat n’ont pas pu être lus.')
+  return data ?? []
+}
+
+// m : { id?, label, body, has_days, is_active }.
+export async function enregistrerModeleCertificat(orgId, m) {
+  const champs = {
+    label: m.label.trim(),
+    body: m.body.trim(),
+    has_days: Boolean(m.has_days),
+    is_active: m.is_active ?? true,
+  }
+  const requete = m.id
+    ? client().from('certificate_templates').update(champs).eq('id', m.id)
+    : client()
+        .from('certificate_templates')
+        .insert({ ...champs, org_id: orgId, sort_order: m.sort_order ?? 100 })
+  const { data, error } = await requete.select('id')
+  if (error?.code === '23514') {
+    throw new Error(
+      'Le texte contient une variable inconnue entre accolades : utilisez seulement celles de la liste.',
+    )
+  }
+  if (error) throw erreurReglage(error, 'Le modèle n’a pas pu être enregistré.')
+  if (!data?.length) throw new Error('Votre rôle ne permet pas cette modification.')
+}
+
+// c : { modeleId, titre, texte, jours, debut } -> id du certificat (numéroté par la base).
+export function emettreCertificat(consultationId, c) {
+  return appeler(
+    'issue_certificate',
+    {
+      p_encounter_id: consultationId,
+      p_template_id: c.modeleId || null,
+      p_title: c.titre.trim(),
+      p_body: c.texte.trim(),
+      p_rest_days: c.jours ?? null,
+      p_starts_on: c.debut ?? null,
+      p_includes_diagnosis: false,
+    },
+    'Le certificat n’a pas été émis.',
+  )
+}
+
+export function chargerCertificat(id, ouverture = null) {
+  return appeler(
+    'get_certificate',
+    { p_certificate_id: id, p_opening_id: ouverture },
+    'Le certificat n’a pas pu être lu.',
+  )
+}
+
+// Rendez-vous pris depuis la consultation (reports suivis) :
+// [{ appointment_id, starts_at, status, type_label, practitioner_name, rescheduled }].
+export async function chargerSuivis(consultationId) {
+  return (
+    (await appeler(
+      'get_encounter_followups',
+      { p_encounter_id: consultationId },
+      'Le prochain rendez-vous n’a pas pu être lu.',
+    )) ?? []
+  )
+}
+
+// champs : comme prendreRdv (rendez-vous) ; confirmer : avertissements acceptés.
+export async function prendreSuivi(consultationId, champs, confirmer = false) {
+  const { data, error } = await client().rpc('schedule_encounter_followup', {
+    p_encounter_id: consultationId,
+    p_type_id: champs.typeId,
+    p_starts_at: champs.debut,
+    p_practitioner_id: champs.praticienId || null,
+    p_session_id: champs.seanceId || null,
+    p_confirm: confirmer,
+    p_outside_session: !champs.seanceId && !!champs.horsSeance,
+  })
+  if (error) {
+    const e = erreurConsultation(error, 'Le rendez-vous n’a pas été enregistré. Réessayez.')
+    e.confirmation = error.hint === 'confirmation_required'
+    throw e
+  }
+  return data
 }

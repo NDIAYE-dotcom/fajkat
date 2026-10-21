@@ -7,9 +7,10 @@ import { useOrganization } from './useOrganization.js'
 // Tant que les fonctionnalités se chargent, seules les entrées sans fonctionnalité
 // requise (la Journée du jour) sont proposées : rien n'apparaît puis ne disparaît.
 export function useNavigation() {
-  const { role } = useOrganization()
+  const { role, structure } = useOrganization()
+  const exerce = Boolean(structure?.exerce)
   const { features, chargement, erreur } = useFeatures()
-  const visibles = useMemo(() => entreesVisibles(features, role), [features, role])
+  const visibles = useMemo(() => entreesVisibles(features, role, exerce), [features, role, exerce])
   const estVisible = (code) => visibles.some((e) => e.code === code)
   return { visibles, estVisible, features, chargement, erreur }
 }

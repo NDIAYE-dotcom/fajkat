@@ -52,6 +52,14 @@ export function stylesOrdonnance(encre) {
     unite: { fontSize: 8 },
     phrase: { marginTop: 4, fontSize: 10 },
     note: { marginTop: 12, fontSize: 10 },
+    prochainRdv: {
+      marginTop: 12,
+      padding: 6,
+      fontSize: 11,
+      fontWeight: 700,
+      borderWidth: 1,
+      borderColor: encre,
+    },
     signature: {
       marginTop: 18,
       marginLeft: 'auto',

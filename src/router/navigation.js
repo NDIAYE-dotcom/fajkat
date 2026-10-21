@@ -14,6 +14,8 @@
 //   roles       rôles autorisés (memberships.role)
 //   famille     famille du menu (FAMILLES_NAV)
 //   mobile      rang dans la barre inférieure (1 à 5), absent sinon
+//   exerce      owner et admin seulement s'ils exercent une profession soignante
+//               (memberships.is_clinician) : contenu médical rédigé (références)
 //   description phrase affichée tant que le module est en préparation (sinon, celle du catalogue)
 
 import {
@@ -74,6 +76,9 @@ const SOIGNANTS = [...DIRECTION, 'medecin', 'sage_femme', 'infirmier', 'aide_soi
 const ACCUEIL = [...SOIGNANTS, 'accueil']
 const FINANCES = [...DIRECTION, 'caissier', 'comptable']
 const MEDICAMENTS = [...DIRECTION, 'pharmacien', 'infirmier']
+// Soignants qui rédigent (lettres de référence, contre-références) : ni l'aide-soignant,
+// ni l'owner ou l'admin qui n'exercent pas (exerce).
+const REDACTEURS = [...DIRECTION, 'medecin', 'sage_femme', 'infirmier']
 
 // Pages du menu utilisateur, hors familles.
 export const ROLES_PARAMETRES = DIRECTION
@@ -159,7 +164,8 @@ export const ENTREES = [
     libelle: 'Références',
     icone: Send,
     feature: 'references',
-    roles: SOIGNANTS,
+    roles: REDACTEURS,
+    exerce: true,
     famille: 'parcours_patient',
   },
   {
@@ -366,8 +372,10 @@ export function entreeDepuisChemin(chemin) {
   return ENTREES.find((e) => e.chemin === segment) ?? null
 }
 
-export function roleAutorise(entree, role) {
-  return Boolean(role) && entree.roles.includes(role)
+// exerce : l'owner ou l'admin exerce une profession soignante (structure.exerce).
+export function roleAutorise(entree, role, exerce = false) {
+  if (!role || !entree.roles.includes(role)) return false
+  return !entree.exerce || !DIRECTION.includes(role) || exerce
 }
 
 export function featureIncluse(entree, features) {
@@ -375,8 +383,8 @@ export function featureIncluse(entree, features) {
 }
 
 // Entrées visibles : fonctionnalité incluse ET rôle autorisé.
-export function entreesVisibles(features, role) {
-  return ENTREES.filter((e) => featureIncluse(e, features) && roleAutorise(e, role))
+export function entreesVisibles(features, role, exerce = false) {
+  return ENTREES.filter((e) => featureIncluse(e, features) && roleAutorise(e, role, exerce))
 }
 
 export function grouperParFamille(entrees) {

@@ -4,30 +4,19 @@
 //
 // Règles :
 //   - jamais de diagnostic, de type de consultation ni de service : en-tête de la
-//     structure, patient (nom, âge), date, praticien, médicaments, signature ;
+//     structure, patient (nom, âge), date, praticien, médicaments, prochain rendez-vous
+//     (date et heure seulement), signature ;
 //   - noir et blanc, traits pleins ou pointillés, aucun gris clair : lisible après
 //     photocopie ;
 //   - pour chaque médicament, les quatre prises au trait (pictogrammes.js) avec la quantité
 //     en gros chiffres (IBM Plex Mono) ; durée et consignes en phrases courtes.
 // Le PDF ne lit pas les feuilles de style : l'encre vient du jeton --impression-encre.
+// Polices : pdf/commun.js (importé par genererOrdonnance).
 
-import { Circle, Document, Font, Image, Page, Path, Svg, Text, View } from '@react-pdf/renderer'
-import atkinson400 from '@fontsource/atkinson-hyperlegible/files/atkinson-hyperlegible-latin-400-normal.woff?url'
-import atkinson700 from '@fontsource/atkinson-hyperlegible/files/atkinson-hyperlegible-latin-700-normal.woff?url'
-import plex600 from '@fontsource/ibm-plex-mono/files/ibm-plex-mono-latin-600-normal.woff?url'
-import spectral600 from '@fontsource/spectral/files/spectral-latin-600-normal.woff?url'
+import { Circle, Document, Image, Page, Path, Svg, Text, View } from '@react-pdf/renderer'
 import { formatTelephone } from '../../../lib/format.js'
 import { formatDose, phraseDuree, phraseQuantite, PRISES, resumeProduit } from '../ordonnance.js'
 import { PICTOGRAMMES } from '../pictogrammes.js'
-
-Font.register({
-  family: 'Atkinson',
-  fonts: [{ src: atkinson400 }, { src: atkinson700, fontWeight: 700 }],
-})
-Font.register({ family: 'Plex', src: plex600 })
-Font.register({ family: 'Spectral', src: spectral600 })
-// Aucun mot coupé en fin de ligne.
-Font.registerHyphenationCallback((mot) => [mot])
 
 // Trait des pictogrammes, passé en objet : strokeWidth est ici un attribut SVG du PDF, pas
 // celui d'une icône lucide (règle ESLint des icônes).
@@ -134,6 +123,7 @@ export default function DocumentOrdonnance({ d, s, encre }) {
         ))}
 
         {ordonnance.note ? <Text style={s.note}>{ordonnance.note}</Text> : null}
+        {d.prochainRdv ? <Text style={s.prochainRdv}>{d.prochainRdv}</Text> : null}
 
         <View style={s.signature} wrap={false}>
           <Text style={s.petit}>Signature et cachet</Text>

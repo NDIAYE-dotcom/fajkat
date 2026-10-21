@@ -29,6 +29,7 @@ export function usePermissionsConsultation(orgId) {
     ecrire: Boolean(d.write),
     sensible: Boolean(d.sensitive),
     configurer: Boolean(d.configure),
+    references: Boolean(d.references),
     chargement: incluse && requete.isPending,
     erreur: requete.error,
   }

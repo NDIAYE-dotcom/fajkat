@@ -162,6 +162,13 @@ export const router = createBrowserRouter([
                   () => import('../modules/consultations/pages/Consultation/Consultation.jsx'),
                 ),
               },
+              // Références (feature references) : en attente de retour, contre-références.
+              {
+                path: 'references',
+                lazy: composant(
+                  () => import('../modules/consultations/pages/References/References.jsx'),
+                ),
+              },
               {
                 path: 'mon-espace',
                 lazy: composant(() => import('../modules/personnel/pages/MonEspace/MonEspace.jsx')),

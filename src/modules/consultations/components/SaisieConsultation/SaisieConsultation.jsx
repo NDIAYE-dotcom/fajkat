@@ -7,11 +7,13 @@ import Select from '../../../../components/ui/Select/Select.jsx'
 import Textarea from '../../../../components/ui/Textarea/Textarea.jsx'
 import { useEnLigne } from '../../../../hooks/useEnLigne.js'
 import { useSauvegardeConsultation } from '../../hooks/useSauvegardeConsultation.js'
+import { contenuConsultation } from '../../documents.js'
 import { avertissementsOrdonnance, ligneVide, ordonnancePourValidation } from '../../ordonnance.js'
 import { declarationsImmediates, LIMITES, verifier } from '../../utils.js'
 import ConflitVersion from '../ConflitVersion/ConflitVersion.jsx'
 import ConstantesPassage from '../ConstantesPassage/ConstantesPassage.jsx'
 import Diagnostics from '../Diagnostics/Diagnostics.jsx'
+import DocumentsConsultation from '../DocumentsConsultation/DocumentsConsultation.jsx'
 import EnTeteConsultation from '../EnTeteConsultation/EnTeteConsultation.jsx'
 import ExamensRapides from '../ExamensRapides/ExamensRapides.jsx'
 import IndicateurEnregistrement from '../IndicateurEnregistrement/IndicateurEnregistrement.jsx'
@@ -34,6 +36,7 @@ export default function SaisieConsultation({
   orgId,
   types,
   examens,
+  references = false,
   onValidee,
   onRecharger,
 }) {
@@ -230,6 +233,14 @@ export default function SaisieConsultation({
             onChange={(v) => maj('prescription', v)}
           />
         </SectionConsultation>
+
+        <DocumentsConsultation
+          consultation={consultation}
+          contenu={contenuConsultation(consultation, c, examens)}
+          patient={patient}
+          sensible={sensible}
+          references={references}
+        />
 
         <div className="saisie-consultation__pied">
           {Object.keys(erreurs).some((k) => erreurs[k]) && (

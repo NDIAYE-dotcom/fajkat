@@ -1,0 +1,27 @@
+.formulaire-modele-certificat__texte,
+.formulaire-modele-certificat__variables {
+  grid-column: 1 / -1;
+}
+
+.formulaire-modele-certificat__variables {
+  font-size: var(--texte-s);
+  color: var(--encre-douce);
+}
+
+.formulaire-modele-certificat__variables p {
+  margin: 0;
+}
+
+.formulaire-modele-certificat__variables ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--esp-1) var(--esp-4);
+  margin: var(--esp-2) 0;
+  padding: 0;
+  list-style: none;
+}
+
+.formulaire-modele-certificat__variables code {
+  font-family: var(--police-mono);
+  color: var(--encre);
+}

@@ -1,0 +1,34 @@
+.modale-prochain-rdv,
+.modale-prochain-rdv__champs {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-5);
+}
+
+.modale-prochain-rdv__propositions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-2);
+}
+
+.modale-prochain-rdv__titre {
+  margin: 0;
+  font-family: var(--police-texte);
+  font-size: var(--texte-m);
+  font-weight: 700;
+  color: var(--encre);
+}
+
+.modale-prochain-rdv__vide {
+  margin: 0;
+  color: var(--encre-douce);
+}
+
+.modale-prochain-rdv__liste {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--esp-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}

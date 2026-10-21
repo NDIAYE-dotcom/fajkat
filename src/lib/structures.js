@@ -13,12 +13,13 @@ export function cleStructures(userId) {
   return ['structures', userId]
 }
 
-// [{ id, name, type, status, trial_ends_at, timezone, country_code, region, logo_url, settings, role }]
+// [{ id, name, type, status, trial_ends_at, timezone, country_code, region, logo_url, settings,
+//    role, exerce }] — exerce : owner ou admin qui exerce une profession soignante (is_clinician).
 export async function chargerStructures(userId) {
   const { data, error } = await client()
     .from('memberships')
     .select(
-      'role, organization:organizations (id, name, type, status, trial_ends_at, timezone, country_code, region, logo_url, settings, deleted_at)',
+      'role, is_clinician, organization:organizations (id, name, type, status, trial_ends_at, timezone, country_code, region, logo_url, settings, deleted_at)',
     )
     .eq('user_id', userId)
     .eq('is_active', true)
@@ -31,7 +32,11 @@ export async function chargerStructures(userId) {
   }
   return (data ?? [])
     .filter((ligne) => ligne.organization && !ligne.organization.deleted_at)
-    .map(({ role, organization }) => ({ ...organization, role }))
+    .map(({ role, is_clinician, organization }) => ({
+      ...organization,
+      role,
+      exerce: Boolean(is_clinician),
+    }))
     .sort((a, b) => a.name.localeCompare(b.name, 'fr'))
 }
 

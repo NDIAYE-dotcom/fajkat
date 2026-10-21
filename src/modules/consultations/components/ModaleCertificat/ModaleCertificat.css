@@ -1,0 +1,29 @@
+.modale-certificat {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-4);
+}
+
+.modale-certificat__ligne {
+  display: grid;
+  gap: var(--esp-4);
+}
+
+@media (min-width: 720px) {
+  .modale-certificat__ligne:has(> :nth-child(2)) {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.modale-certificat__retouche {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--esp-2);
+  color: var(--encre-douce);
+  font-size: var(--texte-s);
+}
+
+.modale-certificat__retouche p {
+  margin: 0;
+}

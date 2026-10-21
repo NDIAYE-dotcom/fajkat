@@ -119,8 +119,11 @@ test.describe('1440 px — détails', () => {
     await expect(
       page.locator('.ligne-rdv-compacte__lien', { hasText: 'NDIAYE-DIALLO' }),
     ).toHaveAttribute('title', /Ndèye Fatou Bintou Khadidiatou/)
-    await expect(page.getByText('Complet').first()).toBeVisible()
     await verifierEcran(page, 'semaine-detail')
+    // Séance de 3 places remplie à J + 3 (donnees_agenda.sql) : sa semaine, quel que soit le
+    // jour du lancement (elle n'est pas toujours dans celle du prochain mardi).
+    await page.goto(`/app/rendez-vous?vue=semaine&date=${ajouterJours(aujourdhui(), 3)}`)
+    await expect(page.getByText('Complet').first()).toBeVisible()
     expect(erreurs).toEqual([])
   })
 

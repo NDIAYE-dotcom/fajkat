@@ -1,0 +1,53 @@
+.fiche-reference {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-4);
+}
+
+.fiche-reference__entete {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--esp-2);
+  margin: 0;
+  color: var(--encre-douce);
+  overflow-wrap: break-word;
+}
+
+.fiche-reference__bloc {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-1);
+}
+
+.fiche-reference__titre {
+  margin: 0;
+  font-family: var(--police-texte);
+  font-size: var(--texte-m);
+  font-weight: 700;
+  color: var(--encre);
+}
+
+.fiche-reference__texte {
+  margin: 0;
+  white-space: pre-line;
+  overflow-wrap: break-word;
+  color: var(--encre);
+}
+
+/* Retour de la structure d'accueil : fiche à marge colorée. */
+.fiche-reference__retour {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-3);
+  padding: var(--esp-4);
+  border-left: 4px solid var(--accent);
+  border-radius: var(--rayon-panneau);
+  background: var(--surface);
+}
+
+.fiche-reference__signature {
+  margin: 0;
+  font-size: var(--texte-s);
+  color: var(--encre-douce);
+}

@@ -483,3 +483,76 @@ select current_setting('e2e.poste')::uuid, p.id,
 set local session_replication_role = origin;
 
 commit;
+
+-- =============================================================================
+-- Étape 14, partie E : références, certificats, prochain rendez-vous
+-- -----------------------------------------------------------------------------
+-- « DOC Aissatou » : consultation validée (motif, examen, conduite, Amoxicilline) :
+--                    référence pré-remplie, certificats, prochain rendez-vous et ordonnance.
+-- « DOC Ndella »   : consultation sensible (planification familiale) validée : lettre en
+--                    pli confidentiel, prochain rendez-vous de PF (« Consultation » à l'accueil).
+-- « DOC Ancienne » : référence d'il y a 20 jours sans retour (« En retard ») : contre-référence.
+-- « DOC Confidentielle » : référence sensible en attente (« Pli confidentiel » dans la liste).
+-- Établissement de référence : Hôpital régional de Kolda.
+-- =============================================================================
+
+begin;
+
+select set_config('e2e.poste', id::text, true) from public.organizations where name = 'Poste de santé Test';
+insert into public.referral_destinations (org_id, name, kind, phone, address)
+values (current_setting('e2e.poste')::uuid, 'Hôpital régional de Kolda', 'hopital', '+221339961100',
+        'Route de Sédhiou, Kolda');
+
+create function pg_temp.doc_consultation(p_prenom text, p_type text, p_contenu jsonb)
+returns uuid language plpgsql as $$
+declare
+  v_p uuid;
+  v_e jsonb;
+  v_r jsonb;
+begin
+  insert into public.patients (org_id, last_name, first_name, sex, declared_age)
+  values (current_setting('e2e.poste')::uuid, 'DOC', p_prenom, 'F', 31) returning id into v_p;
+  v_e := public.start_encounter(v_p, null, (select id from public.encounter_types
+           where org_id = current_setting('e2e.poste')::uuid and template_code = p_type));
+  v_r := public.save_encounter_draft((v_e ->> 'id')::uuid, (v_e ->> 'version')::integer, p_contenu);
+  perform public.validate_encounter((v_e ->> 'id')::uuid, (v_r ->> 'version')::integer);
+  return (v_e ->> 'id')::uuid;
+end;
+$$;
+grant execute on function pg_temp.doc_consultation(text, text, jsonb) to authenticated;
+
+set local role authenticated;
+select set_config('request.jwt.claims',
+  '{"sub": "00000000-0000-4000-e2e0-000000000002", "role": "authenticated"}', true);
+do $$
+declare
+  v_e uuid;
+begin
+  perform pg_temp.doc_consultation('Aissatou', 'consultation', jsonb_build_object(
+    'reason', 'Toux et fièvre depuis 4 jours', 'examination', 'Râles crépitants à la base droite',
+    'plan', 'Antibiotique, revoir dans 5 jours',
+    'prescription', jsonb_build_object('items', jsonb_build_array(jsonb_build_object(
+      'product_name', 'Amoxicilline', 'dosage', '500 mg', 'form', 'Gélule', 'route_code', 'orale',
+      'dose_morning', 1, 'dose_evening', 1, 'dose_unit', 'gélule', 'duration_days', 5,
+      'quantity', 10, 'quantity_unit', 'gélules')))));
+  perform pg_temp.doc_consultation('Ndella', 'pf', jsonb_build_object(
+    'reason', 'Contraception : implant souhaité', 'prescription', jsonb_build_object('items', '[]'::jsonb)));
+  v_e := pg_temp.doc_consultation('Ancienne', 'consultation', jsonb_build_object(
+    'reason', 'Douleur abdominale', 'prescription', jsonb_build_object('items', '[]'::jsonb)));
+  perform public.create_referral(v_e, null, 'Centre de santé de Kolda', 'routine',
+    'Suspicion d''appendicite', 'Douleur en fosse iliaque droite', null);
+  v_e := pg_temp.doc_consultation('Confidentielle', 'pf', jsonb_build_object(
+    'reason', 'Contraception', 'prescription', jsonb_build_object('items', '[]'::jsonb)));
+  perform public.create_referral(v_e, null, 'Centre de santé de Kolda', 'routine',
+    'Retrait d''implant difficile', null, null);
+end $$;
+reset role;
+
+-- Référence d'il y a 20 jours (écrite directement : la base n'antidate rien).
+set local session_replication_role = replica;
+update public.referrals r set referred_at = r.referred_at - interval '20 days'
+  from public.patients p
+ where p.id = r.patient_id and p.last_name = 'DOC' and p.first_name = 'Ancienne';
+set local session_replication_role = origin;
+
+commit;

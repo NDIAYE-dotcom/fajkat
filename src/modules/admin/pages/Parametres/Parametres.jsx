@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import Tabs from '../../../../components/ui/Tabs/Tabs.jsx'
 import { useAuth } from '../../../../hooks/useAuth.js'
-import { useFeature } from '../../../../hooks/useFeature.js'
+import { useFeatures } from '../../../../hooks/useFeature.js'
 import { useOrganization } from '../../../../hooks/useOrganization.js'
 import { useToast } from '../../../../hooks/useToast.js'
 import { cleStructures } from '../../../../lib/structures.js'
@@ -14,7 +14,9 @@ import EtapeEquipe from '../../components/EtapeEquipe/EtapeEquipe.jsx'
 import EtapeIdentite from '../../components/EtapeIdentite/EtapeIdentite.jsx'
 import EtapeServices from '../../components/EtapeServices/EtapeServices.jsx'
 import EtapeTiersPayants from '../../components/EtapeTiersPayants/EtapeTiersPayants.jsx'
+import ReglagesCertificats from '../../../consultations/components/ReglagesCertificats/ReglagesCertificats.jsx'
 import ReglagesOrdonnance from '../../../consultations/components/ReglagesOrdonnance/ReglagesOrdonnance.jsx'
+import ReglagesReferences from '../../../consultations/components/ReglagesReferences/ReglagesReferences.jsx'
 import { useDemarrage } from '../../useDemarrage.js'
 import './Parametres.css'
 
@@ -39,6 +41,22 @@ const ONGLETS = [
     horsDemarrage: true,
     feature: 'consultations',
   },
+  {
+    id: 'certificats',
+    libelle: 'Certificats',
+    Composant: ReglagesCertificats,
+    cle: cles.fiche,
+    horsDemarrage: true,
+    feature: 'consultations',
+  },
+  {
+    id: 'references',
+    libelle: 'Références',
+    Composant: ReglagesReferences,
+    cle: cles.fiche,
+    horsDemarrage: true,
+    feature: 'references',
+  },
 ]
 
 export default function Parametres() {
@@ -53,10 +71,8 @@ function PageParametres() {
   const { structure } = useOrganization()
   const { utilisateur } = useAuth()
   const { onboarding, marquer, enregistrerReglages } = useDemarrage()
-  const consultations = useFeature('consultations').actif
-  const onglets = ONGLETS.filter(
-    (o) => !o.feature || (o.feature === 'consultations' && consultations),
-  )
+  const { features } = useFeatures()
+  const onglets = ONGLETS.filter((o) => !o.feature || features.includes(o.feature))
   const queryClient = useQueryClient()
   const toast = useToast()
   const [parametres, setParametres] = useSearchParams()

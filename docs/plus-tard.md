@@ -40,7 +40,20 @@ Pendant une étape, on corrige seulement les bugs. Toute idée d'amélioration e
 - **Étape 31 (super-admin) : gérer les référentiels communs des formes (`drug_forms`) et des voies d'administration (`drug_routes`)** : ajout, renommage, désactivation (is_active), sans suppression ; listes communes à toutes les structures. Partie D.
 - ~~Qualité du praticien sur l'ordonnance~~ — **réglé** (migration `20261020160000_etape14f_rdv_passes.sql`) : « Fonction » de la fiche du personnel, sinon titre du profil, imprimée sous le nom du praticien. Mise en page définitive à l'étape 21.
 - **Ajouter une ordonnance à une consultation déjà validée** (oubli, renouvellement) : la base le permet (add_prescription), l'écran pas encore. Partie D.
+- **Étape 22 (signature et cachet) : QR de vérification des certificats** sur la page publique Verifier : le QR imprimé sur le certificat mène à une page qui confirme le numéro (CERT-2026-0001), la structure et la date d'émission, sans le texte ni le nom du patient. Partie E.
+- **Ajouter un avenant à un certificat émis par erreur** : aujourd'hui un certificat émis ne se modifie plus et ne s'annule pas ; prévoir une annulation motivée (le numéro reste pris, la vérification par QR affiche « annulé »). Partie E.
+- **Lettre de référence de plusieurs pages** : un résumé très long pousse le coupon de contre-référence en page 2 ; la bande pliée de la page 1 reste correcte. Mise en page définitive à l'étape 21. Partie E.
+- **Étape 21 : accorder « jour » / « jours » dans le certificat de repos** (« repos de 1 jour », « repos de 3 jours » au lieu de « 3 jour(s) »), d'après le nombre saisi. D'ici là, le texte reste corrigeable à la main avant l'émission. Partie E.
+- **Prévenir le référent quand la contre-référence est saisie** (notification) et relancer les références en retard sur la Journée du jour. Partie E.
 - **Ordonnance depuis le catalogue de la pharmacie** avec le stock visible : étape 17 (clé étrangère sur `prescription_items.product_id`, contrôle du produit dans `encounter_insert_prescription`, lecture de l'ordonnance sans diagnostic par le pharmacien).
+
+## Offre Clinique, après le pilote
+
+- **Téléconsultation** (idée, rien n'est codé) :
+  - Niveau 1 : type de rendez-vous « Téléconsultation », paiement avant l'appel, lien vidéo envoyé par WhatsApp, consultation saisie comme d'habitude, ordonnance PDF signée avec QR (étapes 10, 22, 23-24).
+  - Niveau 2 : vidéo intégrée à Fajkat (nouvelle dépendance à valider), avec repli en audio seul quand la connexion est faible.
+  - À vérifier avant tout : cadre légal de la téléconsultation au Sénégal, consentement du patient, déclaration à la CDP.
+  - Variante Poste de santé : téléexpertise de l'ICP vers le médecin du district.
 
 ## Hébergement
 

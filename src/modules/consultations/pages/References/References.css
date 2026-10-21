@@ -1,0 +1,17 @@
+.references {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-4);
+  max-width: 80rem;
+}
+
+.references__titre {
+  margin: 0;
+  font-size: var(--titre-2);
+  color: var(--primaire);
+}
+
+.references__aide {
+  margin: 0;
+  color: var(--encre-douce);
+}

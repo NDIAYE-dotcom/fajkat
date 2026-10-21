@@ -1,0 +1,5 @@
+.reglages-references {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-6);
+}
