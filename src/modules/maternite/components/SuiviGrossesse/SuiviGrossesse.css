@@ -72,13 +72,3 @@
   flex-direction: column;
   gap: var(--esp-3);
 }
-
-.suivi-grossesse__retrait {
-  display: flex;
-  flex-direction: column;
-  gap: var(--esp-4);
-}
-
-.suivi-grossesse__retrait p {
-  margin: 0;
-}

@@ -10,6 +10,7 @@ import { useEnLigne } from '../../../../hooks/useEnLigne.js'
 import { useOrganization } from '../../../../hooks/useOrganization.js'
 import { useToast } from '../../../../hooks/useToast.js'
 import LectureCpn from '../../../maternite/components/LectureCpn/LectureCpn.jsx'
+import LectureSoinsCpn from '../../../maternite/components/LectureSoinsCpn/LectureSoinsCpn.jsx'
 import FeatureRoute from '../../../../router/guards/FeatureRoute/FeatureRoute.jsx'
 import RoleRoute from '../../../../router/guards/RoleRoute/RoleRoute.jsx'
 import { entreeDepuisChemin, offresDeLEntree } from '../../../../router/navigation.js'
@@ -185,6 +186,7 @@ function VueValidee({ consultation: c, cpn, patient, ecrire, references, recharg
         </p>
         <LectureConsultation consultation={c} patient={patient} imprimer={ecrire} />
         {cpn && ecrire && <LectureCpn consultationId={c.id} />}
+        {cpn && ecrire && <LectureSoinsCpn consultationId={c.id} />}
         {ecrire && (
           <DocumentsConsultation
             consultation={c}

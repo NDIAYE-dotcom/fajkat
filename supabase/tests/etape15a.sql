@@ -459,15 +459,18 @@ begin
   perform set_config('request.jwt.claims',
     '{"sub": "00000000-0000-4000-a15a-00000000000b", "role": "authenticated"}', true);
   v_gb := public.open_pregnancy(v_b, 'lmp', current_setting('test.jour')::date - 30, null, null, null, 1, 0, 0);
-  perform pg_temp.refus(format($q$update public.patients set merged_into_id = %L, deleted_at = now() where id = %L$q$,
-    v_f, v_b), '22023', 'deux dossiers ont une grossesse en cours');
-  perform public.remove_pregnancy(v_gb, 'Doublon');
+  -- Deux grossesses en cours : plus aucun refus depuis l'étape 15 B2 (détail testé dans
+  -- etape15b2.sql) ; une seule reste en cours, l'autre est retirée « Doublon après fusion ».
   update public.patients set merged_into_id = v_f, deleted_at = now() where id = v_b;
   if exists (select 1 from public.pregnancies where patient_id = v_b)
-     or (select count(*) from public.pregnancies where patient_id = v_f) <> 3 then
+     or (select count(*) from public.pregnancies where patient_id = v_f) <> 3
+     or (select count(*) from public.pregnancies
+          where patient_id = v_f and status = 'ongoing' and deleted_at is null) <> 1
+     or not exists (select 1 from public.pregnancies
+                     where patient_id = v_f and removed_reason = 'Doublon après fusion') then
     raise exception 'ÉCHEC : grossesses non rattachées au dossier gardé';
   end if;
-  raise notice 'OK : fusion : deux grossesses en cours refusées, grossesses rattachées au dossier gardé';
+  raise notice 'OK : fusion : deux grossesses en cours réunies sans refus, grossesses rattachées au dossier gardé';
 end $$;
 
 rollback;

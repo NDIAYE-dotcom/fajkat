@@ -22,6 +22,8 @@ import './LigneOrdonnance.css'
 // Une ligne de l'ordonnance en saisie. Clavier : Entrée passe à la case suivante, et crée
 // la ligne suivante depuis la dernière case ; « 1-0-1 » tapé dans une case de posologie
 // se répartit sur les cases suivantes à la sortie de la case.
+//   bloquee : message si la ligne correspond à un soin bloqué par une situation de la
+//   grossesse (SP sous cotrimoxazole) : ligne en rouge, « Retirer la ligne » ;
 //   onChange(champs) : champs modifiés ({ saisies: { matin: '1' } }, { form_code }…).
 export default function LigneOrdonnance({
   ligne: l,
@@ -31,6 +33,7 @@ export default function LigneOrdonnance({
   formes,
   voies,
   erreurs = {},
+  bloquee,
   desactive,
   refNom,
   onChange,
@@ -72,7 +75,23 @@ export default function LigneOrdonnance({
   if (l.form && !forme) formesOptions.unshift({ valeur: '', libelle: l.form })
 
   return (
-    <li className="ligne-ordonnance" onKeyDown={surTouche}>
+    <li
+      className={`ligne-ordonnance${bloquee ? ' ligne-ordonnance--bloquee' : ''}`}
+      onKeyDown={surTouche}
+    >
+      {bloquee && (
+        <div className="ligne-ordonnance__blocage" role="alert">
+          <p>{bloquee}</p>
+          <Button
+            variante="secondaire"
+            iconeDebut={<Icone icone={Trash2} />}
+            disabled={desactive}
+            onClick={onSupprimer}
+          >
+            Retirer la ligne
+          </Button>
+        </div>
+      )}
       <div className="ligne-ordonnance__entete">
         <span className="ligne-ordonnance__numero" aria-hidden="true">
           {index + 1}

@@ -1,7 +1,8 @@
 // Accès aux données de la maternité (étape 15, feature maternite). Partie A : suivi de
 // grossesse (ouverture, datations, gestité / parité, groupe sanguin, retrait) et réglages
 // de la structure. Partie B1 : CPN (section de la consultation, tableau, CPN faite
-// ailleurs, bilan), modèle de CPN et listes de la structure. Le suivi ne se lit que par des fonctions de la base : elle refuse
+// ailleurs, bilan), modèle de CPN et listes de la structure. Partie B2 : soins, Td,
+// conseils, examens de la grossesse (habilités), résultats d'un laboratoire extérieur. Le suivi ne se lit que par des fonctions de la base : elle refuse
 // l'accueil, le caissier, le comptable et l'owner qui n'exerce pas.
 
 import { estErreurReseau, MESSAGE_INDISPONIBLE, traduireErreur } from '../../lib/erreursAuth.js'
@@ -24,6 +25,10 @@ export const cles = {
   cpnConsultation: (consultationId) => ['maternite', 'cpn-consultation', consultationId],
   cpn: (grossesseId) => ['maternite', 'cpn', grossesseId],
   bilanCpn: (grossesseId) => ['maternite', 'bilan-cpn', grossesseId],
+  soinsConsultation: (consultationId) => ['maternite', 'soins-consultation', consultationId],
+  soins: (grossesseId) => ['maternite', 'soins', grossesseId],
+  examens: (grossesseId) => ['maternite', 'examens', grossesseId],
+  typesSoins: (orgId) => ['maternite', 'types-soins', orgId],
 }
 
 // Refus métier (22023, 42501 levés par nos fonctions) : message de la base, en français.
@@ -307,5 +312,145 @@ export function retirerCpnAilleurs(id, motif) {
     'remove_external_anc_visit',
     { p_anc_visit_id: id, p_reason: motif },
     'La CPN n’a pas pu être retirée.',
+  )
+}
+
+// --- Soins, Td, examens (partie B2) -----------------------------------------------------
+
+// Identifiant créé sur l'appareil : un envoi répété (coupure, double clic) ne crée rien.
+export function nouvelIdentifiant() {
+  if (globalThis.crypto?.randomUUID) return globalThis.crypto.randomUUID()
+  const o = globalThis.crypto.getRandomValues(new Uint8Array(16))
+  o[6] = (o[6] & 0x0f) | 0x40
+  o[8] = (o[8] & 0x3f) | 0x80
+  const h = [...o].map((x) => x.toString(16).padStart(2, '0')).join('')
+  return `${h.slice(0, 8)}-${h.slice(8, 12)}-${h.slice(12, 16)}-${h.slice(16, 20)}-${h.slice(20)}`
+}
+
+// Types de soins de la structure et leurs règles (paramètres, sans donnée de patient) :
+// la situation qui bloque un soin se vérifie aussi pendant la saisie, avant la base.
+export async function chargerTypesSoins(orgId) {
+  const { data, error } = await client()
+    .from('maternal_intervention_types')
+    .select(
+      'id, template_code, label, blocked_by_condition, block_message, prescription, is_active',
+    )
+    .eq('org_id', orgId)
+    .is('deleted_at', null)
+    .order('sort_order')
+  if (error) throw traduireErreur(error, 'Les soins de la structure n’ont pas pu être lus.')
+  return data ?? []
+}
+
+// Section Soins de la CPN (habilités) : situations, soins avec blocage, thèmes, Td ; given
+// pour une consultation validée.
+export function chargerSoinsConsultation(consultationId) {
+  return appeler(
+    'get_encounter_anc_care',
+    { p_encounter_id: consultationId },
+    'Les soins de la CPN n’ont pas pu être lus.',
+  )
+}
+
+// Onglet Grossesse : soins, Td, et conseils pour les habilités seulement.
+export function chargerSoinsGrossesse(grossesseId) {
+  return appeler(
+    'get_anc_care',
+    { p_pregnancy_id: grossesseId },
+    'Les soins de la grossesse n’ont pas pu être lus.',
+  )
+}
+
+export function noterSoinAilleurs(grossesseId, typeId, date, lieu, note, identifiant) {
+  return appeler(
+    'add_external_intervention',
+    {
+      p_pregnancy_id: grossesseId,
+      p_type_id: typeId,
+      p_given_on: date || null,
+      p_place: lieu || null,
+      p_note: note || null,
+      p_client_id: identifiant,
+    },
+    'Le soin n’a pas pu être noté.',
+  )
+}
+
+export function retirerSoinAilleurs(id, motif) {
+  return appeler(
+    'remove_external_intervention',
+    { p_id: id, p_reason: motif },
+    'Le soin n’a pas pu être retiré.',
+  )
+}
+
+// Td d'après le carnet : date exacte, au mois ou à l'année (ramenée au premier jour par la
+// base, précision gardée pour l'affichage).
+export function noterTdCarnet(patientId, rang, date, precision, lieu, note, identifiant) {
+  return appeler(
+    'add_immunization_from_card',
+    {
+      p_patient_id: patientId,
+      p_vaccine_code: 'td',
+      p_dose_rank: rang,
+      p_given_on: date,
+      p_date_precision: precision,
+      p_place: lieu || null,
+      p_note: note || null,
+      p_client_id: identifiant,
+    },
+    'La dose n’a pas pu être notée.',
+  )
+}
+
+export function annulerDose(id, motif) {
+  return appeler(
+    'void_immunization',
+    { p_id: id, p_reason: motif },
+    'La dose n’a pas pu être annulée.',
+  )
+}
+
+// Examens de la grossesse (habilités) : une ligne de journal par ouverture de l'écran.
+export function chargerExamensGrossesse(grossesseId, ouverture) {
+  return appeler(
+    'get_pregnancy_tests',
+    { p_pregnancy_id: grossesseId, p_opening_id: ouverture },
+    'Les examens de la grossesse n’ont pas pu être lus.',
+  )
+}
+
+// r : { rapid_test_type_id, taken_on, lab_name, result, value_number, value_text, note }.
+export function noterResultatExterieur(grossesseId, r, identifiant) {
+  return appeler(
+    'add_external_test_result',
+    {
+      p_pregnancy_id: grossesseId,
+      p_rapid_test_type_id: r.rapid_test_type_id,
+      p_taken_on: r.taken_on,
+      p_lab_name: r.lab_name,
+      p_result: r.result || null,
+      p_value_number: r.value_number ?? null,
+      p_value_text: r.value_text || null,
+      p_note: r.note || null,
+      p_client_id: identifiant,
+    },
+    'Le résultat n’a pas pu être noté.',
+  )
+}
+
+export function retirerResultatExterieur(id, motif) {
+  return appeler(
+    'remove_external_test_result',
+    { p_id: id, p_reason: motif },
+    'Le résultat n’a pas pu être retiré.',
+  )
+}
+
+export function confirmerDatation(grossesseId) {
+  return appeler(
+    'confirm_pregnancy_dating',
+    { p_pregnancy_id: grossesseId },
+    'La vérification n’a pas pu être enregistrée.',
   )
 }

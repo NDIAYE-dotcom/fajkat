@@ -1,0 +1,15 @@
+.champs-resultat {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+  gap: var(--esp-3) var(--esp-4);
+}
+
+.champs-resultat__large {
+  grid-column: 1 / -1;
+}
+
+.champs-resultat__radios {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--esp-2) var(--esp-4);
+}

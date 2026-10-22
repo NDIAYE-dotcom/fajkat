@@ -2,26 +2,29 @@ import { useQueryClient } from '@tanstack/react-query'
 import { CalendarPlus, Pencil, Undo2 } from 'lucide-react'
 import { useState } from 'react'
 import Button from '../../../../components/ui/Button/Button.jsx'
-import Field from '../../../../components/ui/Field/Field.jsx'
 import Icone from '../../../../components/ui/Icone/Icone.jsx'
 import Message from '../../../../components/ui/Message/Message.jsx'
-import Modal from '../../../../components/ui/Modal/Modal.jsx'
 import Skeleton from '../../../../components/ui/Skeleton/Skeleton.jsx'
-import Textarea from '../../../../components/ui/Textarea/Textarea.jsx'
 import { useEnLigne } from '../../../../hooks/useEnLigne.js'
 import { useToast } from '../../../../hooks/useToast.js'
 import { formatDate } from '../../../../lib/format.js'
 import { cles, retenirDatation, retirerGrossesse } from '../../api.js'
 import { formatGPE, formatSA, LIBELLES_DATATION } from '../../grossesse.js'
 import { useGrossesse } from '../../hooks/useMaternite.js'
+import ExamensGrossesse from '../ExamensGrossesse/ExamensGrossesse.jsx'
 import HistoriqueDatations from '../HistoriqueDatations/HistoriqueDatations.jsx'
 import ModaleDatation from '../ModaleDatation/ModaleDatation.jsx'
+import ModaleMotif from '../ModaleMotif/ModaleMotif.jsx'
 import ModaleObstetrique from '../ModaleObstetrique/ModaleObstetrique.jsx'
+import RepereDatationFusion from '../RepereDatationFusion/RepereDatationFusion.jsx'
+import SoinsGrossesse from '../SoinsGrossesse/SoinsGrossesse.jsx'
 import TableauCpn from '../TableauCpn/TableauCpn.jsx'
 import './SuiviGrossesse.css'
 
 // Grossesse en cours : terme du jour (calculé par la base), DPA, datation retenue, gestité,
-// parité, groupe sanguin ; datations, corrections et retrait pour les soignants qui écrivent.
+// parité, groupe sanguin ; CPN, soins et Td ; datations, corrections et retrait pour les
+// soignants qui écrivent. Soignants habilités seulement (ecrire) : examens de la grossesse
+// et repère « Datation à vérifier » ; pour les autres ces blocs n'existent pas à l'écran.
 export default function SuiviGrossesse({ id, patientId, ecrire, reglages }) {
   const queryClient = useQueryClient()
   const toast = useToast()
@@ -35,8 +38,9 @@ export default function SuiviGrossesse({ id, patientId, ecrire, reglages }) {
     Promise.all([
       queryClient.invalidateQueries({ queryKey: cles.grossesse(id) }),
       queryClient.invalidateQueries({ queryKey: cles.grossessesPatiente(patientId) }),
-      // Une nouvelle datation change le terme des CPN à venir et le bilan.
+      // Une nouvelle datation change le terme des CPN à venir, le bilan et les soins.
       queryClient.invalidateQueries({ queryKey: cles.bilanCpn(id) }),
+      queryClient.invalidateQueries({ queryKey: cles.soins(id) }),
     ])
 
   if (requete.isPending) return <Skeleton forme="bloc" hauteur="10rem" />
@@ -132,7 +136,21 @@ export default function SuiviGrossesse({ id, patientId, ecrire, reglages }) {
         )}
       </div>
 
+      {g.dating_review_since && (
+        <RepereDatationFusion
+          grossesse={g}
+          onVerifiee={async () => {
+            await relire()
+            toast.succes('Datation vérifiée')
+          }}
+        />
+      )}
+
       <TableauCpn grossesseId={g.id} ecrire={ecrire} />
+
+      <SoinsGrossesse grossesseId={g.id} patientId={patientId} ecrire={ecrire} />
+
+      {ecrire && <ExamensGrossesse grossesseId={g.id} />}
 
       <section className="suivi-grossesse__section" aria-labelledby="suivi-datations">
         <h3 id="suivi-datations" className="suivi-grossesse__sous-titre">
@@ -167,81 +185,19 @@ export default function SuiviGrossesse({ id, patientId, ecrire, reglages }) {
         />
       )}
       {fenetre === 'retrait' && (
-        <ModaleRetrait
-          grossesse={g}
+        // Suivi ouvert par erreur : retiré avec un motif, jamais effacé.
+        <ModaleMotif
+          titre="Retirer ce suivi de grossesse ?"
+          texte="À faire seulement pour un suivi ouvert par erreur (mauvais dossier, grossesse non confirmée). Il n’est jamais effacé : le journal du dossier le garde."
+          action="Retirer"
+          aideMotif="Indiquez pourquoi ce suivi est retiré."
           onFermer={() => setFenetre(null)}
-          onRetiree={() => apres('Suivi de grossesse retiré')}
+          onConfirmer={async (motif) => {
+            await retirerGrossesse(g.id, motif)
+            await apres('Suivi de grossesse retiré')
+          }}
         />
       )}
     </section>
-  )
-}
-
-// Suivi ouvert par erreur : retiré avec un motif, jamais effacé (le journal le garde).
-function ModaleRetrait({ grossesse, onFermer, onRetiree }) {
-  const enLigne = useEnLigne()
-  const [motif, setMotif] = useState('')
-  const [erreur, setErreur] = useState(null)
-  const [envoi, setEnvoi] = useState(false)
-  const [echec, setEchec] = useState(null)
-
-  async function retirer() {
-    if (motif.trim().length < 3) {
-      setErreur('Indiquez pourquoi ce suivi est retiré.')
-      document.getElementById('retrait-grossesse-motif')?.focus()
-      return
-    }
-    setEnvoi(true)
-    setEchec(null)
-    try {
-      await retirerGrossesse(grossesse.id, motif.trim())
-      onRetiree()
-    } catch (e) {
-      setEchec(e.message)
-    } finally {
-      setEnvoi(false)
-    }
-  }
-
-  return (
-    <Modal
-      ouvert
-      onFermer={onFermer}
-      fermerSurVoile={false}
-      titre="Retirer ce suivi de grossesse ?"
-      actions={
-        <>
-          <Button variante="secondaire" onClick={onFermer} disabled={envoi}>
-            Garder
-          </Button>
-          <Button chargement={envoi} disabled={!enLigne} onClick={retirer}>
-            Retirer
-          </Button>
-        </>
-      }
-    >
-      <div className="suivi-grossesse__retrait">
-        <p>
-          À faire seulement pour un suivi ouvert par erreur (mauvais dossier, grossesse non
-          confirmée). Il n’est jamais effacé : le journal du dossier le garde.
-        </p>
-        <Field id="retrait-grossesse-motif" label="Motif" requis erreur={erreur}>
-          <Textarea
-            rows={2}
-            maxLength={300}
-            value={motif}
-            onChange={(e) => {
-              setMotif(e.target.value)
-              setErreur(null)
-            }}
-          />
-        </Field>
-        {echec && (
-          <Message ton="erreur" titre="Suivi non retiré">
-            <p>{echec}</p>
-          </Message>
-        )}
-      </div>
-    </Modal>
   )
 }

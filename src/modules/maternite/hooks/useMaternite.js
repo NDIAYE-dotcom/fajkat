@@ -1,8 +1,14 @@
 import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import { useFeature } from '../../../hooks/useFeature.js'
+import { useOuverture } from '../../consultations/hooks/useConsultation.js'
+import { lignesBloquees, situationsCochees } from '../soins.js'
 import {
   chargerBilanCpn,
   chargerCpnConsultation,
+  chargerExamensGrossesse,
+  chargerSoinsConsultation,
+  chargerSoinsGrossesse,
+  chargerTypesSoins,
   chargerGrossesse,
   chargerModelesCpn,
   chargerOptionsCpn,
@@ -117,4 +123,62 @@ export function useBilanCpn(grossesseId) {
     enabled: Boolean(grossesseId),
     gcTime: 0,
   })
+}
+
+// --- Soins, Td, examens (partie B2) -------------------------------------------------------
+
+export function useSoinsConsultation(consultationId, actif) {
+  return useQuery({
+    queryKey: cles.soinsConsultation(consultationId),
+    queryFn: () => chargerSoinsConsultation(consultationId),
+    enabled: Boolean(consultationId) && actif,
+    gcTime: 0,
+  })
+}
+
+export function useTypesSoins(orgId, actif = true) {
+  return useQuery({
+    queryKey: cles.typesSoins(orgId),
+    queryFn: () => chargerTypesSoins(orgId),
+    enabled: Boolean(orgId) && actif,
+    staleTime: 10 * 60 * 1000,
+  })
+}
+
+export function useSoinsGrossesse(grossesseId) {
+  return useQuery({
+    queryKey: cles.soins(grossesseId),
+    queryFn: () => chargerSoinsGrossesse(grossesseId),
+    enabled: Boolean(grossesseId),
+    gcTime: 0,
+  })
+}
+
+// Habilités seulement. Le même identifiant d'ouverture tant que l'écran reste ouvert :
+// les rechargements (retour sur l'onglet…) ne font pas de nouvelle ligne de journal.
+export function useExamensGrossesse(grossesseId, actif) {
+  const ouverture = useOuverture()
+  return useQuery({
+    queryKey: cles.examens(grossesseId),
+    queryFn: () => chargerExamensGrossesse(grossesseId, ouverture),
+    enabled: Boolean(grossesseId) && actif,
+    gcTime: 0,
+  })
+}
+
+// Lignes de l'ordonnance d'une consultation en brouillon qui correspondent à un soin bloqué
+// par une situation (SP sous cotrimoxazole) : { [cle]: message }. Pour une CPN, les
+// situations cochées dans la CPN ; pour toute autre consultation (fièvre…), celles en
+// cours de la grossesse. Vide sans la feature maternité.
+export function useLignesBloquees(orgId, consultationId, estCpn, maternite, ordonnance) {
+  const actif = useFeature('maternite').actif
+  const types = useTypesSoins(orgId, actif)
+  const soins = useSoinsConsultation(consultationId, actif)
+  if (!actif || !soins.data?.pregnancy_id) return {}
+  const enCours = (soins.data.conditions ?? []).filter((x) => x.active).map((x) => x.code)
+  return lignesBloquees(
+    ordonnance,
+    types.data,
+    estCpn ? situationsCochees(maternite, soins.data.conditions) : enCours,
+  )
 }

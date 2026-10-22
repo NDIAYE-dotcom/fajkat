@@ -7,8 +7,15 @@ import Select from '../../../../components/ui/Select/Select.jsx'
 import Textarea from '../../../../components/ui/Textarea/Textarea.jsx'
 import { useEnLigne } from '../../../../hooks/useEnLigne.js'
 import SectionCpn from '../../../maternite/components/SectionCpn/SectionCpn.jsx'
+import SectionSoinsCpn from '../../../maternite/components/SectionSoinsCpn/SectionSoinsCpn.jsx'
 import { caseCpnDuMessage, verifierCpn } from '../../../maternite/cpn.js'
-import { useCpnConsultation } from '../../../maternite/hooks/useMaternite.js'
+import {
+  useCpnConsultation,
+  useLignesBloquees,
+  useSoinsConsultation,
+} from '../../../maternite/hooks/useMaternite.js'
+import { useMotifCpn } from '../../../maternite/hooks/useMotifCpn.js'
+import { soinsSensibles, verifierSoins } from '../../../maternite/soins.js'
 import { useSauvegardeConsultation } from '../../hooks/useSauvegardeConsultation.js'
 import { contenuConsultation } from '../../documents.js'
 import { avertissementsOrdonnance, ligneVide, ordonnancePourValidation } from '../../ordonnance.js'
@@ -54,6 +61,16 @@ export default function SaisieConsultation({
   // Consultation prénatale : section CPN (étape 15), recopiée par la base à la validation.
   const estCpn = type?.template_code === 'cpn'
   const cpn = useCpnConsultation(consultation.id, estCpn)
+  const soins = useSoinsConsultation(consultation.id, estCpn)
+  // SP sous cotrimoxazole : ligne en rouge, validation refusée (la base refait le contrôle).
+  const bloquees = useLignesBloquees(orgId, consultation.id, estCpn, c.maternite, c.prescription)
+  const nbBloquees = Object.keys(bloquees).length
+  useMotifCpn(
+    estCpn && !bloque && Boolean(cpn.data?.pregnancy),
+    cpn.data?.anc_number,
+    c.reason,
+    (v) => s.setContenu((p) => ({ ...p, reason: v })),
+  )
   const declarations = declarationsImmediates(c)
   // Sensible d'office (type, diagnostic ou examen sensible) : la base le fera aussi au
   // prochain enregistrement, et une consultation sensible le reste.
@@ -61,7 +78,8 @@ export default function SaisieConsultation({
     s.sensible ||
     Boolean(type?.is_sensitive_default) ||
     c.diagnoses.some((d) => d.is_sensitive) ||
-    c.tests.some((t) => examens.find((e) => e.id === t.rapid_test_type_id)?.is_sensitive)
+    c.tests.some((t) => examens.find((e) => e.id === t.rapid_test_type_id)?.is_sensitive) ||
+    (estCpn && soinsSensibles(c.maternite, examens))
   const sensible = sensibleAuto || c.is_sensitive
   const medicaments = c.prescription.items.filter((l) => !ligneVide(l)).length
 
@@ -77,17 +95,21 @@ export default function SaisieConsultation({
     }
     const trouvees = verifier(c, examens)
     if (estCpn) {
-      const m = verifierCpn(c.maternite)
+      const m = {
+        ...verifierCpn(c.maternite),
+        ...verifierSoins(c.maternite, soins.data?.conditions),
+      }
       if (cpn.data && !cpn.data.pregnancy) {
         m.grossesse =
           'Ouvrez le suivi de grossesse avant de valider la CPN, ou changez le type de consultation.'
       }
       if (Object.keys(m).length) trouvees.maternite = m
     }
+    if (nbBloquees) trouvees.ordonnanceBloquee = true
     setErreurs(trouvees)
     if (Object.keys(trouvees).length) {
       const premier = document.querySelector(
-        `#${ID} [aria-invalid='true'], #${ID} .message--erreur`,
+        `#${ID} [aria-invalid='true'], #${ID} .message--erreur, #${ID} .ligne-ordonnance--bloquee`,
       )
       premier?.scrollIntoView({ block: 'center' })
       if (premier?.focus) premier.focus()
@@ -198,6 +220,19 @@ export default function SaisieConsultation({
             onChange={(v) => maj('maternite', v)}
           />
         )}
+        {estCpn && (
+          <SectionSoinsCpn
+            consultation={consultation}
+            orgId={orgId}
+            valeur={c.maternite}
+            erreurs={erreurs.maternite}
+            desactive={bloque}
+            onChange={(v) => maj('maternite', v)}
+            ordonnance={c.prescription}
+            onOrdonnance={(v) => maj('prescription', v)}
+            examens={examens}
+          />
+        )}
 
         <SectionConsultation titre="Examen clinique" resume={c.examination ? 'Saisi' : 'À saisir'}>
           {champTexte('examination', 'Examen clinique', 4)}
@@ -237,7 +272,7 @@ export default function SaisieConsultation({
             label="Consultation sensible"
             description={
               sensibleAuto
-                ? 'Sensible d’office (type, diagnostic ou examen sensible) : elle le restera.'
+                ? 'Sensible d’office (type, diagnostic, examen ou situation sensible) : elle le restera.'
                 : 'Réservée aux soignants habilités ; chaque lecture est enregistrée. Une consultation sensible le reste.'
             }
             checked={sensible}
@@ -249,12 +284,13 @@ export default function SaisieConsultation({
         <SectionConsultation
           titre="Ordonnance"
           resume={medicaments ? pluriel(medicaments, 'médicament') : 'Aucune'}
-          alerte={Boolean(erreurs.prescription)}
+          alerte={Boolean(erreurs.prescription) || nbBloquees > 0}
         >
           <Ordonnance
             orgId={orgId}
             valeur={c.prescription}
             erreurs={erreurs.prescription}
+            bloquees={bloquees}
             desactive={bloque}
             onChange={(v) => maj('prescription', v)}
           />

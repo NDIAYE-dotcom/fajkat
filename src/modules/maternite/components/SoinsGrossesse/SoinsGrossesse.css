@@ -1,0 +1,67 @@
+.soins-grossesse {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-3);
+}
+
+.soins-grossesse__entete {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--esp-3);
+}
+
+.soins-grossesse__titre {
+  margin: 0;
+  font-family: var(--police-titre);
+  font-size: var(--texte-m);
+  color: var(--primaire);
+}
+
+.soins-grossesse__etats,
+.soins-grossesse__liste {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.soins-grossesse__etat,
+.soins-grossesse__ligne {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--esp-1) var(--esp-3);
+  padding: var(--esp-2) 0;
+  border-bottom: 1px solid var(--doux);
+}
+
+.soins-grossesse__ligne {
+  align-items: center;
+}
+
+.soins-grossesse__nom {
+  font-weight: 700;
+  color: var(--encre);
+  overflow-wrap: break-word;
+}
+
+.soins-grossesse__doux {
+  font-size: var(--texte-s);
+  color: var(--encre-douce);
+}
+
+.soins-grossesse__chiffres {
+  font-family: var(--police-mono);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.soins-grossesse__note {
+  flex-basis: 100%;
+  font-size: var(--texte-s);
+  color: var(--encre);
+  overflow-wrap: break-word;
+}

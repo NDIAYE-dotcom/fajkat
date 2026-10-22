@@ -102,3 +102,23 @@
   font-weight: 700;
   color: var(--encre);
 }
+
+.ligne-ordonnance--bloquee {
+  border-color: var(--tampon);
+  border-left-color: var(--tampon);
+}
+
+.ligne-ordonnance__blocage {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--esp-2) var(--esp-3);
+  color: var(--tampon);
+  font-weight: 700;
+}
+
+.ligne-ordonnance__blocage p {
+  flex: 1 1 14rem;
+  margin: 0;
+}

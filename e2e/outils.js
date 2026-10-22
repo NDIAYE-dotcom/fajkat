@@ -176,3 +176,20 @@ export function relever(page, motif) {
   })
   return corps
 }
+
+// Texte d'un PDF, lu par PDFKit de macOS (osascript, JavaScript for Automation) : le PDF
+// est compressé et ses polices réduites, chercher un mot dans le fichier brut ne prouve
+// rien. Renvoie le texte tel qu'un lecteur PDF l'extrait.
+export function textePdf(chemin) {
+  const absolu = chemin.startsWith('/') ? chemin : `${process.cwd()}/${chemin}`
+  return execFileSync(
+    'osascript',
+    [
+      '-l',
+      'JavaScript',
+      '-e',
+      `ObjC.import('Quartz'); $.PDFDocument.alloc.initWithURL($.NSURL.fileURLWithPath(${JSON.stringify(absolu)})).string.js`,
+    ],
+    { encoding: 'utf8' },
+  )
+}

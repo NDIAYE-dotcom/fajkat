@@ -1,0 +1,9 @@
+.modale-motif {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-4);
+}
+
+.modale-motif p {
+  margin: 0;
+}

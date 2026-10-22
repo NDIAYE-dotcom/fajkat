@@ -8,7 +8,7 @@ Les migrations appliquées sur fajkat-dev ne se modifient jamais.
 | ------ | ----------------------------------------- | ----------------------------- |
 | A      | Grossesse, datation                       | faite (commit f19f671)        |
 | B1     | CPN : modèle, saisie, prochaine CPN       | faite (commit 15ac6d4)        |
-| B2     | CPN : traitements préventifs, Td, examens | à faire                       |
+| B2     | CPN : traitements préventifs, Td, examens | faite                         |
 | C      | Facteurs de risque, signes de danger      | à faire                       |
 | D      | Accouchement, partogramme, nouveau-nés    | à faire (rôle matrone inclus) |
 | E      | Certificat d'accouchement                 | à faire                       |
@@ -111,9 +111,49 @@ antécédents obstétricaux dans `medical_history`. Registre `audit_medical_tabl
   l'instant), `vaccine_doses` (rang, intervalle minimal), `immunizations` en ajout seul
   (origine « fait ici » ou « d'après le carnet », date approximative acceptée, annulation
   motivée). L'étape 16 ajoutera seulement le calendrier de l'enfant.
-- Examens : Hb, glycémie, syphilis, VIH par `encounter_tests` (VIH et syphilis sensibles) ;
-  groupage par `patient_medical`. VIH masqué à l'aide-soignant (« fait », sans résultat),
-  lecture journalisée.
+- Examens : Hb, glycémie, syphilis, VIH, hépatite B (AgHBs) par `encounter_tests` (liste
+  paramétrable `anc_tests`, à valider) et résultats d'un laboratoire extérieur
+  (`external_test_results` : date, laboratoire, « résultat externe ») ; groupe sanguin et
+  rhésus par `patient_medical`. Liste réservée en entier aux habilités (tout ou rien) ;
+  l'aide-soignant ne voit jamais les examens ni les diagnostics d'une CPN, ni à l'écran ni
+  dans l'API. Lecture journalisée si un résultat sensible est rendu.
+- **Décisions d'Ousmane (21/10/2026)** :
+  - âge gestationnel d'une CPN recalculé avec la datation retenue pour le bilan, « SA du
+    jour » figé sur la fiche ;
+  - vaccins lus par les rôles médicaux (aide-soignant compris), notés par les soignants qui
+    rédigent ; rien pour l'accueil, le caissier et l'owner ou l'admin qui n'exerce pas ;
+  - « Sous cotrimoxazole » : case de la CPN, situation de la grossesse
+    (`pregnancy_conditions`) qui rend la CPN sensible (pas d'autre journal que l'ouverture de
+    la CPN) ; blocage de la SP par une règle de la table des soins ; lue seulement dans
+    l'écran CPN des habilités. Pour tout non-habilité, et partout ailleurs, une femme sous
+    cotrimoxazole ressemble exactement à une femme qui n'a pas encore reçu la SP : même
+    statut TPI, mêmes alertes, jamais « bloqué » ;
+  - faits ailleurs : TPI (daté) et moustiquaire (case « déjà reçue ailleurs ») ; fer : une
+    note suffit ;
+  - Td : rang proposé d'office, date exacte, au mois ou à l'année ; lecture la plus prudente
+    (date ramenée au premier jour possible : dose suivante proposée au plus tôt, protection
+    finie au plus tôt) ; dose saisie par erreur annulée avec un motif, jamais supprimée ;
+  - envois répétés (coupure, double clic) sans doublon : identifiant créé sur l'appareil ;
+    « Ajouter à l'ordonnance » ajoute au brouillon une ligne à clé fixe par soin.
+  - « Sous cotrimoxazole » est une table à part (`pregnancy_conditions`), jamais une colonne
+    de `pregnancies` ; la décocher exige un motif (journalisé) ;
+  - Td à date approximative affiché à sa précision (« mars 2024 », « 2025 »), jamais comme un
+    jour exact ;
+  - AgHBs sensible comme le VIH et la syphilis ; un résultat extérieur sensible saisi pendant
+    une CPN la rend sensible ; examens journalisés une fois par ouverture de l'écran ;
+  - conseils donnés jamais visibles pour l'aide-soignant ;
+  - fusion de dossiers jamais refusée à cause d'une donnée médicale : dose de Td en double,
+    la plus fiable reste (faite ici avant le carnet, puis la date la plus précise), l'autre
+    est annulée « Doublon après fusion », journalisée, sans message.
+  - fusion de deux dossiers qui ont chacun une grossesse en cours, sans refus ni message :
+    une grossesse au-delà de sa DPA + N jours (`maternity_settings.overdue_closure_days`,
+    42 proposés, à valider) est une autre grossesse, terminée ailleurs, close avec le statut
+    `ended` (issue non renseignée) ; les deux au-delà : la plus ancienne est close. Sinon,
+    même grossesse saisie deux fois : la plus remplie est gardée, CPN, soins, conseils,
+    résultats extérieurs, situations et datations (historique) lui sont rattachés,
+    cotrimoxazole gardé si l'une l'a ; DDR différentes : repère « Datation à vérifier
+    (fusion) » pour les habilités dans l'onglet Grossesse, levé par « J'ai vérifié » ; l'autre
+    est retirée « Doublon après fusion », journalisée.
 
 ### C. Facteurs de risque et signes de danger
 
@@ -123,6 +163,9 @@ antécédents obstétricaux dans `medical_history`. Registre `audit_medical_tabl
 - `pregnancy_risks` (manuel ou automatique, retrait motivé). Tampon « GROSSESSE À RISQUE ».
 - Bandeau « Référence recommandée » → fenêtre de référence de l'étape 14 pré-remplie.
 - Facteur sensible jamais nommé à l'aide-soignant (tampon sans raison).
+- **Anémie de la grossesse** : hémoglobine sous 11 g/dL chez une femme enceinte = anémie,
+  seuil paramétrable dans la table, « à valider par une sage-femme » (demande d'Ousmane du
+  22/10/2026).
 
 ### D. Accouchement et nouveau-nés
 
@@ -187,6 +230,8 @@ antécédents obstétricaux dans `medical_history`. Registre `audit_medical_tabl
   (date et heure), accouchement, nouveau-nés, postnatal.
 - **Jamais de version imprimée avec les données sensibles** (VIH, PF, facteurs sensibles) :
   la mère emporte le carnet. Elles restent à l'écran pour les habilités.
+- **Conseils donnés jamais imprimés** dans le carnet (un thème comme la PTME ou la PF en dit
+  trop) ; ils restent à l'écran pour les habilités (décision du 21/10/2026).
 
 ### I. Tableau de bord maternité
 

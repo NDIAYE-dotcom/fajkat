@@ -4,7 +4,10 @@
 
 import { formatDate } from '../../lib/format.js'
 import { lireNombre } from '../consultations/utils.js'
-import { ajouterJours, formatSA } from './grossesse.js'
+import { prochaineApresBrouillon } from './bilan.js'
+import { formatSA } from './grossesse.js'
+
+export { bilanContacts, prochaineApresBrouillon } from './bilan.js'
 
 export const LISTES_CPN = [
   { code: 'presentation', libelle: 'Présentation', cle: 'presentation_option_id' },
@@ -105,29 +108,6 @@ export function texteProchaine(next) {
     `(${formatSA(next.target_ga_days)}), entre le ${formatDate(next.window_start_date)} ` +
     `et le ${formatDate(next.window_end_date)}.`
   )
-}
-
-// Prochaine CPN attendue si la CPN en cours de saisie (brouillon, pas encore comptée par la
-// base) est validée aujourd'hui : même règle que anc_status_compute, avec une CPN de plus.
-//   status : anc_status ; contacts : contacts du modèle de la grossesse ; gaJours : terme
-//   du jour ; aujourdhui : AAAA-MM-JJ. Renvoie la forme de status.next, ou null.
-export function prochaineApresBrouillon(status, contacts, gaJours, aujourdhui) {
-  if (!status || status.ga_days === null || status.ga_days === undefined) return null
-  const faites = status.done + 1
-  const c = [...(contacts ?? [])]
-    .sort((a, b) => a.contact_number - b.contact_number)
-    .find((x) => x.contact_number > faites && x.window_end_days >= gaJours)
-  if (!c) return null
-  const date = (jours) => ajouterJours(aujourdhui, jours - gaJours)
-  const cible = date(c.target_ga_days)
-  return {
-    contact_number: c.contact_number,
-    anc_number: faites + 1,
-    target_ga_days: c.target_ga_days,
-    target_date: cible > aujourdhui ? cible : aujourdhui,
-    window_start_date: date(c.window_start_days),
-    window_end_date: date(c.window_end_days),
-  }
 }
 
 // Prochaine CPN d'une consultation (réponse de get_encounter_anc) : celle de la base si la

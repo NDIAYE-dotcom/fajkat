@@ -1,0 +1,75 @@
+.vaccin-td {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-3);
+}
+
+.vaccin-td__entete {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--esp-3);
+}
+
+.vaccin-td__titre {
+  margin: 0;
+  font-family: var(--police-titre);
+  font-size: var(--texte-m);
+  color: var(--primaire);
+}
+
+.vaccin-td__bilan {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-1);
+  padding: var(--esp-3) var(--esp-4);
+  border-left: 4px solid var(--accent);
+  background: var(--surface);
+  border-radius: var(--rayon-panneau);
+}
+
+.vaccin-td__bilan p {
+  margin: 0;
+  color: var(--encre);
+}
+
+.vaccin-td__liste {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.vaccin-td__ligne {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--esp-1) var(--esp-3);
+  padding: var(--esp-2) 0;
+  border-bottom: 1px solid var(--doux);
+}
+
+.vaccin-td__dose {
+  font-weight: 700;
+  color: var(--encre);
+  white-space: nowrap;
+}
+
+.vaccin-td__chiffres {
+  font-family: var(--police-mono);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.vaccin-td__doux {
+  font-size: var(--texte-s);
+  color: var(--encre-douce);
+  overflow-wrap: break-word;
+}
+
+.vaccin-td__lot {
+  font-family: var(--police-mono);
+  white-space: nowrap;
+}

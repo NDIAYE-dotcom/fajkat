@@ -20,8 +20,16 @@ import './Ordonnance.css'
 
 // Ordonnance en saisie, dans le brouillon de la consultation : elle est enregistrée avec
 // lui (appareil à chaque frappe, serveur toutes les 10 s) et figée à la validation.
-//   valeur : { note, items } ; erreurs : { note?, lignes?: { [cle]: { champ: message } } }.
-export default function Ordonnance({ orgId, valeur, onChange, erreurs = {}, desactive }) {
+//   valeur : { note, items } ; erreurs : { note?, lignes?: { [cle]: { champ: message } } } ;
+//   bloquees : { [cle]: message } lignes d'un soin bloqué (maternité), en rouge.
+export default function Ordonnance({
+  orgId,
+  valeur,
+  onChange,
+  erreurs = {},
+  bloquees = {},
+  desactive,
+}) {
   const formes = useFormesMedicament()
   const voies = useVoies()
   const ord = normaliserOrdonnance(valeur)
@@ -89,6 +97,7 @@ export default function Ordonnance({ orgId, valeur, onChange, erreurs = {}, desa
               formes={listeFormes}
               voies={voies.data ?? []}
               erreurs={erreurs.lignes?.[l.cle]}
+              bloquee={bloquees[l.cle]}
               desactive={desactive}
               refNom={(el) => {
                 if (el && aFocaliser.current === l.cle) {

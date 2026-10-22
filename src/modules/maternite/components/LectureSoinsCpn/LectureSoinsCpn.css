@@ -1,0 +1,42 @@
+.lecture-soins-cpn {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-3);
+}
+
+.lecture-soins-cpn__titre {
+  margin: 0;
+  font-family: var(--police-titre);
+  font-size: var(--texte-l);
+  color: var(--primaire);
+}
+
+.lecture-soins-cpn__valeurs {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-3);
+  margin: 0;
+}
+
+.lecture-soins-cpn__valeurs dt {
+  font-size: var(--texte-s);
+  color: var(--encre-douce);
+}
+
+.lecture-soins-cpn__valeurs dd {
+  margin: 0;
+  color: var(--encre);
+  overflow-wrap: break-word;
+}
+
+.lecture-soins-cpn__confidentiel {
+  padding: var(--esp-2) var(--esp-3);
+  border-left: 4px solid var(--tampon);
+  background: var(--surface);
+  border-radius: var(--rayon-panneau);
+}
+
+.lecture-soins-cpn__lot {
+  font-family: var(--police-mono);
+  white-space: nowrap;
+}

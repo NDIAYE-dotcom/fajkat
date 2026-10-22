@@ -139,12 +139,16 @@ test.describe('1440 px — prise, report, type', () => {
     await expect(fenetre.getByText('Prochaines séances avec des places :')).toBeVisible()
     await verifierEcran(page, 'prise-seance-pleine')
     const proposition = fenetre.getByRole('button', { name: /14:00 – 16:00 · 3 places/ }).first()
+    // Un jour férié (1er novembre…) décale la séance proposée : le test lit la date reprise
+    // dans la fenêtre au lieu de la calculer, et vérifie seulement qu'elle a avancé.
     await proposition.click()
-    await expect(fenetre.getByLabel(/^Date/)).toHaveValue(fr(jour(10)))
+    await expect(fenetre.getByLabel(/^Date/)).not.toHaveValue(fr(jour(3)))
+    const proposee = await fenetre.getByLabel(/^Date/).inputValue()
+    expect(proposee.split('/').reverse().join('-') > jour(3)).toBe(true)
     await expect(fenetre.getByRole('radio', { name: /14:00 – 16:00\s*3 places/ })).toBeChecked()
     await fenetre.getByRole('button', { name: 'Enregistrer le rendez-vous' }).click()
     const confirmer = fenetre.getByRole('button', { name: 'Confirmer le rendez-vous' })
-    const pris = page.getByText(`Rendez-vous pris le ${fr(jour(10))} à 14:00`)
+    const pris = page.getByText(`Rendez-vous pris le ${proposee} à 14:00`)
     await expect(confirmer.or(pris)).toBeVisible()
     if (await confirmer.isVisible()) await confirmer.click()
     await expect(pris).toBeVisible()

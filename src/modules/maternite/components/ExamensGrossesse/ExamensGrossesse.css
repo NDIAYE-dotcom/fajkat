@@ -1,0 +1,78 @@
+.examens-grossesse {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-3);
+}
+
+.examens-grossesse__entete {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--esp-3);
+}
+
+.examens-grossesse__titre {
+  margin: 0;
+  font-family: var(--police-titre);
+  font-size: var(--texte-m);
+  color: var(--primaire);
+}
+
+.examens-grossesse__groupe {
+  margin: 0;
+  color: var(--encre);
+}
+
+.examens-grossesse__liste,
+.examens-grossesse__resultats {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.examens-grossesse__examen {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-1);
+  padding: var(--esp-2) 0;
+  border-bottom: 1px solid var(--doux);
+}
+
+.examens-grossesse__tete,
+.examens-grossesse__resultat {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--esp-1) var(--esp-3);
+}
+
+.examens-grossesse__nom {
+  font-weight: 700;
+  color: var(--encre);
+  overflow-wrap: break-word;
+}
+
+.examens-grossesse__afaire {
+  font-size: var(--texte-s);
+  color: var(--encre-douce);
+  font-style: italic;
+}
+
+.examens-grossesse__valeur {
+  color: var(--encre);
+}
+
+.examens-grossesse__chiffres {
+  font-family: var(--police-mono);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.examens-grossesse__doux {
+  font-size: var(--texte-s);
+  color: var(--encre-douce);
+  overflow-wrap: break-word;
+}

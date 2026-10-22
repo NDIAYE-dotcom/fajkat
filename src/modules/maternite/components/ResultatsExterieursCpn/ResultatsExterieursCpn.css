@@ -1,0 +1,37 @@
+.resultats-exterieurs {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.resultats-exterieurs__ligne {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-3);
+  padding: var(--esp-3) var(--esp-4);
+  border-left: 4px solid var(--accent);
+  background: var(--fond);
+  border-radius: var(--rayon-panneau);
+}
+
+.resultats-exterieurs__entete {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--esp-2) var(--esp-3);
+}
+
+.resultats-exterieurs__nom {
+  flex: 1 1 auto;
+  font-weight: 700;
+  color: var(--encre);
+}
+
+.resultats-exterieurs__erreur {
+  margin: 0;
+  font-size: var(--texte-s);
+  color: var(--tampon);
+}
